@@ -42,6 +42,7 @@ public class MechanicsConfig {
     public CauldronConfig cauldronConfig;
     public PermissionConfig permissionConfig;
     public PenConfig penConfig;
+    public BlockBagConfig blockBagConfig;
     public boolean useTweakcraftUtils;
 
     public MechanicsConfig(BetterMechanics p) throws ConfigWriteException {
@@ -62,6 +63,7 @@ public class MechanicsConfig {
         hiddenSwitchConfig = new HiddenSwitchConfig();
         ammeterConfig = new AmmeterConfig();
         cauldronConfig = new CauldronConfig();
+        blockBagConfig = new BlockBagConfig();
         permissionConfig = new PermissionConfig();
         penConfig = new PenConfig();
         useTweakcraftUtils = config.getBoolean("use-tweakcraftutils", false);
@@ -71,6 +73,15 @@ public class MechanicsConfig {
         if (useTweakcraftUtils && plugin.getTweakcraftUtils() != null) {
             if (plugin.getTweakcraftUtils().getConfigHandler().enableTPBack)
                 plugin.getTweakcraftUtils().getTelehistory().addHistory(player.getName(), loc);
+        }
+    }
+
+    public static class BlockBagConfig {
+        
+        public int searchWidth;
+        
+        public BlockBagConfig() {
+            searchWidth = config.getInt("blockbag.search-width", 3);
         }
     }
 
@@ -317,6 +328,10 @@ public class MechanicsConfig {
 
     public PermissionConfig getPermissionConfig() {
         return this.permissionConfig;
+    }
+
+    public BlockBagConfig getBlockBagConfig() {
+        return blockBagConfig;
     }
 
     public BridgeConfig getBridgeConfig() {

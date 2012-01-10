@@ -2,10 +2,7 @@ package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.MechanicsType;
 import net.edoxile.bettermechanics.exceptions.*;
-import net.edoxile.bettermechanics.utils.BlockMapper;
-import net.edoxile.bettermechanics.utils.BlockbagUtil;
-import net.edoxile.bettermechanics.utils.MechanicsConfig;
-import net.edoxile.bettermechanics.utils.SignUtil;
+import net.edoxile.bettermechanics.utils.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +10,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import java.util.Set;
@@ -25,19 +23,21 @@ import java.util.logging.Logger;
 public class Door {
     private static final Logger log = Logger.getLogger("Minecraft");
     private Sign sign;
+    private Sign endSign;
     private Player player;
-    private Chest chest;
     private MechanicsConfig.DoorConfig config;
     private Set<Block> blockSet;
     private MaterialData doorMaterial;
+    private BlockBagManager blockBagManager;
 
-    public Door(MechanicsConfig c, Sign s, Player p) {
+    public Door(MechanicsConfig c, BlockBagManager bbm, Sign s, Player p) {
         sign = s;
         player = p;
         config = c.getDoorConfig();
+        blockBagManager = bbm;
     }
 
-    public boolean map() throws InvalidMaterialException, BlockNotFoundException, NonCardinalDirectionException, ChestNotFoundException {
+    public boolean map() throws InvalidMaterialException, BlockNotFoundException, NonCardinalDirectionException {
         if (!config.enabled)
             return false;
         BlockFace direction;
@@ -57,7 +57,7 @@ public class Door {
             throw new InvalidMaterialException();
         }
 
-        Sign endSign = BlockMapper.findMechanicsSign(sign.getBlock(), direction, doorType, config.maxHeight);
+        endSign = BlockMapper.findMechanicsSign(sign.getBlock(), direction, doorType, config.maxHeight);
         Block startBlock = sign.getBlock().getRelative(direction).getRelative(direction);
         Block endBlock = null;
         switch (direction) {
@@ -71,7 +71,7 @@ public class Door {
         try {
             blockSet = BlockMapper.mapVertical(direction, orientation, startBlock, endBlock, (doorType == MechanicsType.SMALL_DOOR));
             if (!blockSet.isEmpty()) {
-                Block chestBlock = BlockMapper.mapCuboidRegion(sign.getBlock(), 3, Material.CHEST);
+                /* Block chestBlock = BlockMapper.mapCuboidRegion(sign.getBlock(), 3, Material.CHEST);
                 if (chestBlock == null) {
                     //Check other sign
 
@@ -83,7 +83,7 @@ public class Door {
                 chest = BlockbagUtil.getChest(chestBlock);
                 if (chest == null) {
                     throw new ChestNotFoundException();
-                }
+                } */
                 return true;
             } else {
                 log.info("[BetterMechanics] Empty blockSet?");
@@ -95,16 +95,30 @@ public class Door {
         }
     }
 
-    public void toggleOpen() {
+    public void toggleOpen() throws ChestNotFoundException {
         int amount = 0;
         try {
+
+            BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), true, false);
+
+            if(tmpbag == null)
+                tmpbag = blockBagManager.searchBlockBag(endSign.getBlock(), true, false);
+
+            if(tmpbag == null)
+                throw new ChestNotFoundException();
+
             for (Block b : blockSet) {
                 if (b.getType() == doorMaterial.getItemType() && b.getData() == doorMaterial.getData()) {
                     b.setType(Material.AIR);
                     amount++;
                 }
             }
-            BlockbagUtil.safeAddItems(chest, doorMaterial.toItemStack(amount));
+            // BlockbagUtil.safeAddItems(chest, doorMaterial.toItemStack(amount));
+
+
+
+            tmpbag.safeAddItems(doorMaterial.toItemStack(amount));
+
             if (player != null) {
                 player.sendMessage(ChatColor.GOLD + "Door opened!");
             }
@@ -125,9 +139,18 @@ public class Door {
         }
     }
 
-    public void toggleClosed() {
+    public void toggleClosed() throws ChestNotFoundException {
         int amount = 0;
         try {
+
+            BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), false, true);
+
+            if(tmpbag == null)
+                tmpbag = blockBagManager.searchBlockBag(endSign.getBlock(), false, true);
+
+            if(tmpbag == null)
+                throw new ChestNotFoundException();
+
             for (Block b : blockSet) {
                 if (canPassThrough(b.getType())) {
                     b.setType(doorMaterial.getItemType());
@@ -135,7 +158,9 @@ public class Door {
                     amount++;
                 }
             }
-            BlockbagUtil.safeRemoveItems(chest, doorMaterial.toItemStack(amount));
+            // BlockbagUtil.safeRemoveItems(chest, doorMaterial.toItemStack(amount));
+
+            tmpbag.safeRemoveItems(doorMaterial.toItemStack(amount));
             if (player != null) {
                 player.sendMessage(ChatColor.GOLD + "Door closed!");
             }

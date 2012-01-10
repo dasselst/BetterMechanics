@@ -5,6 +5,7 @@ import net.edoxile.bettermechanics.exceptions.ConfigWriteException;
 import net.edoxile.bettermechanics.listeners.MechanicsBlockListener;
 import net.edoxile.bettermechanics.listeners.MechanicsPlayerListener;
 import net.edoxile.bettermechanics.mechanics.Pen;
+import net.edoxile.bettermechanics.utils.BlockBagManager;
 import net.edoxile.bettermechanics.utils.MechanicsConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,6 +29,7 @@ public class BetterMechanics extends JavaPlugin {
     private MechanicsBlockListener blockListener;
     private TweakcraftUtils tcutils = null;
     private MechanicsConfig configManager;
+    private BlockBagManager blockBagManager;
     private File configFile;
 
     public void onDisable() {
@@ -38,8 +40,10 @@ public class BetterMechanics extends JavaPlugin {
         try {
             configFile = this.getFile();
             configManager = new MechanicsConfig(this);
-            blockListener = new MechanicsBlockListener(configManager);
-            playerListener = new MechanicsPlayerListener(configManager);
+            blockBagManager = new BlockBagManager(configManager);
+            blockListener = new MechanicsBlockListener(configManager, blockBagManager);
+            playerListener = new MechanicsPlayerListener(configManager, blockBagManager);
+
             registerEvents();
             if (configManager.useTweakcraftUtils) {
                 log.info("[BetterMechanics] Using TweakcraftUtils!");

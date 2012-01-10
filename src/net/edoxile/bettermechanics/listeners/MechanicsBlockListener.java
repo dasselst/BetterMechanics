@@ -3,15 +3,18 @@ package net.edoxile.bettermechanics.listeners;
 import net.edoxile.bettermechanics.mechanics.Bridge;
 import net.edoxile.bettermechanics.mechanics.Door;
 import net.edoxile.bettermechanics.mechanics.Gate;
+import net.edoxile.bettermechanics.utils.BlockBagManager;
 import net.edoxile.bettermechanics.utils.MechanicsConfig;
 import net.edoxile.bettermechanics.utils.SignUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,9 +24,11 @@ import org.bukkit.event.block.SignChangeEvent;
 public class MechanicsBlockListener extends BlockListener {
     private MechanicsConfig config;
     private MechanicsConfig.PermissionConfig permissions;
+    private BlockBagManager bagmanager;
 
-    public MechanicsBlockListener(MechanicsConfig c) {
+    public MechanicsBlockListener(MechanicsConfig c, BlockBagManager manager) {
         config = c;
+        bagmanager = manager;
         permissions = c.getPermissionConfig();
     }
 
@@ -34,7 +39,7 @@ public class MechanicsBlockListener extends BlockListener {
     public void onSignChange(SignChangeEvent event) {
         String str = event.getLine(1);
         if (SignUtil.getMechanicsType(str) == null) {
-            return;
+            // return;
         } else {
             if (!permissions.check(event.getPlayer(), SignUtil.getMechanicsType(str).name().toLowerCase() + ".create", event.getBlock(), false)) {
                 event.setCancelled(true);
@@ -94,6 +99,30 @@ public class MechanicsBlockListener extends BlockListener {
         } else if (str.equalsIgnoreCase("[x]")) {
             event.setLine(1, "[X]");
             event.getPlayer().sendMessage(ChatColor.AQUA + "You created a hidden switch!");
+        } else if (str.equalsIgnoreCase("[black hole]")) {
+            if(!permissions.checkPermissions(event.getPlayer(), "blackhole.create")) {
+                event.setCancelled(true);
+                event.getPlayer().sendMessage(ChatColor.RED+"You don't have permission to create a black hole!");
+                if(event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST)) {
+                    event.getBlock().setTypeId(0);
+                    event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.SIGN, 1));
+                }
+            } else {
+                event.setLine(1, "[Black Hole]");
+                event.getPlayer().sendMessage(ChatColor.AQUA + "You created a black hole!");
+            }
+        } else if (str.equalsIgnoreCase("[block source]")) {
+            if(!permissions.checkPermissions(event.getPlayer(), "blocksource.create")) {
+                event.setCancelled(true);
+                event.getPlayer().sendMessage(ChatColor.RED+"You don't have permission to create a block source!");
+                if(event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST)) {
+                    event.getBlock().setTypeId(0);
+                    event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.SIGN, 1));
+                }
+            } else {
+                event.setLine(1, "[Block Source]");
+                event.getPlayer().sendMessage(ChatColor.AQUA + "You created a block source!");
+            }
         } else {
             return;
         }
@@ -159,7 +188,7 @@ public class MechanicsBlockListener extends BlockListener {
         switch (SignUtil.getActiveMechanicsType(sign)) {
             case SMALL_BRIDGE:
             case BRIDGE: {
-                Bridge bridge = new Bridge(config, sign, null);
+                Bridge bridge = new Bridge(config, bagmanager, sign, null);
                 try {
                     if (!bridge.map())
                         return;
@@ -174,7 +203,7 @@ public class MechanicsBlockListener extends BlockListener {
             break;
             case SMALL_GATE:
             case GATE: {
-                Gate gate = new Gate(config, sign, null);
+                Gate gate = new Gate(config, bagmanager, sign, null);
                 try {
                     if (!gate.map())
                         return;
@@ -189,7 +218,7 @@ public class MechanicsBlockListener extends BlockListener {
             break;
             case SMALL_DOOR:
             case DOOR: {
-                Door door = new Door(config, sign, null);
+                Door door = new Door(config, bagmanager, sign, null);
                 try {
                     if (!door.map())
                         return;

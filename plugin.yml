@@ -1,8 +1,8 @@
 name: BetterMechanics
 main: old.bettermechanics.BetterMechanics
 version: 2.0.0-prealpha
-author: Edoxile
-website: https://github.com/Edoxile/BetterMechanics
+authors: [Edoxile, GuntherDW]
+website: https://github.com/TweakCraft/BetterMechanics
 commands:
     pen:
         description: Change the text of signs

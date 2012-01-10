@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class BlockbagUtil {
     private static final Logger log = Logger.getLogger("Minecraft");
 
-    public static boolean safeRemoveItems(Chest chest, ItemStack itemStack) throws OutOfMaterialException {
+    public static boolean safeRemoveItems(ItemStack itemStack) throws OutOfMaterialException {
         boolean checkData = true;
         if (itemStack.getData() == null) {
             checkData = false;
@@ -65,7 +65,7 @@ public class BlockbagUtil {
         }
     }
 
-    public static boolean safeAddItems(Chest chest, ItemStack itemStack) throws OutOfSpaceException {
+    public static boolean safeAddItems(ItemStack itemStack) throws OutOfSpaceException {
         int amount = itemStack.getAmount();
         ItemStack[] stacks = chest.getInventory().getContents();
         for (int i = 0; i < stacks.length; i++) {
@@ -130,5 +130,26 @@ public class BlockbagUtil {
             }
         }
         return null;
+    }
+
+    public boolean isBlockSource() {
+        return true;
+    }
+
+    public boolean isBlockHole() {
+        return true;
+    }
+
+    public Material getSourceMaterial() {
+        return Material.CHEST;
+    }
+
+    public boolean isBlockBag(Block block) {
+        if(block.getType().equals(getSourceMaterial())) {
+            chest = (Chest) block.getState();
+            return true;
+        }
+
+        return false;
     }
 }

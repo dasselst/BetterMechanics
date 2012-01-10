@@ -29,10 +29,10 @@ public class SignUtil {
 
     public static MechanicsType getMechanicsType(String str) {
         if (str.equalsIgnoreCase("[Lift Up]")
-         || str.equalsIgnoreCase("[Lift Down]")
-         || str.equalsIgnoreCase("[Lift]"))
+                || str.equalsIgnoreCase("[Lift Down]")
+                || str.equalsIgnoreCase("[Lift]"))
             return MechanicsType.LIFT;
-        
+
         if (str.equalsIgnoreCase("[TeleLift]"))
             return MechanicsType.TELELIFT;
 
@@ -43,21 +43,21 @@ public class SignUtil {
             return MechanicsType.SMALL_GATE;
 
         if (str.equalsIgnoreCase("[Bridge]")
-         || str.equalsIgnoreCase("[Bridge End]"))
+                || str.equalsIgnoreCase("[Bridge End]"))
             return MechanicsType.BRIDGE;
 
         if (str.equalsIgnoreCase("[sBridge]")
-         || str.equalsIgnoreCase("[sBridge End]"))
+                || str.equalsIgnoreCase("[sBridge End]"))
             return MechanicsType.SMALL_BRIDGE;
 
         if (str.equalsIgnoreCase("[Door]")
-         || str.equalsIgnoreCase("[Door Down]")
-         || str.equalsIgnoreCase("[Door Up]"))
+                || str.equalsIgnoreCase("[Door Down]")
+                || str.equalsIgnoreCase("[Door Up]"))
             return MechanicsType.DOOR;
 
         if (str.equalsIgnoreCase("[sDoor]")
-         || str.equalsIgnoreCase("[sDoor Down]")
-         || str.equalsIgnoreCase("[sDoor Up]"))
+                || str.equalsIgnoreCase("[sDoor Down]")
+                || str.equalsIgnoreCase("[sDoor Up]"))
             return MechanicsType.SMALL_DOOR;
 
         if (str.equalsIgnoreCase("[X]"))
@@ -81,7 +81,7 @@ public class SignUtil {
 
     public static MechanicsType getActiveMechanicsType(String str) {
         if (str.equalsIgnoreCase("[Lift Up]")
-         || str.equalsIgnoreCase("[Lift Down]"))
+                || str.equalsIgnoreCase("[Lift Down]"))
             return MechanicsType.LIFT;
 
         if (str.equalsIgnoreCase("[TeleLift]"))
@@ -100,15 +100,15 @@ public class SignUtil {
             return MechanicsType.SMALL_BRIDGE;
 
         if (str.equalsIgnoreCase("[Door Down]")
-         || str.equalsIgnoreCase("[Door Up]"))
+                || str.equalsIgnoreCase("[Door Up]"))
             return MechanicsType.DOOR;
 
         if (str.equalsIgnoreCase("[sDoor Down]")
-         || str.equalsIgnoreCase("[sDoor Up]"))
+                || str.equalsIgnoreCase("[sDoor Up]"))
             return MechanicsType.SMALL_DOOR;
 
         if (str.equalsIgnoreCase("[sDoor Down]")
-         || str.equalsIgnoreCase("[sDoor Up]"))
+                || str.equalsIgnoreCase("[sDoor Up]"))
             return MechanicsType.DOOR;
 
         if (str.equalsIgnoreCase("[X]"))
