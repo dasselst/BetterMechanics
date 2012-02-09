@@ -1,7 +1,8 @@
-
-/build
-/dist
-/.classpath
-/.project
+#ignore my eclipse files
 /bin
+/.project
+/.settings
+/.classpath
+/.idea
+/*.iml
 /out
