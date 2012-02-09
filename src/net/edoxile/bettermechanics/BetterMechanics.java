@@ -1,9 +1,26 @@
+/*
+ * Copyright (c) 2012.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package net.edoxile.bettermechanics;
 
 import net.edoxile.bettermechanics.listeners.BMBlockListener;
 import net.edoxile.bettermechanics.listeners.BMPlayerListener;
 import net.edoxile.bettermechanics.mechanics.Bridge;
-import net.edoxile.bettermechanics.mechanics.Gate;
 import net.edoxile.bettermechanics.models.MechanicsHandler;
 import net.edoxile.bettermechanics.models.PermissionType;
 import org.bukkit.block.Block;
@@ -15,7 +32,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +41,7 @@ import java.util.logging.Logger;
  * @author Edoxile
  */
 public class BetterMechanics extends JavaPlugin {
+    private static BetterMechanics instance = null;
     private static Logger logger = Logger.getLogger("Minecraft");
     private static boolean debugMode;
     private MechanicsHandler mechanicsHandler = new MechanicsHandler();
@@ -32,12 +49,10 @@ public class BetterMechanics extends JavaPlugin {
     private BMBlockListener blockListener = new BMBlockListener(this);
 
     public void onEnable() {
+        instance = this;
         //Register different Mechanics
         /*mechanicsHandler.addMechanic(new Gate(this));
         mechanicsHandler.addMechanic(new Pen(this));*/
-        log("Checking config", Level.INFO);
-        checkConfig();
-        log("Checked config", Level.INFO);
         mechanicsHandler.addMechanic(new Bridge(this));
 
         //TODO: Register different events
@@ -51,6 +66,7 @@ public class BetterMechanics extends JavaPlugin {
     }
 
     public void onDisable() {
+        instance = null;
         log("Disabled.");
     }
 
@@ -71,37 +87,29 @@ public class BetterMechanics extends JavaPlugin {
     }
 
     public static void log(String msg, Level level) {
-        if (level != Level.FINEST || debugMode)
-            logger.log(level, "[BetterMechanics] " + msg);
-    }
-
-    public void checkConfig() {
-        File configFile = new File(getDataFolder(), "config.yml");
-        if (!configFile.canRead()) {
-            try {
-                if (configFile.getParentFile().mkdirs()) {
-                    if (configFile.createNewFile()) {
-                        log("Successfully made new config file.");
-                        Configuration c = getConfiguration();
-                        c.load();
-                        c.setProperty("debug-mode", false);
-                        new Bridge(this).saveConfig(c);
-                        c.save();
-                    } else {
-                        log("Failed to create new config file.");
-                    }
-                } else {
-                    log("Failed to create config dir.");
-                }
-            } catch (IOException e) {
-                log("Couldn't write new config file.");
-            }
-        } else {
-            log("Config file found.");
+        if (level == Level.FINEST && !debugMode) {
+            return;
+        } else if (debugMode && level == Level.FINEST) {
+            level = Level.INFO;
         }
+        logger.log(level, msg);
+
     }
 
-    public Logger getLogger(){
+    //TODO: implement
+    public Configuration getConfig() {
+        return this.getConfiguration();
+    }
+    
+    public File getJarFile(){
+        return getFile();
+    }
+
+    public Logger getLogger() {
         return logger;
+    }
+
+    public static BetterMechanics getInstance(){
+        return instance;
     }
 }

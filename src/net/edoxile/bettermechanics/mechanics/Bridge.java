@@ -1,17 +1,31 @@
+/*
+ * Copyright (c) 2012.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
-import net.edoxile.configparser.ConfigEntity;
-import net.edoxile.configparser.annotations.ConfigEntityNode;
-import net.edoxile.configparser.annotations.NodeType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,26 +37,14 @@ import java.util.logging.Level;
  *
  * @author Edoxile
  */
-@ConfigEntityNode("bridge")
-public class Bridge extends ConfigEntity implements ISignMechanic {
+public class Bridge implements ISignMechanic {
+    private static boolean enabled = true;
+    private static int maxLength = 128;
+    private static List<Integer> materialList = Arrays.asList(Material.WOOD.getId());
 
-    @NodeType(
-            node = "enabled",
-            clazz = Boolean.class
-    )
-    private boolean enabled = true;
+    static{
 
-    @NodeType(
-            node = "max-length",
-            clazz = Integer.class
-    )
-    private int maxLength = 128;
-
-    @NodeType(
-            node = "allowed-materials",
-            clazz = Integer.class
-    )
-    private List<Integer> materialList = Arrays.asList(Material.IRON_FENCE.getId(), Material.FENCE.getId());
+    }
 
     private ArrayList<Block> blockList = new ArrayList<Block>();
     private List<BlockFace> allowedOrientations = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
@@ -52,7 +54,6 @@ public class Bridge extends ConfigEntity implements ISignMechanic {
     private BetterMechanics plugin = null;
 
     public Bridge(BetterMechanics p) {
-        super(p);
         plugin = p;
         //loadConfig(plugin.getConfiguration());
     }
