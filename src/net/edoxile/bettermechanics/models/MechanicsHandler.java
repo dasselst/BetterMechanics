@@ -18,6 +18,7 @@
 
 package net.edoxile.bettermechanics.models;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.IBlockMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanic;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by IntelliJ IDEA.
@@ -72,7 +74,7 @@ public class MechanicsHandler {
         if (mechanic instanceof ICommandableMechanic) {
             ICommandableMechanic commandableMechanic = (ICommandableMechanic) mechanic;
             if (commandableMechanicMap.containsKey(commandableMechanic.getIdentifier())) {
-                //TODO: log command overwrite error!
+                BetterMechanics.log("Mechanic " + commandableMechanic.getName() + " is trying to overwrite command: '"+commandableMechanic.getIdentifier()+"'.", Level.SEVERE);
             } else {
                 commandableMechanicMap.put(commandableMechanic.getIdentifier(), commandableMechanic);
             }

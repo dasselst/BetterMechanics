@@ -30,6 +30,5 @@ public interface ICommandableMechanic extends IMechanic {
 
     public boolean onCommand(CommandSender commandSender, Command command, String[] args);
 
-    public String getIdentifier();
-
+    public String[] getIdentifier();
 }

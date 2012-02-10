@@ -19,7 +19,7 @@
 package net.edoxile.bettermechanics.mechanics.interfaces;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 /**
@@ -27,17 +27,21 @@ import org.bukkit.entity.Player;
  *
  * @author Edoxile
  */
-public interface ISignMechanic extends IMechanic {
+public abstract class ISignMechanic extends IBlockMechanic {
 
-    public void onSignPowerOn(Block sign);
+    public void onSignPowerOn(Sign sign){}
 
-    public void onSignPowerOff(Block sign);
+    public void onSignPowerOff(Sign sign){}
 
-    public void onPlayerRightClickSign(Player player, Block sign);
+    public void onPlayerRightClickSign(Player player, Sign sign){}
 
-    public void onPlayerLeftClickSign(Player player, Block sign);
+    public void onPlayerLeftClickSign(Player player, Sign sign){}
 
-    public abstract String getIdentifier();
+    public abstract String[] getIdentifier();
 
-    public abstract Material getMechanicActivator();
+    public abstract Material[] getMechanicActivator();
+    
+    public Material[] getMechanicTarget(){
+        return new Material[]{Material.WALL_SIGN, Material.SIGN_POST};
+    }
 }

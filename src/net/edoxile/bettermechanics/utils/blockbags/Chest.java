@@ -16,13 +16,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.mechanics.interfaces;
+package net.edoxile.bettermechanics.utils.blockbags;
+
+import org.bukkit.block.Sign;
+
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public interface IMechanic {
-    public String getName();
+public class Chest extends BlockBag{
+    ArrayList<Chest> chestList = new ArrayList<Chest>();
+
+    @Override
+    public boolean removeItems(int id, byte data, int amount) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean storeItems(int id, byte data, int amount) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean searchStorage(Sign sign) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

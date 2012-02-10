@@ -16,13 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.mechanics.interfaces;
+package net.edoxile.bettermechanics.utils.blockbags;
+
+import org.bukkit.block.Sign;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public interface IMechanic {
-    public String getName();
+public class BlackHole extends BlockBag {
+    @Override
+    public boolean removeItems(int id, byte data, int amount) {
+        return true;
+    }
+
+    @Override
+    public boolean storeItems(int id, byte data, int amount) {
+        return true;
+    }
+
+    @Override
+    public boolean searchStorage(Sign sign) {
+        //TODO: implement this method.
+        return false;
+    }
 }

@@ -84,7 +84,7 @@ public class Gate extends ConfigEntity implements ISignMechanic {
     public void onPlayerLeftClickSign(Player player, Block sign) {
     }
 
-    public String getIdentifier() {
+    public String[] getIdentifier() {
         return "[Gate]";
     }
 

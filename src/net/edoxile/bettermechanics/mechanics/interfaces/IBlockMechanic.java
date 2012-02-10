@@ -27,23 +27,23 @@ import org.bukkit.entity.Player;
  *
  * @author Edoxile
  */
-public interface IBlockMechanic extends IMechanic {
+public abstract class IBlockMechanic implements IMechanic {
 
-    public void onBlockRightClick(Player player, Block block);
+    public void onBlockRightClick(Player player, Block block){}
 
-    public void onBlockLeftClick(Player player, Block block);
+    public void onBlockLeftClick(Player player, Block block){}
 
-    public void onBlockPlace(Player player, Block block);
+    public void onBlockPlace(Player player, Block block){}
 
-    public void onBlockBreak(Player player, Block block);
+    public void onBlockBreak(Player player, Block block){}
 
-    public void onBlockPowerOn(Block block);
+    public void onBlockPowerOn(Block block){}
 
-    public void onBlockPowerOff(Block block);
+    public void onBlockPowerOff(Block block){}
 
-    public boolean isTriggeredByRedstone();
+    public abstract boolean isTriggeredByRedstone();
 
-    public Material getMechanicActivator();
+    public abstract Material[] getMechanicActivator();
 
-    public Material getMechanicTarget();
+    public abstract Material[] getMechanicTarget();
 }

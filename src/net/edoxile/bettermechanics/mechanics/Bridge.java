@@ -86,7 +86,7 @@ public class Bridge implements ISignMechanic {
     public void onPlayerLeftClickSign(Player player, Block sign) {
     }
 
-    public String getIdentifier() {
+    public String[] getIdentifier() {
         return "[Bridge]";
     }
 

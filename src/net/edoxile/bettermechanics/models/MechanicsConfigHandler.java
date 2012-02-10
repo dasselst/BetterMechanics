@@ -148,12 +148,20 @@ public class MechanicsConfigHandler {
     }
 
     public class PenConfig {
-        public final boolean enabled;
-        public final Material penMaterial;
+        private final boolean enabled;
+        private final Material penTool;
 
         public PenConfig() {
             enabled = configuration.getBoolean("pen.enabled", true);
-            penMaterial = Material.getMaterial(configuration.getInt("pen.material", 280));
+            penTool = Material.getMaterial(configuration.getInt("pen.material", 280));
+        }
+        
+        public boolean isEnabled(){
+            return enabled;
+        }
+        
+        public Material getPenTool(){
+            return penTool;
         }
     }
 
