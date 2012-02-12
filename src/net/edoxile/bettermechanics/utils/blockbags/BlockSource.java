@@ -25,21 +25,21 @@ import org.bukkit.block.Sign;
  *
  * @author Edoxile
  */
-public class BlackHole extends BlockBag {
+public class BlockSource extends BlockBag{
 
     @Override
-    public boolean storeItems(int id, byte data, int amount) {
+    public boolean removeItems(int id, byte data, int amount){
         return true;
     }
 
     @Override
     public boolean searchStorage(Sign sign) {
-        //TODO: implement this method.
+        //TODO: implement this method
         return false;
     }
 
     @Override
     public Direction getDirection() {
-        return Direction.SINK;
+        return Direction.SOURCE;
     }
 }

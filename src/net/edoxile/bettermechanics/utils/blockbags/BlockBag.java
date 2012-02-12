@@ -18,8 +18,11 @@
 
 package net.edoxile.bettermechanics.utils.blockbags;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.logging.Level;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,6 +30,12 @@ import org.bukkit.inventory.ItemStack;
  * @author Edoxile
  */
 public abstract class BlockBag {
+
+    public enum Direction {
+        SOURCE,
+        SINK,
+        ANY
+    }
 
     public boolean removeItems(ItemStack itemStack) {
         return removeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
@@ -40,21 +49,29 @@ public abstract class BlockBag {
         return removeItems(id, (byte) 0, amount);
     }
 
-    public abstract boolean removeItems(int id, byte data, int amount);
-    
+    public boolean removeItems(int id, byte data, int amount) {
+        BetterMechanics.log("Method 'storeItems' was called but not overwritten", Level.WARNING);
+        return false;
+    }
+
     public boolean storeItems(ItemStack itemStack) {
         return storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
     }
-    
-    public boolean storeItems(ItemStack itemStack, int amount){
+
+    public boolean storeItems(ItemStack itemStack, int amount) {
         return storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
     }
-    
+
     public boolean storeItems(int id, int amount) {
-        return storeItems(id, (byte)0, amount);
+        return storeItems(id, (byte) 0, amount);
     }
 
-    public abstract boolean storeItems(int id, byte data, int amount);
-    
+    public boolean storeItems(int id, byte data, int amount) {
+        BetterMechanics.log("Method 'storeItems' was called but not overwritten", Level.WARNING);
+        return false;
+    }
+
     public abstract boolean searchStorage(Sign sign);
+
+    public abstract Direction getDirection();
 }

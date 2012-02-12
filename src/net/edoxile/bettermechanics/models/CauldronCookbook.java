@@ -77,9 +77,9 @@ public class CauldronCookbook {
 
                 add(new Recipe(name, ingredients, results));
             }
-            BetterMechanics.log("Cauldron loaded " + size() + " recipes.");
+            BetterMechanics.log("Cauldron loaded " + size() + " recipes");
         } catch (Exception e) {
-            BetterMechanics.log("Something went wrong loading the config file.");
+            BetterMechanics.log("Something went wrong loading the config file");
         }
     }
 

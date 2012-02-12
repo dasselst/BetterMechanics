@@ -1,6 +1,12 @@
+Changelog:
+- Made interfaces for Mechanics. If they are registered, they will be executed by an ID (Sign ID), or by BlockType/EventType.
+  This means that making new Mechanics is easier than before.
+- Implemented Pen
+- Rewritten BlockBags, now it is possible to use Black Holes and Block Source as BlockBags, as well as chests
+- Cauldron now accepts data-values as arguments in the config
+
+
 TODO:
-- Modulated config loader (mechanics tell config what to load(?))
-- Create an event handler, check for blockType and listening mechanics
 - Create a decent blockMapper, not like the previous one with OVER 9000 functions
 - Implement all the mechanics:
     * Gate
@@ -8,13 +14,8 @@ TODO:
     * Door
     * (Tele)Lift
     * Ammeter
-    * Pen
     * Cauldron
     * Cycler (for chests, until notch fixed dem bugs)
     * Hidden Switch
     * PoweredBlock (changes blocks (materialtype) when powerd with redstone)
 - Reorganize inventory code
-
-Changed:
-- Made interfaces for Mechanics. If they are registered, they will be executed by an ID (Sign ID), or by BlockType/EventType.
-  This means that making new Mechanics is easier than before.

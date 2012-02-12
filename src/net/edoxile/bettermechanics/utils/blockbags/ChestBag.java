@@ -18,30 +18,36 @@
 
 package net.edoxile.bettermechanics.utils.blockbags;
 
+import net.edoxile.bettermechanics.utils.InventoryManager;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
-
-import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public class Chest extends BlockBag{
-    ArrayList<Chest> chestList = new ArrayList<Chest>();
+public class ChestBag extends BlockBag{
+    Chest chest = null;
 
     @Override
     public boolean removeItems(int id, byte data, int amount) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return InventoryManager.removeContents(chest.getInventory(), id, data, amount);
     }
 
     @Override
     public boolean storeItems(int id, byte data, int amount) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return InventoryManager.addContents(chest.getInventory(), id, data, amount);
     }
 
     @Override
     public boolean searchStorage(Sign sign) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        //TODO: implement method
+        return false;
+    }
+
+    @Override
+    public Direction getDirection() {
+        return Direction.ANY;
     }
 }

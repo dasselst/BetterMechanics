@@ -18,6 +18,7 @@
 
 package net.edoxile.bettermechanics.utils;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,45 +28,82 @@ import org.bukkit.inventory.ItemStack;
  * @author Edoxile
  */
 public class InventoryManager {
-    public static ItemStack[] putContents(Inventory iTo, ItemStack... sFrom) {
-        ItemStack[] sTo = iTo.getContents();
-        fromLoop:
-        for (int i = 0; i < sFrom.length; i++) {
-            ItemStack fStack = sFrom[i];
-            if (fStack == null) {
-                continue;
+
+    public static boolean addContents(Inventory iTo, ItemStack stack, int amount) {
+        if (stack == null || iTo == null) {
+            return false;
+        }
+        ItemStack[] t = iTo.getContents();
+        int leftover = 0;
+        for (int i = 0; i < t.length; i++) {
+            if (amount > 64) {
+                stack.setAmount(64);
+                amount -= 64;
+            } else if (amount > 0) {
+                stack.setAmount(amount);
+                amount = 0;
             } else {
-                toLoop:
-                for (int j = 0; j < sTo.length; j++) {
-                    ItemStack tStack = sTo[j];
-                    if (tStack == null) {
-                        sTo[j] = fStack;
-                        sFrom[i] = null;
-                        continue fromLoop;
-                    } else if (fStack.getTypeId() == tStack.getTypeId() && fStack.getDurability() == tStack.getDurability() && tStack.getEnchantments().isEmpty()) {
-                        int total = fStack.getAmount() + tStack.getAmount();
-                        if (total > 64) {
-                            tStack.setAmount(64);
-                            fStack.setAmount(total - 64);
-                        } else {
-                            tStack.setAmount(total);
-                            int remainder = total - 64;
-                            if (remainder == 0) {
-                                sFrom[i] = null;
-                                sTo[j] = tStack;
-                                continue fromLoop;
-                            } else {
-                                fStack.setAmount(remainder);
-                            }
-                        }
-                    } else {
-                        continue;
-                    }
-                    sTo[j] = tStack;
+                break;
+            }
+            ItemStack toStack = t[i];
+            if (toStack == null) {
+                t[i] = stack;
+                leftover = 0;
+            } else if (toStack.getTypeId() == stack.getTypeId() && toStack.getDurability() == stack.getDurability() && (toStack.getEnchantments().isEmpty() && stack.getEnchantments().isEmpty())) {
+                if ((toStack.getAmount() + stack.getAmount()) > 64) {
+                    leftover = (toStack.getAmount() + stack.getAmount()) - 64;
+                    t[i].setAmount(64);
+                } else {
+                    leftover = 0;
+                    t[i].setAmount(64);
+                }
+            } else {
+                continue;
+            }
+            amount += leftover;
+        }
+        if (amount == 0) {
+            iTo.setContents(t);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean removeContents(Inventory iFrom, ItemStack stack, int amount) {
+        return removeContents(iFrom, stack.getTypeId(), (byte) stack.getDurability(), amount);
+    }
+
+    public static boolean addContents(Inventory iTo, int id, byte data, int amount) {
+        ItemStack stack = new ItemStack(id, 1, data);
+        return addContents(iTo, stack, amount);
+    }
+
+    public static boolean removeContents(Inventory iFrom, int id, byte data, int amount) {
+        if (Material.getMaterial(id) == null || iFrom == null) {
+            return false;
+        }
+        ItemStack[] f = iFrom.getContents();
+        for (int i = 0; i < f.length; i++) {
+            if (amount == 0) {
+                break;
+            }
+            ItemStack fromStack = f[i];
+            if (fromStack != null && fromStack.getTypeId() == id && fromStack.getDurability() == data && fromStack.getEnchantments().isEmpty()) {
+                if (fromStack.getAmount() >= amount) {
+                    f[i].setAmount(fromStack.getAmount() - amount);
+                    amount = 0;
+                } else {
+                    amount -= fromStack.getAmount();
+                    f[i] = null;
                 }
             }
-            sFrom[i] = fStack;
         }
-        return sFrom;
+        if (amount == 0) {
+            iFrom.setContents(f);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
