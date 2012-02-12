@@ -81,12 +81,12 @@ public class MaterialMapIterator {
     public void previous() {
         pointer--;
     }
-    
-    public int id(){
+
+    public int id() {
         return getId(_keys[pointer]);
     }
 
-    public byte data(){
+    public byte data() {
         return getData(_keys[pointer]);
     }
 

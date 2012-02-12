@@ -100,8 +100,8 @@ public class BetterMechanics extends JavaPlugin {
     public Configuration getConfig() {
         return this.getConfiguration();
     }
-    
-    public File getJarFile(){
+
+    public File getJarFile() {
         return getFile();
     }
 
@@ -109,7 +109,7 @@ public class BetterMechanics extends JavaPlugin {
         return logger;
     }
 
-    public static BetterMechanics getInstance(){
+    public static BetterMechanics getInstance() {
         return instance;
     }
 }

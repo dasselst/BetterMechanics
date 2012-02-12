@@ -74,7 +74,7 @@ public class MechanicsHandler {
         if (mechanic instanceof ICommandableMechanic) {
             ICommandableMechanic commandableMechanic = (ICommandableMechanic) mechanic;
             if (commandableMechanicMap.containsKey(commandableMechanic.getIdentifier())) {
-                BetterMechanics.log("Mechanic " + commandableMechanic.getName() + " is trying to overwrite command: '"+commandableMechanic.getIdentifier()+"'.", Level.SEVERE);
+                BetterMechanics.log("Mechanic " + commandableMechanic.getName() + " is trying to overwrite command: '" + commandableMechanic.getIdentifier() + "'.", Level.SEVERE);
             } else {
                 commandableMechanicMap.put(commandableMechanic.getIdentifier(), commandableMechanic);
             }

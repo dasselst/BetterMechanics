@@ -42,7 +42,7 @@ public class Bridge implements ISignMechanic {
     private static int maxLength = 128;
     private static List<Integer> materialList = Arrays.asList(Material.WOOD.getId());
 
-    static{
+    static {
 
     }
 

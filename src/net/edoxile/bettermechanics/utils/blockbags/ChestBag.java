@@ -27,7 +27,7 @@ import org.bukkit.block.Sign;
  *
  * @author Edoxile
  */
-public class ChestBag extends BlockBag{
+public class ChestBag extends BlockBag {
     Chest chest = null;
 
     @Override

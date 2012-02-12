@@ -29,17 +29,23 @@ import org.bukkit.entity.Player;
  */
 public abstract class IBlockMechanic implements IMechanic {
 
-    public void onBlockRightClick(Player player, Block block){}
+    public void onBlockRightClick(Player player, Block block) {
+    }
 
-    public void onBlockLeftClick(Player player, Block block){}
+    public void onBlockLeftClick(Player player, Block block) {
+    }
 
-    public void onBlockPlace(Player player, Block block){}
+    public void onBlockPlace(Player player, Block block) {
+    }
 
-    public void onBlockBreak(Player player, Block block){}
+    public void onBlockBreak(Player player, Block block) {
+    }
 
-    public void onBlockPowerOn(Block block){}
+    public void onBlockPowerOn(Block block) {
+    }
 
-    public void onBlockPowerOff(Block block){}
+    public void onBlockPowerOff(Block block) {
+    }
 
     public abstract boolean isTriggeredByRedstone();
 

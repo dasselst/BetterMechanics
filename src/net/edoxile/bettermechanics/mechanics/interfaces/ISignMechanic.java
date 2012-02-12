@@ -29,19 +29,23 @@ import org.bukkit.entity.Player;
  */
 public abstract class ISignMechanic extends IBlockMechanic {
 
-    public void onSignPowerOn(Sign sign){}
+    public void onSignPowerOn(Sign sign) {
+    }
 
-    public void onSignPowerOff(Sign sign){}
+    public void onSignPowerOff(Sign sign) {
+    }
 
-    public void onPlayerRightClickSign(Player player, Sign sign){}
+    public void onPlayerRightClickSign(Player player, Sign sign) {
+    }
 
-    public void onPlayerLeftClickSign(Player player, Sign sign){}
+    public void onPlayerLeftClickSign(Player player, Sign sign) {
+    }
 
     public abstract String[] getIdentifier();
 
     public abstract Material[] getMechanicActivator();
-    
-    public Material[] getMechanicTarget(){
+
+    public Material[] getMechanicTarget() {
         return new Material[]{Material.WALL_SIGN, Material.SIGN_POST};
     }
 }

@@ -25,10 +25,10 @@ import org.bukkit.block.Sign;
  *
  * @author Edoxile
  */
-public class BlockSource extends BlockBag{
+public class BlockSource extends BlockBag {
 
     @Override
-    public boolean removeItems(int id, byte data, int amount){
+    public boolean removeItems(int id, byte data, int amount) {
         return true;
     }
 
