@@ -8,17 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="libs" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../TweakCart2/lib/craftbukkit-1.0.1-R1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../TweakCart2/lib/craftbukkit-1.0.1-R1.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
   </component>
 </module>
 

@@ -18,9 +18,11 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
 import net.edoxile.bettermechanics.models.MechanicsConfigHandler;
+import net.edoxile.bettermechanics.models.PermissionHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -54,68 +56,78 @@ public class Pen extends ISignMechanic implements ICommandableMechanic {
     }
 
     public void onPlayerRightClickSign(Player player, Sign sign) {
-        //TODO: check permissions
-        setText(player, sign.getLines());
+        if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
+            setText(player, sign.getLines());
+        } else {
+            player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
+        }
     }
 
     public void onPlayerLeftClickSign(Player player, Sign sign) {
-        //TODO: check permissions
-        String[] lines = getLines(player);
-        if (lines != null) {
-            for (int i = 0; i < 4; i++) {
-                sign.setLine(i, lines[i]);
+        if (BetterMechanics.getPermissionHandler().hasPermission(player, sign.getBlock(), "pen", PermissionHandler.Checks.ALL)) {
+            String[] lines = getLines(player);
+            if (lines != null) {
+                for (int i = 0; i < 4; i++) {
+                    sign.setLine(i, lines[i]);
+                }
+                //Update sign so it's visible for everybody
+                sign.update();
+            } else {
+                player.sendMessage(ChatColor.DARK_RED + "You haven't set the text to put on this sign yet!");
             }
-            //Update sign so it's visible for everybody
-            sign.update();
         } else {
-            player.sendMessage(ChatColor.DARK_RED + "You haven't set the text to put on this sign yet!");
+            player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
         }
     }
 
     public boolean onCommand(CommandSender commandSender, Command command, String[] args) {
-        if (commandSender instanceof Player) {
+        if (config.isEnabled() && commandSender instanceof Player) {
             Player player = (Player) commandSender;
-            //TODO: check if player has permission to use pen.
-            if (enabled) {
-                if (args.length == 0) {
-                    player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
-                } else {
-                    if (args[0].equalsIgnoreCase("set")) {
-                        if (args.length < 2) {
-                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                        } else {
-                            setLines(player, args);
-                        }
-                    } else if (args[0].equalsIgnoreCase("clear")) {
-                        clear(player);
-                        player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
-                    } else if (args[0].equalsIgnoreCase("dump")) {
-                        dump(player);
-                    } else if (args[0].equalsIgnoreCase("setline")) {
-                        if (args.length < 3) {
-                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                        } else {
-                            setLine(player, args);
-                        }
-                    } else if (args[0].equalsIgnoreCase("setline")) {
-                        if (args.length < 2) {
-                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                        } else {
-                            clearLine(player, args);
-                        }
-                    } else if (args[0].equalsIgnoreCase("help")) {
-                        player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");
-                        player.sendMessage("/pen set [text] | set the sign text");
-                        player.sendMessage("/pen setline [line] [text] | set one line of the text");
-                        player.sendMessage("/pen clearline [line] | clears the specified line");
-                        player.sendMessage("/pen clear | clears the current text");
-                        player.sendMessage("/pen dump | dumps the current text");
+            if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
+                if (enabled) {
+                    if (args.length == 0) {
+                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
                     } else {
-                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen <set|clear>|setline|help>");
+                        if (args[0].equalsIgnoreCase("set")) {
+                            if (args.length < 2) {
+                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                            } else {
+                                setLines(player, args);
+                            }
+                        } else if (args[0].equalsIgnoreCase("clear")) {
+                            clear(player);
+                            player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
+                        } else if (args[0].equalsIgnoreCase("dump")) {
+                            dump(player);
+                        } else if (args[0].equalsIgnoreCase("setline")) {
+                            if (args.length < 3) {
+                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                            } else {
+                                setLine(player, args);
+                            }
+                        } else if (args[0].equalsIgnoreCase("setline")) {
+                            if (args.length < 2) {
+                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                            } else {
+                                clearLine(player, args);
+                            }
+                        } else if (args[0].equalsIgnoreCase("help")) {
+                            player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");
+                            player.sendMessage("/pen set [text] | set the sign text");
+                            player.sendMessage("/pen setline [line] [text] | set one line of the text");
+                            player.sendMessage("/pen clearline [line] | clears the specified line");
+                            player.sendMessage("/pen clear | clears the current text");
+                            player.sendMessage("/pen dump | dumps the current text");
+                        } else {
+                            player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen <set|clear>|setline|help>");
+                        }
                     }
+                    return true;
                 }
-                return true;
+            } else {
+                player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
             }
+
         } else {
             commandSender.sendMessage("Consoles aren't allowed to use /pen!");
         }
@@ -128,6 +140,11 @@ public class Pen extends ISignMechanic implements ICommandableMechanic {
 
     @Override
     public boolean isTriggeredByRedstone() {
+        return false;
+    }
+
+    @Override
+    public boolean hasBlockMapper() {
         return false;
     }
 

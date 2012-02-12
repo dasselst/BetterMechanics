@@ -20,8 +20,9 @@ package net.edoxile.bettermechanics;
 
 import net.edoxile.bettermechanics.listeners.BMBlockListener;
 import net.edoxile.bettermechanics.listeners.BMPlayerListener;
-import net.edoxile.bettermechanics.mechanics.Bridge;
+import net.edoxile.bettermechanics.mechanics.Pen;
 import net.edoxile.bettermechanics.models.MechanicsHandler;
+import net.edoxile.bettermechanics.models.PermissionHandler;
 import net.edoxile.bettermechanics.models.PermissionType;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -42,6 +43,7 @@ import java.util.logging.Logger;
  */
 public class BetterMechanics extends JavaPlugin {
     private static BetterMechanics instance = null;
+    private static PermissionHandler permissionHandler = null;
     private static Logger logger = Logger.getLogger("Minecraft");
     private static boolean debugMode;
     private MechanicsHandler mechanicsHandler = new MechanicsHandler();
@@ -50,10 +52,9 @@ public class BetterMechanics extends JavaPlugin {
 
     public void onEnable() {
         instance = this;
+        permissionHandler = new PermissionHandler();
         //Register different Mechanics
-        /*mechanicsHandler.addMechanic(new Gate(this));
-        mechanicsHandler.addMechanic(new Pen(this));*/
-        mechanicsHandler.addMechanic(new Bridge(this));
+        mechanicsHandler.addMechanic(new Pen());
 
         //TODO: Register different events
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
@@ -96,8 +97,7 @@ public class BetterMechanics extends JavaPlugin {
 
     }
 
-    //TODO: implement
-    public Configuration getConfig() {
+    public Configuration getPluginConfig() {
         return this.getConfiguration();
     }
 
@@ -111,5 +111,9 @@ public class BetterMechanics extends JavaPlugin {
 
     public static BetterMechanics getInstance() {
         return instance;
+    }
+
+    public static PermissionHandler getPermissionHandler() {
+        return permissionHandler;
     }
 }

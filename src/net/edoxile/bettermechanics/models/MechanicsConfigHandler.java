@@ -71,6 +71,7 @@ public class MechanicsConfigHandler {
     private AmmeterConfig ammeterConfig;
     private CauldronConfig cauldronConfig;
     private PenConfig penConfig;
+    private PermissionsConfig permisionsConfig;
 
     public Configuration getConfiguration() {
         return configuration;
@@ -107,9 +108,9 @@ public class MechanicsConfigHandler {
     }
 
     public class BridgeConfig {
-        public final boolean enabled;
-        public final Set<Material> materials;
-        public final int maxLength;
+        private final boolean enabled;
+        private final Set<Material> materials;
+        private final int maxLength;
 
         public BridgeConfig() {
             enabled = configuration.getBoolean("bridge.enabled", true);
@@ -121,17 +122,25 @@ public class MechanicsConfigHandler {
             materials = Collections.unmodifiableSet(hashSet);
         }
 
-        public boolean canUseBlock(Material b) {
-            return materials.contains(b);
+        public boolean canUseMaterial(Material m) {
+            return materials.contains(m);
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public int getMaxLength() {
+            return maxLength;
         }
     }
 
     public class GateConfig {
-        public final boolean enabled;
-        public final int maxLength;
-        public final int maxWidth;
-        public final int maxHeight;
-        public final Set<Material> materials;
+        private final boolean enabled;
+        private final int maxLength;
+        private final int maxWidth;
+        private final int maxHeight;
+        private final Set<Material> materials;
 
         public GateConfig() {
             enabled = configuration.getBoolean("gate.enabled", true);
@@ -144,6 +153,26 @@ public class MechanicsConfigHandler {
                 set.add(Material.getMaterial(m));
             }
             materials = Collections.unmodifiableSet(set);
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public int getMaxLength() {
+            return maxLength;
+        }
+
+        public int getMaxWidth() {
+            return maxWidth;
+        }
+
+        public int getMaxHeight() {
+            return maxHeight;
+        }
+
+        public boolean canUseMaterial(Material m) {
+            return materials.contains(m);
         }
     }
 
@@ -166,9 +195,9 @@ public class MechanicsConfigHandler {
     }
 
     public class DoorConfig {
-        public final boolean enabled;
-        public final int maxHeight;
-        public final Set<Material> materials;
+        private final boolean enabled;
+        private final int maxHeight;
+        private final Set<Material> materials;
 
         public DoorConfig() {
             enabled = configuration.getBoolean("door.enabled", true);
@@ -181,40 +210,64 @@ public class MechanicsConfigHandler {
             materials = Collections.unmodifiableSet(set);
         }
 
-        public boolean canUseBlock(Material b) {
-            return materials.contains(b);
+        public boolean canUseMaterial(Material m) {
+            return materials.contains(m);
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public int getMaxHeight() {
+            return maxHeight;
         }
     }
 
     public class LiftConfig {
-        public final boolean enabled;
-        public final int maxSearchHeight;
+        private final boolean enabled;
+        private final int maxSearchHeight;
 
         public LiftConfig() {
             enabled = configuration.getBoolean("lift.enabled", true);
             maxSearchHeight = configuration.getInt("lift.max-search-height", 32);
         }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public int getMaxSearchHeight() {
+            return maxSearchHeight;
+        }
     }
 
     public class TeleLiftConfig {
-        public final boolean enabled;
+        private final boolean enabled;
 
         public TeleLiftConfig() {
             enabled = configuration.getBoolean("telelift.enabled", true);
         }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
     }
 
     public class HiddenSwitchConfig {
-        public final boolean enabled;
+        private final boolean enabled;
 
         public HiddenSwitchConfig() {
             enabled = configuration.getBoolean("hidden-switch.enabled", true);
         }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
     }
 
     public class CauldronConfig {
-        public final boolean enabled;
-        public final CauldronCookbook cauldronCookbook;
+        private final boolean enabled;
+        private final CauldronCookbook cauldronCookbook;
 
         public CauldronConfig() {
             if (configuration.getBoolean("cauldron.enabled", true)) {
@@ -230,49 +283,89 @@ public class MechanicsConfigHandler {
                 enabled = false;
             }
         }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public CauldronCookbook getCookBook() {
+            return cauldronCookbook;
+        }
     }
 
     public class AmmeterConfig {
-        public final boolean enabled;
+        private final boolean enabled;
 
         public AmmeterConfig() {
             enabled = configuration.getBoolean("ammeter.enabled", true);
         }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+    }
+
+    public class PermissionsConfig {
+        private final boolean useZones;
+        private final boolean useWorldGuard;
+        private final boolean enabled;
+
+        public PermissionsConfig() {
+            useZones = configuration.getBoolean("permissions.use-zones", false);
+            useWorldGuard = configuration.getBoolean("permissions.use-worldguard", false);
+            enabled = configuration.getBoolean("permissions.use-permissions", false);
+        }
+
+        public boolean canUseZones() {
+            return useZones;
+        }
+
+        public boolean canUseWorldGuard() {
+            return useWorldGuard;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
     }
 
     public BridgeConfig getBridgeConfig() {
-        return this.bridgeConfig;
+        return bridgeConfig;
     }
 
     public GateConfig getGateConfig() {
-        return this.gateConfig;
+        return gateConfig;
     }
 
     public DoorConfig getDoorConfig() {
-        return this.doorConfig;
+        return doorConfig;
     }
 
     public HiddenSwitchConfig getHiddenSwitchConfig() {
-        return this.hiddenSwitchConfig;
+        return hiddenSwitchConfig;
     }
 
     public LiftConfig getLiftConfig() {
-        return this.liftConfig;
+        return liftConfig;
     }
 
     public TeleLiftConfig getTeleLiftConfig() {
-        return this.teleLiftConfig;
+        return teleLiftConfig;
     }
 
     public AmmeterConfig getAmmeterConfig() {
-        return this.ammeterConfig;
+        return ammeterConfig;
     }
 
     public CauldronConfig getCauldronConfig() {
-        return this.cauldronConfig;
+        return cauldronConfig;
     }
 
     public PenConfig getPenConfig() {
-        return this.penConfig;
+        return penConfig;
+    }
+
+    public PermissionsConfig getPermissionsConfig() {
+        return permisionsConfig;
     }
 }
