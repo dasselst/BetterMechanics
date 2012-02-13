@@ -16,8 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.utils.blockbags;
+package net.edoxile.bettermechanics.models.blockbags;
 
+import net.edoxile.bettermechanics.utils.InventoryManager;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 
 /**
@@ -25,21 +27,27 @@ import org.bukkit.block.Sign;
  *
  * @author Edoxile
  */
-public class BlackHole extends BlockBag {
+public class ChestBag extends BlockBag {
+    Chest chest = null;
+
+    @Override
+    public boolean removeItems(int id, byte data, int amount) {
+        return InventoryManager.removeContents(chest.getInventory(), id, data, amount);
+    }
 
     @Override
     public boolean storeItems(int id, byte data, int amount) {
-        return true;
+        return InventoryManager.addContents(chest.getInventory(), id, data, amount);
     }
 
     @Override
     public boolean searchStorage(Sign sign) {
-        //TODO: implement this method.
+        //TODO: implement method
         return false;
     }
 
     @Override
     public Direction getDirection() {
-        return Direction.SINK;
+        return Direction.ANY;
     }
 }

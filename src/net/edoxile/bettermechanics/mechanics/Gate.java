@@ -20,53 +20,32 @@ package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
-import net.edoxile.configparser.annotations.ConfigEntityNode;
-import net.edoxile.configparser.annotations.NodeType;
+import net.edoxile.bettermechanics.utils.ConfigHandler;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-@ConfigEntityNode("gate")
-public class Gate extends ConfigEntity implements ISignMechanic {
-
-    @NodeType(
-            node = "enabled",
-            clazz = Boolean.class
-    )
+public class Gate extends ISignMechanic {
     private boolean enabled = true;
-
-    @NodeType(
-            node = "max-length",
-            clazz = Integer.class
-    )
     private int maxLength = 32;
-
-    @NodeType(
-            node = "max-width",
-            clazz = Integer.class
-    )
     private int maxWidth = 3;
-
-    @NodeType(
-            node = "allowed-materials",
-            clazz = Integer.class
-    )
-    ArrayList<Integer> materialList = new ArrayList<Integer>(Arrays.asList(Material.IRON_FENCE.getId(), Material.FENCE.getId()));
-
-    private BetterMechanics plugin = null;
+    private int maxHeight = 32;
+    Set<Material> materialList = null;
 
     public Gate(BetterMechanics p) {
-        super(p);
-        plugin = p;
-        //loadConfig(p.getConfiguration());
+        ConfigHandler.GateConfig config = ConfigHandler.getInstance().getGateConfig();
+        enabled = config.isEnabled();
+        maxLength = config.getMaxLength();
+        maxWidth = config.getMaxWidth();
+        maxHeight = config.getMaxHeight();
+        materialList = config.getAllowedMaterials();
     }
 
     public void onSignPowerOn(Block sign) {
@@ -81,14 +60,33 @@ public class Gate extends ConfigEntity implements ISignMechanic {
         //Toggle gate
     }
 
-    public void onPlayerLeftClickSign(Player player, Block sign) {
-    }
-
     public String[] getIdentifier() {
-        return "[Gate]";
+        return new String[]{"[Gate]","[dGate]"};
     }
 
-    public Material getMechanicActivator() {
+    @Override
+    public boolean isTriggeredByRedstone() {
+        return true;
+    }
+
+    @Override
+    public boolean hasBlockMapper() {
+        return true;
+    }
+
+    public Material[] getMechanicActivator() {
         return null;
+    }
+
+    public String getName() {
+        return "Gate";
+    }
+    
+    private boolean isAllowedMaterial(Material material){
+        return materialList.contains(material);
+    }
+
+    public boolean mapBlocks(){
+        return false;
     }
 }

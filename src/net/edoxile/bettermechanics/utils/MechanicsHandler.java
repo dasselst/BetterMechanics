@@ -16,9 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.models;
+package net.edoxile.bettermechanics.utils;
 
-import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.IBlockMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanic;
@@ -36,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,37 +50,21 @@ public class MechanicsHandler {
     private HashMap<String, ICommandableMechanic> commandableMechanicMap = new HashMap<String, ICommandableMechanic>();
 
     public void addMechanic(IMechanic mechanic) {
-        if (mechanic instanceof IBlockMechanic) {
-            IBlockMechanic blockMechanic = (IBlockMechanic) mechanic;
-            ArrayList<IBlockMechanic> blockMechanicList = blockMechanicMap.get(blockMechanic.getMechanicActivator());
-            if (blockMechanicList == null) {
-                blockMechanicList = new ArrayList<IBlockMechanic>();
-            }
-            blockMechanicList.add(blockMechanic);
-            blockMechanicMap.put(blockMechanic.getMechanicTarget(), blockMechanicList);
-        } else if (mechanic instanceof ISignMechanic) {
-            ISignMechanic signMechanic = (ISignMechanic) mechanic;
-            ArrayList<ISignMechanic> signMechanicList = signMechanicMap.get(signMechanic.getIdentifier());
-            if (signMechanicList == null) {
-                signMechanicList = new ArrayList<ISignMechanic>();
+        //TODO: implement
+        if (mechanic instanceof ISignMechanic) {
 
-            }
-            signMechanicList.add(signMechanic);
-            signMechanicMap.put(signMechanic.getIdentifier(), signMechanicList);
+        } else if (mechanic instanceof IBlockMechanic) {
+
+        } else {
+            mechanicsList.add(mechanic);
         }
 
         if (mechanic instanceof ICommandableMechanic) {
-            ICommandableMechanic commandableMechanic = (ICommandableMechanic) mechanic;
-            if (commandableMechanicMap.containsKey(commandableMechanic.getIdentifier())) {
-                BetterMechanics.log("Mechanic " + commandableMechanic.getName() + " is trying to overwrite command: '" + commandableMechanic.getIdentifier() + "'.", Level.SEVERE);
-            } else {
-                commandableMechanicMap.put(commandableMechanic.getIdentifier(), commandableMechanic);
-            }
         }
     }
 
     public void callPlayerInteractEvent(PlayerInteractEvent event) {
-        if (event.getClickedBlock().getTypeId() == Material.WALL_SIGN.getId() || event.getClickedBlock().getTypeId() == Material.SIGN_POST.getId()) {
+        if (SignUtil.isSign(event.getClickedBlock())) {
             Sign sign = (Sign) event.getClickedBlock().getState();
             List<ISignMechanic> mechanicList = signMechanicMap.get(sign.getLine(2));
             if (mechanicList == null) {
@@ -91,18 +73,18 @@ public class MechanicsHandler {
                     return;
             }
             for (ISignMechanic mechanic : mechanicList) {
-                if (mechanic != null && (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator() == event.getPlayer().getItemInHand().getType())) {
+                if (mechanic != null && (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(event.getPlayer().getItemInHand().getType()))) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                        mechanic.onPlayerRightClickSign(event.getPlayer(), event.getClickedBlock());
+                        mechanic.onPlayerRightClickSign(event.getPlayer(), sign);
                     } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                        mechanic.onPlayerLeftClickSign(event.getPlayer(), event.getClickedBlock());
+                        mechanic.onPlayerLeftClickSign(event.getPlayer(), sign);
                     }
                 }
             }
         } else {
             List<IBlockMechanic> blockMechanicList = blockMechanicMap.get(event.getClickedBlock().getType());
             for (IBlockMechanic mechanic : blockMechanicList) {
-                if (mechanic != null && (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator() == event.getPlayer().getItemInHand().getType())) {
+                if (mechanic != null && (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(event.getPlayer().getItemInHand().getType()))) {
                     if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                         mechanic.onBlockRightClick(event.getPlayer(), event.getClickedBlock());
                     } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -122,9 +104,9 @@ public class MechanicsHandler {
                 for (ISignMechanic mechanic : mechanicList) {
                     if (mechanic != null) {
                         if (event.getNewCurrent() > 0) {
-                            mechanic.onSignPowerOn(block);
+                            mechanic.onSignPowerOn(sign);
                         } else {
-                            mechanic.onSignPowerOff(block);
+                            mechanic.onSignPowerOff(sign);
                         }
                     }
                 }

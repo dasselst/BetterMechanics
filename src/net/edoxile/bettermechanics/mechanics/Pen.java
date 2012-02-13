@@ -21,8 +21,8 @@ package net.edoxile.bettermechanics.mechanics;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
-import net.edoxile.bettermechanics.models.MechanicsConfigHandler;
-import net.edoxile.bettermechanics.models.PermissionHandler;
+import net.edoxile.bettermechanics.utils.ConfigHandler;
+import net.edoxile.bettermechanics.utils.PermissionHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -30,7 +30,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,14 +45,12 @@ public class Pen extends ISignMechanic implements ICommandableMechanic {
 
     private Material tool;
 
-    private MechanicsConfigHandler.PenConfig config;
-
     public Pen() {
         reloadConfig();
     }
 
     public void reloadConfig() {
-        config = MechanicsConfigHandler.getInstance().getPenConfig();
+        ConfigHandler.PenConfig config = ConfigHandler.getInstance().getPenConfig();
         enabled = config.isEnabled();
         tool = config.getPenTool();
     }
@@ -81,10 +81,9 @@ public class Pen extends ISignMechanic implements ICommandableMechanic {
     }
 
     public boolean onCommand(CommandSender commandSender, Command command, String[] args) {
-        if (config.isEnabled() && commandSender instanceof Player) {
+        if (enabled && commandSender instanceof Player) {
             Player player = (Player) commandSender;
             if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
-                if (enabled) {
                     if (args.length == 0) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
                     } else {
@@ -123,18 +122,17 @@ public class Pen extends ISignMechanic implements ICommandableMechanic {
                         }
                     }
                     return true;
-                }
             } else {
                 player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
             }
 
         } else {
-            commandSender.sendMessage("Consoles aren't allowed to use /pen!");
+            commandSender.sendMessage("Pen disabled or using from commandline!");
         }
         return true;
     }
 
-    public String[] getIdentifier() {
+    public List<String> getIdentifier() {
         return null;
     }
 
@@ -148,8 +146,13 @@ public class Pen extends ISignMechanic implements ICommandableMechanic {
         return false;
     }
 
-    public Material[] getMechanicActivator() {
-        return new Material[]{tool};
+    @Override
+    public boolean hasBlockBag() {
+        return false;
+    }
+
+    public List<Material> getMechanicActivator() {
+        return Arrays.asList(tool);
     }
 
     public String getName() {

@@ -19,7 +19,7 @@
 package net.edoxile.bettermechanics.listeners;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.models.MechanicsHandler;
+import net.edoxile.bettermechanics.utils.MechanicsHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;

@@ -18,9 +18,17 @@
 
 package net.edoxile.bettermechanics.mechanics.interfaces;
 
+import net.edoxile.bettermechanics.BetterMechanics;
+import net.edoxile.bettermechanics.models.BlockMap;
+import net.edoxile.bettermechanics.models.BlockMapException;
+import net.edoxile.bettermechanics.models.SignMechanicEventData;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,23 +37,32 @@ import org.bukkit.entity.Player;
  */
 public abstract class ISignMechanic extends IBlockMechanic {
 
-    public void onSignPowerOn(Sign sign) {
+    public void onSignPowerOn(SignMechanicEventData data) {
     }
 
-    public void onSignPowerOff(Sign sign) {
+    public void onSignPowerOff(SignMechanicEventData data) {
     }
 
-    public void onPlayerRightClickSign(Player player, Sign sign) {
+    public void onPlayerRightClickSign(Player player, SignMechanicEventData data) {
     }
 
-    public void onPlayerLeftClickSign(Player player, Sign sign) {
+    public void onPlayerLeftClickSign(Player player, SignMechanicEventData data) {
     }
 
-    public abstract String[] getIdentifier();
+    public abstract boolean hasBlockMapper();
 
-    public abstract Material[] getMechanicActivator();
+    public abstract boolean hasBlockBag();
 
-    public Material[] getMechanicTarget() {
-        return new Material[]{Material.WALL_SIGN, Material.SIGN_POST};
+    public BlockMap mapBlocks(Sign s) throws BlockMapException{
+        BetterMechanics.log("BlockMapper called but not implemented in this mechanic.", Level.WARNING);
+        return null;
+    }
+
+    public abstract List<String> getIdentifier();
+
+    public abstract List<Material> getMechanicActivator();
+
+    public List<Material> getMechanicTarget() {
+        return Arrays.asList(Material.WALL_SIGN, Material.SIGN_POST);
     }
 }

@@ -34,7 +34,7 @@ public class InventoryManager {
             return false;
         }
         ItemStack[] t = iTo.getContents();
-        int leftover = 0;
+        int leftover;
         for (int i = 0; i < t.length; i++) {
             if (amount > 64) {
                 stack.setAmount(64);

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.utils;
+package net.edoxile.bettermechanics.models;
 
 /**
  * Created by IntelliJ IDEA.
@@ -80,7 +80,7 @@ public class MaterialMap {
         try {
             _values[getIndex(id, data)] -= amount;
         } catch (KeyNotFoundException e) {
-            //TODO: nothing, value not found so doesn't have to be deleted.
+            //do nothing, value not found so doesn't have to be deleted.
         }
     }
 

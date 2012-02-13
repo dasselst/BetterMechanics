@@ -16,31 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.listeners;
-
-import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.utils.MechanicsHandler;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
+package net.edoxile.bettermechanics.models;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
+public class BlockMapException extends Exception{
+    public enum Type {
+        END_NOT_FOUND("The other side could not be found!"),
+        NON_ORDINAL_SIGN("This sign is not placed in an ordinal direction (east, west, north or south)!"),
+        MISPLACED_SIGN("This sign-type is wrong (wall sign <> sign post)!"),
+        NON_ALLOWED_MATERIAL("This mechanic is not made of an allowed material!"),
+        SIZE_LIMIT_EXCEEDED("This mechanic exceeds the size limit in some way!");
 
-public class BMPlayerListener extends PlayerListener {
-    private BetterMechanics plugin;
-    private MechanicsHandler mechanicsHandler;
+        private String errorMessage;
 
-    public BMPlayerListener(BetterMechanics bm) {
-        plugin = bm;
-        mechanicsHandler = bm.getMechanicsHandler();
+        private Type(String errorMsg) {
+            errorMessage = errorMsg;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
     }
-
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled())
-            return;
-        mechanicsHandler.callPlayerInteractEvent(event);
+    
+    public BlockMapException(Type type){
+        super(type.getErrorMessage());
     }
 }

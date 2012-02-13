@@ -16,9 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.models;
+package net.edoxile.bettermechanics.utils;
 
 import net.edoxile.bettermechanics.BetterMechanics;
+import net.edoxile.bettermechanics.models.CauldronCookbook;
 import org.bukkit.Material;
 import org.bukkit.util.config.Configuration;
 
@@ -35,11 +36,11 @@ import java.util.logging.Level;
  *
  * @author Edoxile
  */
-public class MechanicsConfigHandler {
-    private static MechanicsConfigHandler instance = new MechanicsConfigHandler();
+public class ConfigHandler {
+    private static ConfigHandler instance = new ConfigHandler();
     private static BetterMechanics plugin = BetterMechanics.getInstance();
 
-    private MechanicsConfigHandler() {
+    private ConfigHandler() {
         configuration.load();
         if (configuration == null) {
             createConfig();
@@ -57,11 +58,11 @@ public class MechanicsConfigHandler {
         penConfig = new PenConfig();
     }
 
-    public static MechanicsConfigHandler getInstance() {
+    public static ConfigHandler getInstance() {
         return instance;
     }
 
-    private Configuration configuration = BetterMechanics.getInstance().getConfig();
+    private Configuration configuration = BetterMechanics.getInstance().getPluginConfig();
     private BridgeConfig bridgeConfig;
     private GateConfig gateConfig;
     private DoorConfig doorConfig;
@@ -133,6 +134,10 @@ public class MechanicsConfigHandler {
         public int getMaxLength() {
             return maxLength;
         }
+        
+        public Set<Material> getAllowedMaterials(){
+            return materials;
+        }
     }
 
     public class GateConfig {
@@ -173,6 +178,10 @@ public class MechanicsConfigHandler {
 
         public boolean canUseMaterial(Material m) {
             return materials.contains(m);
+        }
+        
+        public Set<Material> getAllowedMaterials(){
+            return materials;
         }
     }
 

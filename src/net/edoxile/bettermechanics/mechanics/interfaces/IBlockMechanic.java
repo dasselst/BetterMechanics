@@ -18,13 +18,11 @@
 
 package net.edoxile.bettermechanics.mechanics.interfaces;
 
-import net.edoxile.bettermechanics.BetterMechanics;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
-import java.util.logging.Level;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,17 +48,10 @@ public abstract class IBlockMechanic implements IMechanic {
 
     public void onBlockPowerOff(Block block) {
     }
-    
-    public boolean mapBlocks(Sign s){
-        BetterMechanics.log("BlockMapper called but not implemented in this mechanic.", Level.WARNING);
-        return false;
-    }
 
     public abstract boolean isTriggeredByRedstone();
-    
-    public abstract boolean hasBlockMapper();
 
-    public abstract Material[] getMechanicActivator();
+    public abstract List<Material> getMechanicActivator();
 
-    public abstract Material[] getMechanicTarget();
+    public abstract List<Material> getMechanicTarget();
 }

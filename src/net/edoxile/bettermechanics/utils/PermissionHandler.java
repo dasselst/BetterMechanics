@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.models;
+package net.edoxile.bettermechanics.utils;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.LocalPlayer;
@@ -72,7 +72,7 @@ public class PermissionHandler {
     }
 
     public PermissionHandler() {
-        MechanicsConfigHandler.PermissionsConfig config = MechanicsConfigHandler.getInstance().getPermissionsConfig();
+        ConfigHandler.PermissionsConfig config = ConfigHandler.getInstance().getPermissionsConfig();
         enabled = config.isEnabled();
         if (config.canUseZones()) {
             Plugin p = BetterMechanics.getInstance().getServer().getPluginManager().getPlugin("Zones");

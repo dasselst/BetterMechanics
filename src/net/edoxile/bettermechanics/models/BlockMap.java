@@ -16,17 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.mechanics.interfaces;
+package net.edoxile.bettermechanics.models;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public interface ICommandableMechanic extends IMechanic {
+public class BlockMap {
+    private final List<Block> blockList;
+    private final Block startBlock;
+    private final Block endBlock;
+    private final Material material;
+    
+    public BlockMap(List<Block> blocks, Block start, Block end, Material type){
+        blockList = blocks;
+        startBlock = start;
+        endBlock = end;
+        material = type;
+    }
+    
+    public List<Block> getList(){
+        return blockList;
+    }
 
-    public boolean onCommand(CommandSender commandSender, Command command, String[] args);
+    public Block getStartBlock(){
+        return startBlock;
+    }
+
+    public Block getEndBlock(){
+        return endBlock;
+    }
+    
+    public Material getMaterial(){
+        return material;
+    }
 }

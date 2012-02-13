@@ -20,9 +20,10 @@ package net.edoxile.bettermechanics;
 
 import net.edoxile.bettermechanics.listeners.BMBlockListener;
 import net.edoxile.bettermechanics.listeners.BMPlayerListener;
+import net.edoxile.bettermechanics.mechanics.Bridge;
 import net.edoxile.bettermechanics.mechanics.Pen;
-import net.edoxile.bettermechanics.models.MechanicsHandler;
-import net.edoxile.bettermechanics.models.PermissionHandler;
+import net.edoxile.bettermechanics.utils.MechanicsHandler;
+import net.edoxile.bettermechanics.utils.PermissionHandler;
 import net.edoxile.bettermechanics.models.PermissionType;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -55,8 +56,9 @@ public class BetterMechanics extends JavaPlugin {
         permissionHandler = new PermissionHandler();
         //Register different Mechanics
         mechanicsHandler.addMechanic(new Pen());
+        mechanicsHandler.addMechanic(new Bridge());
 
-        //TODO: Register different events
+        //Register different events
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Event.Priority.Normal, this);

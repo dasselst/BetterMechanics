@@ -4,10 +4,12 @@ Changelog:
 - Implemented Pen
 - Rewritten BlockBags, now it is possible to use Black Holes and Block Source as BlockBags, as well as chests
 - Cauldron now accepts data-values as arguments in the config
-
+- Reorganized inventory code
+- Each mechanic now has its own BlockMapping function. This is to create a (uniform) standard.
+- Implemented EventData, BlockMap
 
 TODO:
-- Create a decent blockMapper, not like the previous one with OVER 9000 functions
+- Write BlockBagManager
 - Implement all the mechanics:
     * Gate
     * Bridge
@@ -15,7 +17,5 @@ TODO:
     * (Tele)Lift
     * Ammeter
     * Cauldron
-    * Cycler (for chests, until notch fixed dem bugs)
     * Hidden Switch
     * PoweredBlock (changes blocks (materialtype) when powerd with redstone)
-- Reorganize inventory code
