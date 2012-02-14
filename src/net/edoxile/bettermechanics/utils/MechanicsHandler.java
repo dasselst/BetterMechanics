@@ -18,6 +18,7 @@
 
 package net.edoxile.bettermechanics.utils;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.mechanics.interfaces.IBlockMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanic;
@@ -25,16 +26,19 @@ import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,84 +47,96 @@ import java.util.List;
  */
 
 public class MechanicsHandler {
-    private ArrayList<IMechanic> mechanicsList = new ArrayList<IMechanic>();
 
-    private HashMap<Material, ArrayList<IBlockMechanic>> blockMechanicMap = new HashMap<Material, ArrayList<IBlockMechanic>>();
+    private HashMap<String, ArrayList<ISignMechanic>> redstoneSignMechanicMap = new HashMap<String, ArrayList<ISignMechanic>>();
+    private HashMap<Material, ArrayList<IBlockMechanic>> redstoneBlockMechanicMap = new HashMap<Material, ArrayList<IBlockMechanic>>();
+
     private HashMap<String, ArrayList<ISignMechanic>> signMechanicMap = new HashMap<String, ArrayList<ISignMechanic>>();
+    private HashMap<Material, ArrayList<IBlockMechanic>> blockMechanicMap = new HashMap<Material, ArrayList<IBlockMechanic>>();
+
     private HashMap<String, ICommandableMechanic> commandableMechanicMap = new HashMap<String, ICommandableMechanic>();
 
     public void addMechanic(IMechanic mechanic) {
-        //TODO: implement
+        //TODO: check if this list works as it's supposed to (with passing a reference)
         if (mechanic instanceof ISignMechanic) {
-
+            ISignMechanic signMechanic = (ISignMechanic) mechanic;
+            if (signMechanic.isTriggeredByRedstone()) {
+                for (String identifier : signMechanic.getIdentifier()) {
+                    ArrayList<ISignMechanic> list = redstoneSignMechanicMap.get(identifier);
+                    if (list == null) {
+                        list = new ArrayList<ISignMechanic>();
+                        list.add(signMechanic);
+                        redstoneSignMechanicMap.put(identifier, list);
+                    } else {
+                        list.add(signMechanic);
+                        redstoneSignMechanicMap.put(identifier, list);
+                    }
+                }
+            } else {
+                for (String identifier : signMechanic.getIdentifier()) {
+                    ArrayList<ISignMechanic> list = signMechanicMap.get(identifier);
+                    if (list == null) {
+                        list = new ArrayList<ISignMechanic>();
+                        list.add(signMechanic);
+                        signMechanicMap.put(identifier, list);
+                    } else {
+                        list.add(signMechanic);
+                    }
+                }
+            }
         } else if (mechanic instanceof IBlockMechanic) {
-
-        } else {
-            mechanicsList.add(mechanic);
+            IBlockMechanic blockMechanic = (IBlockMechanic) mechanic;
+            if (blockMechanic.isTriggeredByRedstone()) {
+                for (Material target : blockMechanic.getMechanicTarget()) {
+                    ArrayList<IBlockMechanic> list = redstoneBlockMechanicMap.get(target);
+                    if (list == null) {
+                        list = new ArrayList<IBlockMechanic>();
+                        list.add(blockMechanic);
+                        redstoneBlockMechanicMap.put(target, list);
+                    } else {
+                        list.add(blockMechanic);
+                        redstoneBlockMechanicMap.put(target, list);
+                    }
+                }
+            } else {
+                for (Material target : blockMechanic.getMechanicTarget()) {
+                    ArrayList<IBlockMechanic> list = blockMechanicMap.get(target);
+                    if (list == null) {
+                        list = new ArrayList<IBlockMechanic>();
+                        list.add(blockMechanic);
+                        blockMechanicMap.put(target, list);
+                    } else {
+                        list.add(blockMechanic);
+                    }
+                }
+            }
         }
 
         if (mechanic instanceof ICommandableMechanic) {
+            ICommandableMechanic commandableMechanic = (ICommandableMechanic) mechanic;
+            if (commandableMechanicMap.containsKey(commandableMechanic.getName())) {
+                BetterMechanics.log("Mechanic: " + commandableMechanic.getName() + " tried to register a command that has already been registered!", Level.SEVERE);
+            } else {
+                commandableMechanicMap.put(commandableMechanic.getName(), commandableMechanic);
+            }
         }
     }
 
     public void callPlayerInteractEvent(PlayerInteractEvent event) {
         if (SignUtil.isSign(event.getClickedBlock())) {
-            Sign sign = (Sign) event.getClickedBlock().getState();
-            List<ISignMechanic> mechanicList = signMechanicMap.get(sign.getLine(2));
-            if (mechanicList == null) {
-                mechanicList = signMechanicMap.get("");
-                if (mechanicList == null)
-                    return;
-            }
-            for (ISignMechanic mechanic : mechanicList) {
-                if (mechanic != null && (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(event.getPlayer().getItemInHand().getType()))) {
-                    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                        mechanic.onPlayerRightClickSign(event.getPlayer(), sign);
-                    } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                        mechanic.onPlayerLeftClickSign(event.getPlayer(), sign);
-                    }
-                }
-            }
+            //TODO: Call SignMechanicEvent
         } else {
-            List<IBlockMechanic> blockMechanicList = blockMechanicMap.get(event.getClickedBlock().getType());
-            for (IBlockMechanic mechanic : blockMechanicList) {
-                if (mechanic != null && (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(event.getPlayer().getItemInHand().getType()))) {
-                    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                        mechanic.onBlockRightClick(event.getPlayer(), event.getClickedBlock());
-                    } else if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                        mechanic.onBlockLeftClick(event.getPlayer(), event.getClickedBlock());
-                    }
-                }
-            }
+            //TODO: Call BlockMechanicEvent
         }
     }
 
     public void callRedstoneEvent(BlockRedstoneEvent event) {
-        for (BlockFace direction : Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN)) {
+        for (BlockFace direction : Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP)) {
             Block block = event.getBlock().getRelative(direction);
             if (block.getTypeId() == Material.WALL_SIGN.getId() || block.getTypeId() == Material.SIGN_POST.getId()) {
-                Sign sign = (Sign) block.getState();
-                List<ISignMechanic> mechanicList = signMechanicMap.get(sign.getLine(2));
-                for (ISignMechanic mechanic : mechanicList) {
-                    if (mechanic != null) {
-                        if (event.getNewCurrent() > 0) {
-                            mechanic.onSignPowerOn(sign);
-                        } else {
-                            mechanic.onSignPowerOff(sign);
-                        }
-                    }
-                }
+                //TODO: Call SignMechanicEvent
             } else {
-                List<IBlockMechanic> blockMechanicList = blockMechanicMap.get(event.getBlock().getType());
-                for (IBlockMechanic mechanic : blockMechanicList) {
-                    if (mechanic != null) {
-                        if (event.getNewCurrent() > 0) {
-                            mechanic.onBlockPowerOn(block);
-                        } else {
-                            mechanic.onBlockPowerOff(block);
-                        }
-                    }
-                }
+                //TODO: Call BlockMechanicEvent
             }
         }
     }
@@ -140,9 +156,6 @@ public class MechanicsHandler {
 
     public boolean callCommandEvent(Command command, CommandSender commandSender, String[] args) {
         ICommandableMechanic mechanic = commandableMechanicMap.get(command.getName());
-        if (mechanic != null) {
-            return mechanic.onCommand(commandSender, command, args);
-        }
-        return false;
+        return mechanic != null && mechanic.onCommand(commandSender, command, args);
     }
 }
