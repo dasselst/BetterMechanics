@@ -63,8 +63,8 @@ public class SignUtil {
                 return null;
         }
     }
-    
-    public static BlockFace getOrdinalAttachedFace(Sign sign){
+
+    public static BlockFace getOrdinalAttachedFace(Sign sign) {
         BlockFace blockFace = getAttachedFace(sign);
         switch (blockFace) {
             case NORTH:
@@ -80,12 +80,28 @@ public class SignUtil {
     public static boolean isSign(Block block) {
         return block.getTypeId() == Material.WALL_SIGN.getId() || block.getTypeId() == Material.SIGN_POST.getId();
     }
-    
-    public static String getMechanicsIdentifier(Sign sign){
-        return sign.getLine(1);
+
+    public static String getMechanicsIdentifier(Sign sign) {
+        return stripBrackets(sign.getLine(1));
     }
-    
-    public static void setMechanicsIdentifier(Sign sign, String identifier){
+
+    public static void setMechanicsIdentifier(Sign sign, String identifier) {
         sign.setLine(1, identifier);
+    }
+
+    public static String stripBrackets(String string) {
+        if (string.charAt(0) == '[' && string.charAt(string.length() - 1) == ']') {
+            return string.substring(1, string.length() - 2);
+        } else {
+            return string;
+        }
+    }
+
+    public static Sign getSign(Block block) {
+        if (block.getState() instanceof Sign) {
+            return (Sign) block.getState();
+        } else {
+            return null;
+        }
     }
 }

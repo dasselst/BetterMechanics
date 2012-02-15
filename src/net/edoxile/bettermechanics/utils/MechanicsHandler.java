@@ -23,15 +23,19 @@ import net.edoxile.bettermechanics.mechanics.interfaces.IBlockMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanic;
 import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
+import net.edoxile.bettermechanics.models.BlockMap;
+import net.edoxile.bettermechanics.models.BlockMapException;
+import net.edoxile.bettermechanics.models.SignMechanicEventData;
+import net.edoxile.bettermechanics.models.blockbags.BlockBag;
+import net.edoxile.bettermechanics.models.blockbags.BlockBagException;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -124,31 +128,159 @@ public class MechanicsHandler {
 
     public void callPlayerInteractEvent(PlayerInteractEvent event) {
         if (SignUtil.isSign(event.getClickedBlock())) {
-            //TODO: Call SignMechanicEvent
+            Sign sign = SignUtil.getSign(event.getClickedBlock());
+            String id = SignUtil.getMechanicsIdentifier(sign);
+            List<ISignMechanic> mechanicsList = signMechanicMap.get(id);
+            if (mechanicsList == null) {
+                mechanicsList = new ArrayList<ISignMechanic>();
+            }
+            if (signMechanicMap.containsKey(null)) {
+                mechanicsList.addAll(signMechanicMap.get(null));
+            }
+            if (redstoneSignMechanicMap.containsKey(id)) {
+                mechanicsList.addAll(redstoneSignMechanicMap.get(id));
+            }
+            if (redstoneSignMechanicMap.containsKey(null)) {
+                mechanicsList.addAll(redstoneSignMechanicMap.get(null));
+            }
+            for (ISignMechanic mechanic : mechanicsList) {
+                try {
+                    BlockBag bag = null;
+                    BlockMap map = null;
+                    if (mechanic.hasBlockMapper()) {
+                        map = mechanic.mapBlocks(sign);
+                    }
+                    if (mechanic.hasBlockBag()) {
+                        bag = BlockBagHandler.locate(sign);
+                    }
+                    SignMechanicEventData data = new SignMechanicEventData(map, bag);
+                    if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                        mechanic.onPlayerLeftClickSign(event.getPlayer(), data);
+                    } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                        mechanic.onPlayerRightClickSign(event.getPlayer(), data);
+                    }
+                } catch (BlockMapException e) {
+                    event.getPlayer().sendMessage(ChatColor.DARK_RED + e.getMessage());
+                    BetterMechanics.log(e.getMessage());
+                } catch (BlockBagException e) {
+                    event.getPlayer().sendMessage(ChatColor.DARK_RED + e.getMessage());
+                    BetterMechanics.log(e.getMessage());
+                }
+            }
         } else {
-            //TODO: Call BlockMechanicEvent
-        }
-    }
-
-    public void callRedstoneEvent(BlockRedstoneEvent event) {
-        for (BlockFace direction : Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP)) {
-            Block block = event.getBlock().getRelative(direction);
-            if (block.getTypeId() == Material.WALL_SIGN.getId() || block.getTypeId() == Material.SIGN_POST.getId()) {
-                //TODO: Call SignMechanicEvent
-            } else {
-                //TODO: Call BlockMechanicEvent
+            List<IBlockMechanic> mechanicsList = blockMechanicMap.get(event.getClickedBlock().getType());
+            if (mechanicsList == null) {
+                mechanicsList = new ArrayList<IBlockMechanic>();
+            }
+            if (blockMechanicMap.containsKey(null)) {
+                mechanicsList.addAll(blockMechanicMap.get(null));
+            }
+            if (redstoneBlockMechanicMap.containsKey(event.getClickedBlock().getType())) {
+                mechanicsList.addAll(redstoneBlockMechanicMap.get(event.getClickedBlock().getType()));
+            }
+            if (redstoneBlockMechanicMap.containsKey(null)) {
+                mechanicsList.addAll(redstoneBlockMechanicMap.get(null));
+            }
+            for (IBlockMechanic mechanic : mechanicsList) {
+                if (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(event.getPlayer().getItemInHand().getType())) {
+                    if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                        mechanic.onBlockLeftClick(event.getPlayer(), event.getClickedBlock());
+                    } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                        mechanic.onBlockRightClick(event.getPlayer(), event.getClickedBlock());
+                    }
+                }
             }
         }
     }
 
     public void callBlockEvent(BlockEvent event) {
-        List<IBlockMechanic> blockMechanicList = blockMechanicMap.get(event.getBlock().getType());
-        for (IBlockMechanic mechanic : blockMechanicList) {
-            if (mechanic != null) {
-                if (event instanceof BlockBreakEvent) {
-                    mechanic.onBlockBreak(((BlockBreakEvent) event).getPlayer(), event.getBlock());
-                } else if (event instanceof BlockPlaceEvent) {
-                    mechanic.onBlockPlace(((BlockPlaceEvent) event).getPlayer(), event.getBlock());
+        if (event instanceof BlockBreakEvent) {
+            BlockBreakEvent blockBreakEvent = (BlockBreakEvent) event;
+            List<IBlockMechanic> mechanicsList = blockMechanicMap.get(blockBreakEvent.getBlock().getType());
+            if (mechanicsList == null) {
+                mechanicsList = new ArrayList<IBlockMechanic>();
+            }
+            if (blockMechanicMap.containsKey(null)) {
+                mechanicsList.addAll(blockMechanicMap.get(null));
+            }
+            if (redstoneBlockMechanicMap.containsKey(blockBreakEvent.getBlock().getType())) {
+                mechanicsList.addAll(redstoneBlockMechanicMap.get(blockBreakEvent.getBlock().getType()));
+            }
+            for (IBlockMechanic mechanic : mechanicsList) {
+                if (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(blockBreakEvent.getPlayer().getItemInHand().getType())) {
+                    mechanic.onBlockBreak(blockBreakEvent.getPlayer(), blockBreakEvent.getBlock());
+                }
+            }
+        } else if (event instanceof BlockPlaceEvent) {
+            BlockPlaceEvent blockPlaceEvent = (BlockPlaceEvent) event;
+            List<IBlockMechanic> mechanicsList = blockMechanicMap.get(blockPlaceEvent.getBlock().getType());
+            if (mechanicsList == null) {
+                mechanicsList = new ArrayList<IBlockMechanic>();
+            }
+            if (blockMechanicMap.containsKey(null)) {
+                mechanicsList.addAll(blockMechanicMap.get(null));
+            }
+            if (redstoneBlockMechanicMap.containsKey(blockPlaceEvent.getBlock().getType())) {
+                mechanicsList.addAll(redstoneBlockMechanicMap.get(blockPlaceEvent.getBlock().getType()));
+            }
+            for (IBlockMechanic mechanic : mechanicsList) {
+                if (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(blockPlaceEvent.getPlayer().getItemInHand().getType())) {
+                    mechanic.onBlockBreak(blockPlaceEvent.getPlayer(), blockPlaceEvent.getBlock());
+                }
+            }
+        }
+    }
+
+    public void callRedstoneEvent(BlockRedstoneEvent event) {
+        boolean on = event.getNewCurrent() > event.getOldCurrent();
+
+        for (BlockFace direction : Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP)) {
+            Block block = event.getBlock().getRelative(direction);
+            if (SignUtil.isSign(block)) {
+                Sign sign = SignUtil.getSign(block);
+                List<ISignMechanic> list = redstoneSignMechanicMap.get(SignUtil.getMechanicsIdentifier(sign));
+                if (list == null) {
+                    list = new ArrayList<ISignMechanic>();
+                }
+                if (redstoneSignMechanicMap.containsKey(null)) {
+                    list.addAll(redstoneSignMechanicMap.get(null));
+                }
+                for (ISignMechanic mechanic : list) {
+                    try {
+                        BlockBag bag = null;
+                        BlockMap map = null;
+                        if (mechanic.hasBlockMapper()) {
+                            map = mechanic.mapBlocks(sign);
+                        }
+                        if (mechanic.hasBlockBag()) {
+                            bag = BlockBagHandler.locate(sign);
+                        }
+                        SignMechanicEventData data = new SignMechanicEventData(map, bag);
+                        if (on) {
+                            mechanic.onSignPowerOn(data);
+                        } else {
+                            mechanic.onSignPowerOff(data);
+                        }
+                    } catch (BlockMapException e) {
+                        BetterMechanics.log(e.getMessage());
+                    } catch (BlockBagException e) {
+                        BetterMechanics.log(e.getMessage());
+                    }
+                }
+            } else {
+                List<IBlockMechanic> list = redstoneBlockMechanicMap.get(block.getType());
+                if (list == null) {
+                    list = new ArrayList<IBlockMechanic>();
+                }
+                if (blockMechanicMap.containsKey(null)) {
+                    list.addAll(blockMechanicMap.get(null));
+                }
+                for (IBlockMechanic mechanic : list) {
+                    if(on){
+                        mechanic.onBlockPowerOn(event.getBlock());
+                    } else {
+                        mechanic.onBlockPowerOff(event.getBlock());
+                    }
                 }
             }
         }
