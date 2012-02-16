@@ -145,7 +145,7 @@ public class MechanicsHandler {
             }
             for (ISignMechanic mechanic : mechanicsList) {
                 try {
-                    BlockBag bag = null;
+                    BlockBagHandler bag = null;
                     BlockMap map = null;
                     if (mechanic.hasBlockMapper()) {
                         map = mechanic.mapBlocks(sign);
@@ -247,7 +247,7 @@ public class MechanicsHandler {
                 }
                 for (ISignMechanic mechanic : list) {
                     try {
-                        BlockBag bag = null;
+                        BlockBagHandler bag = null;
                         BlockMap map = null;
                         if (mechanic.hasBlockMapper()) {
                             map = mechanic.mapBlocks(sign);

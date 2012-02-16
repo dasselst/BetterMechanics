@@ -20,7 +20,13 @@ package net.edoxile.bettermechanics.utils;
 
 import net.edoxile.bettermechanics.models.blockbags.BlockBag;
 import net.edoxile.bettermechanics.models.blockbags.BlockBagException;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,8 +34,66 @@ import org.bukkit.block.Sign;
  * @author Edoxile
  */
 public class BlockBagHandler {
-    public static BlockBag locate(Sign sign) throws BlockBagException {
-        //TODO: implement
+    public static BlockBagHandler locate(Sign sign) throws BlockBagException {
+        BlockBag source = null, sink = null;
+        ArrayList<Block> chestList = searchBlockType(sign.getBlock(), 2, Material.CHEST);
+        ArrayList<Block> signList = searchBlockType(sign.getBlock(), 2, Material.WALL_SIGN, Material.SIGN_POST);
+        //TODO: compile a BlockBagHandler from these lists
         return null;
+    }
+
+    private BlockBag source = null, sink = null;
+
+    private BlockBagHandler(BlockBag both) {
+        source = both;
+    }
+
+    private BlockBagHandler(BlockBag sourceBag, BlockBag sinkBag) {
+        source = sourceBag;
+        sink = sinkBag;
+    }
+
+    public boolean removeItems(int id, byte data, int amount) {
+        if (sink == null) {
+            return source.removeItems(id, data, amount);
+        } else {
+            return sink.removeItems(id, data, amount);
+        }
+    }
+
+    public boolean storeItems(int id, byte data, int amount) {
+        return source.storeItems(id, data, amount);
+    }
+
+    private static ArrayList<Block> searchBlockType(Block block, int distance, Material... materials) {
+        ArrayList<Block> blockList = new ArrayList<Block>();
+        List<Material> materialList = Arrays.asList(materials);
+        for (int dy = -distance; dy < 0; dy++) {
+            for (int dx = -distance; dx <= distance; dx++) {
+                for (int dz = -distance; dz <= distance; dz++) {
+                    if (dx == 0 && dz == 0 && dy == 0) {
+                        continue;
+                    }
+                    Block toCheck = block.getRelative(dx, dy, dz);
+                    if(materialList.contains(toCheck.getType())){
+                        blockList.add(toCheck);
+                    }
+                }
+            }
+        }
+        for (int dy = 0; dy <= distance; dy++) {
+            for (int dx = -distance; dx <= distance; dx++) {
+                for (int dz = -distance; dz <= distance; dz++) {
+                    if (dx == 0 && dz == 0 && dy == 0) {
+                        continue;
+                    }
+                    Block toCheck = block.getRelative(dx, dy, dz);
+                    if(materialList.contains(toCheck.getType())){
+                        blockList.add(toCheck);
+                    }
+                }
+            }
+        }
+        return blockList;
     }
 }

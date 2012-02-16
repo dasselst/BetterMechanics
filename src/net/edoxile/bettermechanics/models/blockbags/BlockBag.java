@@ -19,7 +19,6 @@
 package net.edoxile.bettermechanics.models.blockbags;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Level;
@@ -70,8 +69,6 @@ public abstract class BlockBag {
         BetterMechanics.log("Method 'storeItems' was called but not overwritten", Level.WARNING);
         return false;
     }
-
-    public abstract boolean searchStorage(Sign sign);
 
     public abstract Direction getDirection();
 }

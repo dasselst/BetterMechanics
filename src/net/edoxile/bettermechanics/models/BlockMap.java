@@ -33,12 +33,14 @@ public class BlockMap {
     private final Block startBlock;
     private final Block endBlock;
     private final Material material;
+    private final byte materialData;
     
-    public BlockMap(List<Block> blocks, Block start, Block end, Material type){
+    public BlockMap(List<Block> blocks, Block start, Block end, Material type, byte data){
         blockList = blocks;
         startBlock = start;
         endBlock = end;
         material = type;
+        materialData = data;
     }
     
     public List<Block> getList(){
@@ -55,5 +57,9 @@ public class BlockMap {
     
     public Material getMaterial(){
         return material;
+    }
+    
+    public byte getMaterialData(){
+        return materialData;
     }
 }

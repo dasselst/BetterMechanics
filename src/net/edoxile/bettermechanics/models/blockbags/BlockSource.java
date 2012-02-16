@@ -18,8 +18,6 @@
 
 package net.edoxile.bettermechanics.models.blockbags;
 
-import org.bukkit.block.Sign;
-
 /**
  * Created by IntelliJ IDEA.
  *
@@ -30,12 +28,6 @@ public class BlockSource extends BlockBag {
     @Override
     public boolean removeItems(int id, byte data, int amount) {
         return true;
-    }
-
-    @Override
-    public boolean searchStorage(Sign sign) {
-        //TODO: implement this method
-        return false;
     }
 
     @Override

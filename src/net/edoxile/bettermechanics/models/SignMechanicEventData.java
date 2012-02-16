@@ -18,7 +18,7 @@
 
 package net.edoxile.bettermechanics.models;
 
-import net.edoxile.bettermechanics.models.blockbags.BlockBag;
+import net.edoxile.bettermechanics.utils.BlockBagHandler;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,9 +27,9 @@ import net.edoxile.bettermechanics.models.blockbags.BlockBag;
  */
 public class SignMechanicEventData {
     private BlockMap blockMap;
-    private BlockBag blockBag;
+    private BlockBagHandler blockBag;
     
-    public SignMechanicEventData(BlockMap map, BlockBag bag){
+    public SignMechanicEventData(BlockMap map, BlockBagHandler bag){
         blockMap = map;
         blockBag = bag;
     }
@@ -38,7 +38,7 @@ public class SignMechanicEventData {
         return blockMap;
     }
     
-    public BlockBag getBlockBag(){
+    public BlockBagHandler getBlockBagHandler(){
         return blockBag;
     }
 }

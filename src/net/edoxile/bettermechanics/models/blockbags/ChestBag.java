@@ -20,7 +20,6 @@ package net.edoxile.bettermechanics.models.blockbags;
 
 import net.edoxile.bettermechanics.utils.InventoryManager;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +27,11 @@ import org.bukkit.block.Sign;
  * @author Edoxile
  */
 public class ChestBag extends BlockBag {
-    Chest chest = null;
+    Chest chest;
+
+    public ChestBag(Chest c) {
+        chest = c;
+    }
 
     @Override
     public boolean removeItems(int id, byte data, int amount) {
@@ -38,12 +41,6 @@ public class ChestBag extends BlockBag {
     @Override
     public boolean storeItems(int id, byte data, int amount) {
         return InventoryManager.addContents(chest.getInventory(), id, data, amount);
-    }
-
-    @Override
-    public boolean searchStorage(Sign sign) {
-        //TODO: implement method
-        return false;
     }
 
     @Override

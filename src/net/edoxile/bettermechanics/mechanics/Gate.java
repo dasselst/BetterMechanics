@@ -25,6 +25,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,8 +62,8 @@ public class Gate extends ISignMechanic {
         //Toggle gate
     }
 
-    public String[] getIdentifier() {
-        return new String[]{"[Gate]","[dGate]"};
+    public List<String> getIdentifier() {
+        return Arrays.asList("[Gate]", "[dGate]");
     }
 
     @Override
@@ -74,7 +76,12 @@ public class Gate extends ISignMechanic {
         return true;
     }
 
-    public Material[] getMechanicActivator() {
+    @Override
+    public boolean hasBlockBag() {
+        return true;
+    }
+
+    public List<Material> getMechanicActivator() {
         return null;
     }
 

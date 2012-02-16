@@ -60,22 +60,34 @@ public class Bridge extends ISignMechanic {
 
     public void onSignPowerOn(SignMechanicEventData data) {
         if (enabled) {
-            open(data);
+            int changed = open(data);
+            if (!data.getBlockBagHandler().storeItems(data.getBlockMap().getMaterial().getId(), data.getBlockMap().getMaterialData(), changed)) {
+                close(data);
+            }
         }
     }
 
     public void onSignPowerOff(SignMechanicEventData data) {
         if (enabled) {
-            close(data);
+            int changed = close(data);
+            if (!data.getBlockBagHandler().removeItems(data.getBlockMap().getMaterial().getId(), data.getBlockMap().getMaterialData(), changed)) {
+                close(data);
+            }
         }
     }
 
     public void onPlayerRightClickSign(Player player, SignMechanicEventData data) {
         if (enabled) {
             if (isClosed(data)) {
-                open(data);
+                int changed = open(data);
+                if (!data.getBlockBagHandler().storeItems(data.getBlockMap().getMaterial().getId(), data.getBlockMap().getMaterialData(), changed)) {
+                    close(data);
+                }
             } else {
-                close(data);
+                int changed = close(data);
+                if (!data.getBlockBagHandler().removeItems(data.getBlockMap().getMaterial().getId(), data.getBlockMap().getMaterialData(), changed)) {
+                    close(data);
+                }
             }
         }
     }
@@ -103,13 +115,14 @@ public class Bridge extends ISignMechanic {
         return null;
     }
 
-    public BlockMap mapBlocks(Sign sign) throws BlockMapException{
+    public BlockMap mapBlocks(Sign sign) throws BlockMapException {
         BlockFace orientation = SignUtil.getOrdinalAttachedFace(sign);
         boolean foundOtherSide = false;
         Block otherSide = null;
         Material bridgeMaterial;
+        byte bridgeMaterialData;
         List<Block> blockList = new ArrayList<Block>();
-        
+
         if (orientation != null) {
             int travelDistance = maxLength;
             while (travelDistance > 0) {
@@ -126,9 +139,11 @@ public class Bridge extends ISignMechanic {
                 if (allowedMaterials.contains(otherSide.getRelative(BlockFace.UP).getType())) {
                     otherSide = otherSide.getRelative(BlockFace.UP);
                     bridgeMaterial = otherSide.getType();
+                    bridgeMaterialData = otherSide.getData();
                 } else if (allowedMaterials.contains(otherSide.getRelative(BlockFace.DOWN).getType())) {
                     otherSide = otherSide.getRelative(BlockFace.DOWN);
                     bridgeMaterial = otherSide.getType();
+                    bridgeMaterialData = otherSide.getData();
                 } else {
                     throw new BlockMapException(BlockMapException.Type.NON_ALLOWED_MATERIAL);
                 }
@@ -143,7 +158,7 @@ public class Bridge extends ISignMechanic {
                         blockList.add(otherSide.getRelative(BlockFace.WEST));
                     }
                 }
-                return new BlockMap(blockList,sign.getBlock(), otherSide, bridgeMaterial);
+                return new BlockMap(blockList, sign.getBlock(), otherSide, bridgeMaterial, bridgeMaterialData);
             } else {
                 throw new BlockMapException(BlockMapException.Type.END_NOT_FOUND);
             }
