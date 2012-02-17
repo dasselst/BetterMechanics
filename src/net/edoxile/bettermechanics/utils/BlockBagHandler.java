@@ -18,10 +18,10 @@
 
 package net.edoxile.bettermechanics.utils;
 
-import net.edoxile.bettermechanics.models.blockbags.BlockBag;
-import net.edoxile.bettermechanics.models.blockbags.BlockBagException;
+import net.edoxile.bettermechanics.models.blockbags.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 
 import java.util.ArrayList;
@@ -36,10 +36,36 @@ import java.util.List;
 public class BlockBagHandler {
     public static BlockBagHandler locate(Sign sign) throws BlockBagException {
         BlockBag source = null, sink = null;
-        ArrayList<Block> chestList = searchBlockType(sign.getBlock(), 2, Material.CHEST);
         ArrayList<Block> signList = searchBlockType(sign.getBlock(), 2, Material.WALL_SIGN, Material.SIGN_POST);
-        //TODO: compile a BlockBagHandler from these lists
-        return null;
+        ChestBag chestBag = new ChestBag((Chest) searchSingleBlockType(sign.getBlock(), 2, Material.CHEST).getState());
+        if (signList.isEmpty() && chestBag.isEmpty()) {
+            throw new BlockBagException(BlockBagException.Type.NO_BAG_FOUND);
+        } else {
+            if (!signList.isEmpty()) {
+                for (Block b : signList) {
+                    Sign s = (Sign) b.getState();
+                    String id = s.getLine(1);
+                    if (sink == null && id.equals("BlackHole")) {
+                        sink = new BlackHole();
+                    } else if (source == null && id.equals("BlockSource")) {
+                        source = new BlockSource();
+                    }
+                }
+            }
+            if (!chestBag.isEmpty()) {
+                if (source == null) {
+                    source = chestBag;
+                }
+                if (sink == null) {
+                    sink = chestBag;
+                }
+            }
+        }
+        if(sink == null || source == null){
+            throw new BlockBagException(BlockBagException.Type.NO_BAG_FOUND);
+        }else{
+            return new BlockBagHandler(source, sink);
+        }
     }
 
     private BlockBag source = null, sink = null;
@@ -75,7 +101,7 @@ public class BlockBagHandler {
                         continue;
                     }
                     Block toCheck = block.getRelative(dx, dy, dz);
-                    if(materialList.contains(toCheck.getType())){
+                    if (materialList.contains(toCheck.getType())) {
                         blockList.add(toCheck);
                     }
                 }
@@ -88,12 +114,42 @@ public class BlockBagHandler {
                         continue;
                     }
                     Block toCheck = block.getRelative(dx, dy, dz);
-                    if(materialList.contains(toCheck.getType())){
+                    if (materialList.contains(toCheck.getType())) {
                         blockList.add(toCheck);
                     }
                 }
             }
         }
         return blockList;
+    }
+
+    private static Block searchSingleBlockType(Block block, int distance, Material material) {
+        for (int dy = -distance; dy < 0; dy++) {
+            for (int dx = -distance; dx <= distance; dx++) {
+                for (int dz = -distance; dz <= distance; dz++) {
+                    if (dx == 0 && dz == 0 && dy == 0) {
+                        continue;
+                    }
+                    Block toCheck = block.getRelative(dx, dy, dz);
+                    if (toCheck.getTypeId() == material.getId()) {
+                        return toCheck;
+                    }
+                }
+            }
+        }
+        for (int dy = 0; dy <= distance; dy++) {
+            for (int dx = -distance; dx <= distance; dx++) {
+                for (int dz = -distance; dz <= distance; dz++) {
+                    if (dx == 0 && dz == 0 && dy == 0) {
+                        continue;
+                    }
+                    Block toCheck = block.getRelative(dx, dy, dz);
+                    if (toCheck.getTypeId() == material.getId()) {
+                        return toCheck;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

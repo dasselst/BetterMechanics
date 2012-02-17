@@ -47,4 +47,8 @@ public class ChestBag extends BlockBag {
     public Direction getDirection() {
         return Direction.ANY;
     }
+
+    public boolean isEmpty() {
+        return chest == null;
+    }
 }
