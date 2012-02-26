@@ -26,8 +26,7 @@ package net.edoxile.bettermechanics.models.blockbags;
 public class BlockSource extends BlockBag {
 
     @Override
-    public boolean removeItems(int id, byte data, int amount) {
-        return true;
+    public void removeItems(int id, byte data, int amount) throws BlockBagException{
     }
 
     @Override

@@ -23,7 +23,7 @@ package net.edoxile.bettermechanics.models;
  *
  * @author Edoxile
  */
-public class BlockMapException extends Exception{
+public class BlockMapException extends Exception {
     public enum Type {
         END_NOT_FOUND("The other side could not be found!"),
         NON_ORDINAL_SIGN("This sign is not placed in an ordinal direction (east, west, north or south)!"),
@@ -41,8 +41,15 @@ public class BlockMapException extends Exception{
             return errorMessage;
         }
     }
-    
-    public BlockMapException(Type type){
+
+    private Type type;
+
+    public BlockMapException(Type type) {
         super(type.getErrorMessage());
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

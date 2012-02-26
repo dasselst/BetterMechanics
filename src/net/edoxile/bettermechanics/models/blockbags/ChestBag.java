@@ -34,13 +34,17 @@ public class ChestBag extends BlockBag {
     }
 
     @Override
-    public boolean removeItems(int id, byte data, int amount) {
-        return InventoryManager.removeContents(chest.getInventory(), id, data, amount);
+    public void removeItems(int id, byte data, int amount) throws BlockBagException{
+        if(!InventoryManager.removeContents(chest.getInventory(), id, data, amount)){
+            throw new BlockBagException(BlockBagException.Type.NOT_ENOUGH_MATERIALS);
+        }
     }
 
     @Override
-    public boolean storeItems(int id, byte data, int amount) {
-        return InventoryManager.addContents(chest.getInventory(), id, data, amount);
+    public void storeItems(int id, byte data, int amount) throws BlockBagException {
+        if(!InventoryManager.addContents(chest.getInventory(), id, data, amount)){
+            throw new BlockBagException(BlockBagException.Type.NO_SPACE_LEFT);
+        }
     }
 
     @Override

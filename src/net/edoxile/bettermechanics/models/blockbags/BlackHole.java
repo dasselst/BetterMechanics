@@ -26,8 +26,7 @@ package net.edoxile.bettermechanics.models.blockbags;
 public class BlackHole extends BlockBag {
 
     @Override
-    public boolean storeItems(int id, byte data, int amount) {
-        return true;
+    public void storeItems(int id, byte data, int amount) throws BlockBagException{
     }
 
     @Override

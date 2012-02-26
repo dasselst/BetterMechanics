@@ -36,38 +36,38 @@ public abstract class BlockBag {
         ANY
     }
 
-    public boolean removeItems(ItemStack itemStack) {
-        return removeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
+    public void removeItems(ItemStack itemStack) throws BlockBagException {
+        removeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
     }
 
-    public boolean removeItems(ItemStack itemStack, int amount) {
-        return removeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
+    public void removeItems(ItemStack itemStack, int amount) throws BlockBagException {
+        removeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
     }
 
-    public boolean removeItems(int id, int amount) {
-        return removeItems(id, (byte) 0, amount);
+    public void removeItems(int id, int amount) throws BlockBagException{
+        removeItems(id, (byte) 0, amount);
     }
 
-    public boolean removeItems(int id, byte data, int amount) {
+    public void removeItems(int id, byte data, int amount) throws BlockBagException {
         BetterMechanics.log("Method 'storeItems' was called but not overwritten", Level.WARNING);
-        return false;
+        throw new BlockBagException(BlockBagException.Type.NOT_ENOUGH_MATERIALS);
     }
 
-    public boolean storeItems(ItemStack itemStack) {
-        return storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
+    public void storeItems(ItemStack itemStack) throws BlockBagException{
+        storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
     }
 
-    public boolean storeItems(ItemStack itemStack, int amount) {
-        return storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
+    public void storeItems(ItemStack itemStack, int amount) throws BlockBagException{
+        storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
     }
 
-    public boolean storeItems(int id, int amount) {
-        return storeItems(id, (byte) 0, amount);
+    public void storeItems(int id, int amount) throws BlockBagException{
+        storeItems(id, (byte) 0, amount);
     }
 
-    public boolean storeItems(int id, byte data, int amount) {
+    public void storeItems(int id, byte data, int amount) throws BlockBagException{
         BetterMechanics.log("Method 'storeItems' was called but not overwritten", Level.WARNING);
-        return false;
+        throw new BlockBagException(BlockBagException.Type.NO_SPACE_LEFT);
     }
 
     public abstract Direction getDirection();
