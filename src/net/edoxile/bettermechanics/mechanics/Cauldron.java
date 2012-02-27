@@ -16,11 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.mechanics.interfaces;
+package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanic;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -29,29 +28,24 @@ import java.util.List;
  *
  * @author Edoxile
  */
-public abstract class IBlockMechanic implements IMechanic {
-
-    public void onBlockRightClick(Player player, Block block) {
+public class Cauldron extends BlockMechanic {
+    @Override
+    public boolean isTriggeredByRedstone() {
+        return false;
     }
 
-    public void onBlockLeftClick(Player player, Block block) {
+    @Override
+    public List<Material> getMechanicActivator() {
+        return null;
     }
 
-    public void onBlockPlace(Player player, Block block) {
+    @Override
+    public List<Material> getMechanicTarget() {
+        return null;
     }
 
-    public void onBlockBreak(Player player, Block block) {
+    @Override
+    public String getName() {
+        return "Cauldron";
     }
-
-    public void onBlockPowerOn(Block block) {
-    }
-
-    public void onBlockPowerOff(Block block) {
-    }
-
-    public abstract boolean isTriggeredByRedstone();
-
-    public abstract List<Material> getMechanicActivator();
-
-    public abstract List<Material> getMechanicTarget();
 }

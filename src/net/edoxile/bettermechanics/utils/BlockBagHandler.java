@@ -61,9 +61,9 @@ public class BlockBagHandler {
                 }
             }
         }
-        if(sink == null || source == null){
+        if (sink == null || source == null) {
             throw new BlockBagException(BlockBagException.Type.NO_BAG_FOUND);
-        }else{
+        } else {
             return new BlockBagHandler(source, sink);
         }
     }
@@ -80,15 +80,21 @@ public class BlockBagHandler {
     }
 
     public boolean removeItems(int id, byte data, int amount) {
-        if (sink == null) {
-            return source.removeItems(id, data, amount);
-        } else {
-            return sink.removeItems(id, data, amount);
+        try {
+            sink.removeItems(id, data, amount);
+            return true;
+        } catch (BlockBagException e) {
+            return false;
         }
     }
 
     public boolean storeItems(int id, byte data, int amount) {
-        return source.storeItems(id, data, amount);
+        try {
+            source.storeItems(id, data, amount);
+            return true;
+        } catch (BlockBagException e) {
+            return false;
+        }
     }
 
     private static ArrayList<Block> searchBlockType(Block block, int distance, Material... materials) {

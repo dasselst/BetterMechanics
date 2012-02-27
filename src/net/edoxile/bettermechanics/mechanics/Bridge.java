@@ -19,7 +19,7 @@
 package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanic;
 import net.edoxile.bettermechanics.models.BlockMap;
 import net.edoxile.bettermechanics.models.BlockMapException;
 import net.edoxile.bettermechanics.models.SignMechanicEventData;
@@ -42,7 +42,7 @@ import java.util.logging.Level;
  *
  * @author Edoxile
  */
-public class Bridge extends ISignMechanic {
+public class Bridge extends SignMechanic {
     private boolean enabled;
     private int maxLength;
     private Set<Material> allowedMaterials;

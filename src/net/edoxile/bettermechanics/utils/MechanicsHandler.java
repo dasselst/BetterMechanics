@@ -19,14 +19,12 @@
 package net.edoxile.bettermechanics.utils;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.mechanics.interfaces.IBlockMechanic;
-import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
-import net.edoxile.bettermechanics.mechanics.interfaces.IMechanic;
-import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
+import net.edoxile.bettermechanics.mechanics.interfaces.*;
+import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanic;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanic;
 import net.edoxile.bettermechanics.models.BlockMap;
 import net.edoxile.bettermechanics.models.BlockMapException;
 import net.edoxile.bettermechanics.models.SignMechanicEventData;
-import net.edoxile.bettermechanics.models.blockbags.BlockBag;
 import net.edoxile.bettermechanics.models.blockbags.BlockBagException;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -52,23 +50,23 @@ import java.util.logging.Level;
 
 public class MechanicsHandler {
 
-    private HashMap<String, ArrayList<ISignMechanic>> redstoneSignMechanicMap = new HashMap<String, ArrayList<ISignMechanic>>();
-    private HashMap<Material, ArrayList<IBlockMechanic>> redstoneBlockMechanicMap = new HashMap<Material, ArrayList<IBlockMechanic>>();
+    private HashMap<String, ArrayList<SignMechanic>> redstoneSignMechanicMap = new HashMap<String, ArrayList<SignMechanic>>();
+    private HashMap<Material, ArrayList<BlockMechanic>> redstoneBlockMechanicMap = new HashMap<Material, ArrayList<BlockMechanic>>();
 
-    private HashMap<String, ArrayList<ISignMechanic>> signMechanicMap = new HashMap<String, ArrayList<ISignMechanic>>();
-    private HashMap<Material, ArrayList<IBlockMechanic>> blockMechanicMap = new HashMap<Material, ArrayList<IBlockMechanic>>();
+    private HashMap<String, ArrayList<SignMechanic>> signMechanicMap = new HashMap<String, ArrayList<SignMechanic>>();
+    private HashMap<Material, ArrayList<BlockMechanic>> blockMechanicMap = new HashMap<Material, ArrayList<BlockMechanic>>();
 
     private HashMap<String, ICommandableMechanic> commandableMechanicMap = new HashMap<String, ICommandableMechanic>();
 
     public void addMechanic(IMechanic mechanic) {
         //TODO: check if this list works as it's supposed to (with passing a reference)
-        if (mechanic instanceof ISignMechanic) {
-            ISignMechanic signMechanic = (ISignMechanic) mechanic;
+        if (mechanic instanceof SignMechanic) {
+            SignMechanic signMechanic = (SignMechanic) mechanic;
             if (signMechanic.isTriggeredByRedstone()) {
                 for (String identifier : signMechanic.getIdentifier()) {
-                    ArrayList<ISignMechanic> list = redstoneSignMechanicMap.get(identifier);
+                    ArrayList<SignMechanic> list = redstoneSignMechanicMap.get(identifier);
                     if (list == null) {
-                        list = new ArrayList<ISignMechanic>();
+                        list = new ArrayList<SignMechanic>();
                         list.add(signMechanic);
                         redstoneSignMechanicMap.put(identifier, list);
                     } else {
@@ -78,9 +76,9 @@ public class MechanicsHandler {
                 }
             } else {
                 for (String identifier : signMechanic.getIdentifier()) {
-                    ArrayList<ISignMechanic> list = signMechanicMap.get(identifier);
+                    ArrayList<SignMechanic> list = signMechanicMap.get(identifier);
                     if (list == null) {
-                        list = new ArrayList<ISignMechanic>();
+                        list = new ArrayList<SignMechanic>();
                         list.add(signMechanic);
                         signMechanicMap.put(identifier, list);
                     } else {
@@ -88,13 +86,13 @@ public class MechanicsHandler {
                     }
                 }
             }
-        } else if (mechanic instanceof IBlockMechanic) {
-            IBlockMechanic blockMechanic = (IBlockMechanic) mechanic;
+        } else if (mechanic instanceof BlockMechanic) {
+            BlockMechanic blockMechanic = (BlockMechanic) mechanic;
             if (blockMechanic.isTriggeredByRedstone()) {
                 for (Material target : blockMechanic.getMechanicTarget()) {
-                    ArrayList<IBlockMechanic> list = redstoneBlockMechanicMap.get(target);
+                    ArrayList<BlockMechanic> list = redstoneBlockMechanicMap.get(target);
                     if (list == null) {
-                        list = new ArrayList<IBlockMechanic>();
+                        list = new ArrayList<BlockMechanic>();
                         list.add(blockMechanic);
                         redstoneBlockMechanicMap.put(target, list);
                     } else {
@@ -104,9 +102,9 @@ public class MechanicsHandler {
                 }
             } else {
                 for (Material target : blockMechanic.getMechanicTarget()) {
-                    ArrayList<IBlockMechanic> list = blockMechanicMap.get(target);
+                    ArrayList<BlockMechanic> list = blockMechanicMap.get(target);
                     if (list == null) {
-                        list = new ArrayList<IBlockMechanic>();
+                        list = new ArrayList<BlockMechanic>();
                         list.add(blockMechanic);
                         blockMechanicMap.put(target, list);
                     } else {
@@ -130,9 +128,9 @@ public class MechanicsHandler {
         if (SignUtil.isSign(event.getClickedBlock())) {
             Sign sign = SignUtil.getSign(event.getClickedBlock());
             String id = SignUtil.getMechanicsIdentifier(sign);
-            List<ISignMechanic> mechanicsList = signMechanicMap.get(id);
+            List<SignMechanic> mechanicsList = signMechanicMap.get(id);
             if (mechanicsList == null) {
-                mechanicsList = new ArrayList<ISignMechanic>();
+                mechanicsList = new ArrayList<SignMechanic>();
             }
             if (signMechanicMap.containsKey(null)) {
                 mechanicsList.addAll(signMechanicMap.get(null));
@@ -143,7 +141,7 @@ public class MechanicsHandler {
             if (redstoneSignMechanicMap.containsKey(null)) {
                 mechanicsList.addAll(redstoneSignMechanicMap.get(null));
             }
-            for (ISignMechanic mechanic : mechanicsList) {
+            for (SignMechanic mechanic : mechanicsList) {
                 try {
                     BlockBagHandler bag = null;
                     BlockMap map = null;
@@ -168,9 +166,9 @@ public class MechanicsHandler {
                 }
             }
         } else {
-            List<IBlockMechanic> mechanicsList = blockMechanicMap.get(event.getClickedBlock().getType());
+            List<BlockMechanic> mechanicsList = blockMechanicMap.get(event.getClickedBlock().getType());
             if (mechanicsList == null) {
-                mechanicsList = new ArrayList<IBlockMechanic>();
+                mechanicsList = new ArrayList<BlockMechanic>();
             }
             if (blockMechanicMap.containsKey(null)) {
                 mechanicsList.addAll(blockMechanicMap.get(null));
@@ -181,7 +179,7 @@ public class MechanicsHandler {
             if (redstoneBlockMechanicMap.containsKey(null)) {
                 mechanicsList.addAll(redstoneBlockMechanicMap.get(null));
             }
-            for (IBlockMechanic mechanic : mechanicsList) {
+            for (BlockMechanic mechanic : mechanicsList) {
                 if (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(event.getPlayer().getItemInHand().getType())) {
                     if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                         mechanic.onBlockLeftClick(event.getPlayer(), event.getClickedBlock());
@@ -196,9 +194,9 @@ public class MechanicsHandler {
     public void callBlockEvent(BlockEvent event) {
         if (event instanceof BlockBreakEvent) {
             BlockBreakEvent blockBreakEvent = (BlockBreakEvent) event;
-            List<IBlockMechanic> mechanicsList = blockMechanicMap.get(blockBreakEvent.getBlock().getType());
+            List<BlockMechanic> mechanicsList = blockMechanicMap.get(blockBreakEvent.getBlock().getType());
             if (mechanicsList == null) {
-                mechanicsList = new ArrayList<IBlockMechanic>();
+                mechanicsList = new ArrayList<BlockMechanic>();
             }
             if (blockMechanicMap.containsKey(null)) {
                 mechanicsList.addAll(blockMechanicMap.get(null));
@@ -206,16 +204,16 @@ public class MechanicsHandler {
             if (redstoneBlockMechanicMap.containsKey(blockBreakEvent.getBlock().getType())) {
                 mechanicsList.addAll(redstoneBlockMechanicMap.get(blockBreakEvent.getBlock().getType()));
             }
-            for (IBlockMechanic mechanic : mechanicsList) {
+            for (BlockMechanic mechanic : mechanicsList) {
                 if (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(blockBreakEvent.getPlayer().getItemInHand().getType())) {
                     mechanic.onBlockBreak(blockBreakEvent.getPlayer(), blockBreakEvent.getBlock());
                 }
             }
         } else if (event instanceof BlockPlaceEvent) {
             BlockPlaceEvent blockPlaceEvent = (BlockPlaceEvent) event;
-            List<IBlockMechanic> mechanicsList = blockMechanicMap.get(blockPlaceEvent.getBlock().getType());
+            List<BlockMechanic> mechanicsList = blockMechanicMap.get(blockPlaceEvent.getBlock().getType());
             if (mechanicsList == null) {
-                mechanicsList = new ArrayList<IBlockMechanic>();
+                mechanicsList = new ArrayList<BlockMechanic>();
             }
             if (blockMechanicMap.containsKey(null)) {
                 mechanicsList.addAll(blockMechanicMap.get(null));
@@ -223,7 +221,7 @@ public class MechanicsHandler {
             if (redstoneBlockMechanicMap.containsKey(blockPlaceEvent.getBlock().getType())) {
                 mechanicsList.addAll(redstoneBlockMechanicMap.get(blockPlaceEvent.getBlock().getType()));
             }
-            for (IBlockMechanic mechanic : mechanicsList) {
+            for (BlockMechanic mechanic : mechanicsList) {
                 if (mechanic.getMechanicActivator() == null || mechanic.getMechanicActivator().contains(blockPlaceEvent.getPlayer().getItemInHand().getType())) {
                     mechanic.onBlockBreak(blockPlaceEvent.getPlayer(), blockPlaceEvent.getBlock());
                 }
@@ -238,14 +236,14 @@ public class MechanicsHandler {
             Block block = event.getBlock().getRelative(direction);
             if (SignUtil.isSign(block)) {
                 Sign sign = SignUtil.getSign(block);
-                List<ISignMechanic> list = redstoneSignMechanicMap.get(SignUtil.getMechanicsIdentifier(sign));
+                List<SignMechanic> list = redstoneSignMechanicMap.get(SignUtil.getMechanicsIdentifier(sign));
                 if (list == null) {
-                    list = new ArrayList<ISignMechanic>();
+                    list = new ArrayList<SignMechanic>();
                 }
                 if (redstoneSignMechanicMap.containsKey(null)) {
                     list.addAll(redstoneSignMechanicMap.get(null));
                 }
-                for (ISignMechanic mechanic : list) {
+                for (SignMechanic mechanic : list) {
                     try {
                         BlockBagHandler bag = null;
                         BlockMap map = null;
@@ -268,14 +266,14 @@ public class MechanicsHandler {
                     }
                 }
             } else {
-                List<IBlockMechanic> list = redstoneBlockMechanicMap.get(block.getType());
+                List<BlockMechanic> list = redstoneBlockMechanicMap.get(block.getType());
                 if (list == null) {
-                    list = new ArrayList<IBlockMechanic>();
+                    list = new ArrayList<BlockMechanic>();
                 }
                 if (blockMechanicMap.containsKey(null)) {
                     list.addAll(blockMechanicMap.get(null));
                 }
-                for (IBlockMechanic mechanic : list) {
+                for (BlockMechanic mechanic : list) {
                     if(on){
                         mechanic.onBlockPowerOn(event.getBlock());
                     } else {

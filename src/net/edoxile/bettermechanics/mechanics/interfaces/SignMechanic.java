@@ -35,7 +35,7 @@ import java.util.logging.Level;
  *
  * @author Edoxile
  */
-public abstract class ISignMechanic extends IBlockMechanic {
+public abstract class SignMechanic extends BlockMechanic {
 
     public void onSignPowerOn(SignMechanicEventData data) {
     }

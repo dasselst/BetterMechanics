@@ -25,12 +25,14 @@ package net.edoxile.bettermechanics.models;
 
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Store of recipes.
@@ -39,33 +41,53 @@ import java.util.logging.Logger;
  */
 public class CauldronCookbook {
     private List<Recipe> recipes = new ArrayList<Recipe>();
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private BetterMechanics instance;
 
     @SuppressWarnings("unchecked")
-    public CauldronCookbook(BetterMechanics plugin) {
+    public CauldronCookbook() {
         try {
             File configFile = new File("plugins/BetterMechanics/cauldron-recipes.yml");
             BetterMechanics.log("Loading cauldron recipes from " + configFile.getAbsolutePath());
-            Configuration config = new Configuration(configFile);
-            config.load();
-            List<String> recipeNames = config.getKeys("recipes");
-            if (recipeNames == null) {
+            YamlConfiguration config = new YamlConfiguration();
+            config.load(configFile);
+            //TODO: check if this fix actually works
+            Set<String> keys = config.getKeys(true);
+            HashSet<String> names = new HashSet<String>();
+            for (String key : keys) {
+                if (key.startsWith("recipes")) {
+                    String[] splitKeys = key.split(".");
+                    if (splitKeys.length > 2) {
+                        names.add(splitKeys[1]);
+                    }
+                }
+            }
+            if (names.isEmpty()) {
                 BetterMechanics.log("Error loading cauldron recipes: no recipes found! (you probably messed up the yml format somewhere)");
                 return;
             }
-            for (String name : recipeNames) {
+            for (String name : names) {
                 MaterialMap ingredients = new MaterialMap();
                 MaterialMap results = new MaterialMap();
 
                 try {
-                    List<List<Integer>> list = (List<List<Integer>>) config.getProperty("recipes." + name + ".ingredients");
+                    List<List<Integer>> list = (List<List<Integer>>) config.get("recipes." + name + ".ingredients");
                     for (List<Integer> l : list) {
-                        ingredients.put(l.get(0), l.get(1).byteValue(), l.get(2));
+                        if (l.size() == 2) {
+                            ingredients.put(l.get(0), (byte) 0, l.get(1));
+                        } else if (l.size() == 3) {
+                            ingredients.put(l.get(0), l.get(1).byteValue(), l.get(2));
+                        } else {
+                            BetterMechanics.log("Cauldron recipes contains a typo in the ingredients of " + name, Level.WARNING);
+                        }
                     }
-                    list = (List<List<Integer>>) config.getProperty("recipes." + name + ".results");
+                    list = (List<List<Integer>>) config.get("recipes." + name + ".results");
                     for (List<Integer> l : list) {
-                        results.put(l.get(0), l.get(1).byteValue(), l.get(2));
+                        if (l.size() == 2) {
+                            ingredients.put(l.get(0), (byte) 0, l.get(1));
+                        } else if (l.size() == 3) {
+                            results.put(l.get(0), l.get(1).byteValue(), l.get(2));
+                        } else {
+                            BetterMechanics.log("Cauldron recipes contains a typo in the results of " + name, Level.WARNING);
+                        }
                     }
                 } catch (Exception e) {
                     recipes.clear();

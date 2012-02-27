@@ -19,7 +19,7 @@
 package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.mechanics.interfaces.ISignMechanic;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanic;
 import net.edoxile.bettermechanics.utils.ConfigHandler;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,7 +34,7 @@ import java.util.Set;
  *
  * @author Edoxile
  */
-public class Gate extends ISignMechanic {
+public class Gate extends SignMechanic {
     private boolean enabled = true;
     private int maxLength = 32;
     private int maxWidth = 3;

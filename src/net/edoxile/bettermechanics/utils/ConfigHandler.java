@@ -280,7 +280,7 @@ public class ConfigHandler {
 
         public CauldronConfig() {
             if (configuration.getBoolean("cauldron.enabled", true)) {
-                cauldronCookbook = new CauldronCookbook(plugin);
+                cauldronCookbook = new CauldronCookbook();
                 if (cauldronCookbook.size() > 0) {
                     enabled = true;
                 } else {

@@ -2,26 +2,31 @@
 recipes:
     Glowstone:
         # 4 dirt, 4 torches
-        ingredients: [ [3,0,4], [50,0,4] ]
+        ingredients: [ [3,4], [50,4] ]
         # 8 glowstone
-        results: [ [89,0,8] ]
+        results: [ [89,8] ]
     Hellstone:
         # 4 cobble, 4 torches
-        ingredients: [ [4,0,4], [50,0,4] ]
+        ingredients: [ [4,4], [50,4] ]
         # 8 hellstone
-        results: [ [87,0,8] ]
+        results: [ [87,8] ]
     Soulsand:
         # 4 cobble, 4 sand
-        ingredients: [ [4,0,4], [12,0,4] ]
+        ingredients: [ [4,4], [12,4] ]
         # 8 soulsand
-        results: [ [88,0,8] ]
+        results: [ [88,8] ]
     Sponge:
         # 4 gold blocks
-        ingredients: [ [41,0,4] ]
+        ingredients: [ [41,4] ]
         # 8 sponge
-        results: [ [19,0,8] ]
+        results: [ [19,8] ]
     Pumpkin:
         # 4 hellstone, 4 farmland
-        ingredients: [ [87,0,4], [60,0,4] ]
+        ingredients: [ [87,4], [60,4] ]
         # 1 pumpkin
-        results: [ [86,0,1] ]
+        results: [ [86,1] ]
+    Netherbrick:
+        # 4 stonebrick, 4 hellstone
+        ingredients: [ [98,4], [87,4] ]
+        # 8 netherbrick
+        results: [ [112,8] ]
