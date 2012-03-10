@@ -64,7 +64,8 @@ public class BetterMechanics extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Event.Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
 
-        debugMode = getConfiguration().getBoolean("debug-mode", false);
+        //TODO: fix this (deprecation etc.)
+        debugMode = getPluginConfig().getBoolean("debug-mode", false);
         log("Enabled! Version: " + getDescription().getVersion() + ".");
     }
 
