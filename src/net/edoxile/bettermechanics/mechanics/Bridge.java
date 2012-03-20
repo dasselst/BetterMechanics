@@ -19,12 +19,12 @@
 package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanic;
-import net.edoxile.bettermechanics.models.BlockMap;
-import net.edoxile.bettermechanics.models.BlockMapException;
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
+import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
+import net.edoxile.bettermechanics.utils.*;
 import net.edoxile.bettermechanics.models.SignMechanicEventData;
-import net.edoxile.bettermechanics.utils.ConfigHandler;
-import net.edoxile.bettermechanics.utils.SignUtil;
+import net.edoxile.bettermechanics.utils.datastorage.BlockMapException;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -42,7 +42,7 @@ import java.util.logging.Level;
  *
  * @author Edoxile
  */
-public class Bridge extends SignMechanic {
+public class Bridge extends SignMechanicListener {
     private boolean enabled;
     private int maxLength;
     private Set<Material> allowedMaterials;

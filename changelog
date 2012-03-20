@@ -1,15 +1,8 @@
 Changelog:
-- Made interfaces for Mechanics. If they are registered, they will be executed by an ID (Sign ID), or by BlockType/EventType.
-  This means that making new Mechanics is easier than before.
-- Implemented Pen
-- Rewritten BlockBags, now it is possible to use Black Holes and Block Source as BlockBags, as well as chests
-- Cauldron now accepts data-values as arguments in the config
-- Reorganized inventory code
-- Each mechanic now has its own BlockMapping function. This is to create a (uniform) standard.
-- Implemented EventData, BlockMap
+- About 99% codechange, dunno anymore :P
 
 TODO:
-- Write BlockBagManager
+- Something with onSignChange(), correcting mistakes/asking permission
 - Implement all the mechanics:
     * Gate
     * Bridge

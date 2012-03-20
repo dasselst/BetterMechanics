@@ -19,10 +19,10 @@
 package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.mechanics.interfaces.ICommandableMechanic;
-import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanic;
-import net.edoxile.bettermechanics.utils.ConfigHandler;
-import net.edoxile.bettermechanics.utils.PermissionHandler;
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
+import net.edoxile.bettermechanics.handlers.PermissionHandler;
+import net.edoxile.bettermechanics.mechanics.interfaces.IMechanicCommandListener;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Edoxile
  */
-public class Pen extends SignMechanic implements ICommandableMechanic {
+public class Pen extends SignMechanicListener implements IMechanicCommandListener {
 
     private boolean enabled;
 

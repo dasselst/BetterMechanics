@@ -25,6 +25,8 @@ package net.edoxile.bettermechanics.models;
 
 
 import net.edoxile.bettermechanics.BetterMechanics;
+import net.edoxile.bettermechanics.utils.datastorage.MaterialMap;
+import net.edoxile.bettermechanics.utils.datastorage.MaterialMapIterator;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

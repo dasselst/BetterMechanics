@@ -19,9 +19,11 @@
 package net.edoxile.bettermechanics.listeners;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.utils.MechanicsHandler;
+import net.edoxile.bettermechanics.handlers.MechanicsHandler;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
@@ -30,27 +32,30 @@ import org.bukkit.event.block.BlockRedstoneEvent;
  *
  * @author Edoxile
  */
-public class BMBlockListener extends BlockListener {
+public class BMBlockListener implements Listener {
     private BetterMechanics plugin;
     private MechanicsHandler mechanicsHandler;
 
     public BMBlockListener(BetterMechanics bm) {
         plugin = bm;
-        mechanicsHandler = bm.getMechanicsHandler();
+        mechanicsHandler = plugin.getMechanicsHandler();
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 && event.getOldCurrent() > 0)
             return;
         mechanicsHandler.callRedstoneEvent(event);
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled())
             return;
         mechanicsHandler.callBlockEvent(event);
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled())
             return;

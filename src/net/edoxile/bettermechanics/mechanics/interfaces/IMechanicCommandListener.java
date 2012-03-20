@@ -16,36 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.mechanics;
+package net.edoxile.bettermechanics.mechanics.interfaces;
 
-import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
-import org.bukkit.Material;
-
-import java.util.List;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public class Cauldron extends BlockMechanicListener {
-    @Override
-    public boolean isTriggeredByRedstone() {
-        return false;
-    }
-
-    @Override
-    public List<Material> getMechanicActivator() {
-        return null;
-    }
-
-    @Override
-    public List<Material> getMechanicTarget() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return "Cauldron";
-    }
+public interface IMechanicCommandListener extends IMechanicListener {
+    public boolean onCommand(CommandSender commandSender, Command command, String[] args);
 }

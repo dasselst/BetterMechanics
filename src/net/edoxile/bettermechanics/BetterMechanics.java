@@ -18,20 +18,19 @@
 
 package net.edoxile.bettermechanics;
 
+import net.edoxile.bettermechanics.handlers.MechanicsHandler;
+import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.listeners.BMBlockListener;
 import net.edoxile.bettermechanics.listeners.BMPlayerListener;
 import net.edoxile.bettermechanics.mechanics.Bridge;
 import net.edoxile.bettermechanics.mechanics.Pen;
-import net.edoxile.bettermechanics.utils.MechanicsHandler;
-import net.edoxile.bettermechanics.utils.PermissionHandler;
 import net.edoxile.bettermechanics.models.PermissionType;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -59,12 +58,12 @@ public class BetterMechanics extends JavaPlugin {
         mechanicsHandler.addMechanic(new Bridge());
 
         //Register different events
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
+        getServer().getPluginManager().registerEvents(blockListener, this);
+        getServer().getPluginManager().registerEvents(playerListener, this);
 
         //TODO: fix this (deprecation etc.)
+        loadConfig();
+
         debugMode = getPluginConfig().getBoolean("debug-mode", false);
         log("Enabled! Version: " + getDescription().getVersion() + ".");
     }
@@ -100,8 +99,8 @@ public class BetterMechanics extends JavaPlugin {
 
     }
 
-    public Configuration getPluginConfig() {
-        return this.getConfiguration();
+    public FileConfiguration getPluginConfig() {
+        return this.getConfig();
     }
 
     public File getJarFile() {
@@ -118,5 +117,9 @@ public class BetterMechanics extends JavaPlugin {
 
     public static PermissionHandler getPermissionHandler() {
         return permissionHandler;
+    }
+
+    public void loadConfig(){
+
     }
 }

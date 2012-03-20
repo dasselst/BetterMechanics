@@ -16,10 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.mechanics;
+package net.edoxile.bettermechanics.utils.datastorage;
 
-import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 import java.util.List;
 
@@ -28,24 +28,38 @@ import java.util.List;
  *
  * @author Edoxile
  */
-public class Cauldron extends BlockMechanicListener {
-    @Override
-    public boolean isTriggeredByRedstone() {
-        return false;
+public class BlockMap {
+    private final List<Block> blockList;
+    private final Block startBlock;
+    private final Block endBlock;
+    private final Material material;
+    private final byte materialData;
+    
+    public BlockMap(List<Block> blocks, Block start, Block end, Material type, byte data){
+        blockList = blocks;
+        startBlock = start;
+        endBlock = end;
+        material = type;
+        materialData = data;
+    }
+    
+    public List<Block> getList(){
+        return blockList;
     }
 
-    @Override
-    public List<Material> getMechanicActivator() {
-        return null;
+    public Block getStartBlock(){
+        return startBlock;
     }
 
-    @Override
-    public List<Material> getMechanicTarget() {
-        return null;
+    public Block getEndBlock(){
+        return endBlock;
     }
-
-    @Override
-    public String getName() {
-        return "Cauldron";
+    
+    public Material getMaterial(){
+        return material;
+    }
+    
+    public byte getMaterialData(){
+        return materialData;
     }
 }

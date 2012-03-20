@@ -19,9 +19,17 @@
 package net.edoxile.bettermechanics.listeners;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.utils.MechanicsHandler;
+import net.edoxile.bettermechanics.event.Event;
+import net.edoxile.bettermechanics.event.PlayerEvent;
+import net.edoxile.bettermechanics.handlers.MechanicsHandler;
+import net.edoxile.bettermechanics.utils.SignUtil;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,7 +37,7 @@ import org.bukkit.event.player.PlayerListener;
  * @author Edoxile
  */
 
-public class BMPlayerListener extends PlayerListener {
+public class BMPlayerListener implements Listener {
     private BetterMechanics plugin;
     private MechanicsHandler mechanicsHandler;
 
@@ -38,9 +46,38 @@ public class BMPlayerListener extends PlayerListener {
         mechanicsHandler = bm.getMechanicsHandler();
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.isCancelled())
             return;
-        mechanicsHandler.callPlayerInteractEvent(event);
+
+        if (event.getAction() == org.bukkit.event.block.Action.LEFT_CLICK_BLOCK || event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
+            PlayerEvent playerEvent = new PlayerEvent(
+                    SignUtil.isSign(event.getClickedBlock()) ? Event.Type.SIGN : Event.Type.BLOCK,
+                    event.getClickedBlock(),
+                    event.getAction() == Action.LEFT_CLICK_BLOCK ? PlayerEvent.Action.LEFT_CLICK : PlayerEvent.Action.RIGHT_CLICK,
+                    event.getPlayer()
+            );
+
+            mechanicsHandler.callPlayerEvent(playerEvent);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (event.isCancelled())
+            return;
+
+        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer());
+        mechanicsHandler.callPlayerEvent(playerEvent);
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onBlockPlace(BlockPlaceEvent event){
+        if (event.isCancelled())
+            return;
+
+        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.PLACE, event.getPlayer());
+        mechanicsHandler.callPlayerEvent(playerEvent);
     }
 }

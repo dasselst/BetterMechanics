@@ -18,7 +18,8 @@
 
 package net.edoxile.bettermechanics.models;
 
-import net.edoxile.bettermechanics.utils.BlockBagHandler;
+import net.edoxile.bettermechanics.handlers.BlockBagHandler;
+import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 
 /**
  * Created by IntelliJ IDEA.

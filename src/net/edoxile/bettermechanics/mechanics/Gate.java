@@ -19,8 +19,8 @@
 package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.BetterMechanics;
-import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanic;
-import net.edoxile.bettermechanics.utils.ConfigHandler;
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ import java.util.Set;
  *
  * @author Edoxile
  */
-public class Gate extends SignMechanic {
+public class Gate extends SignMechanicListener {
     private boolean enabled = true;
     private int maxLength = 32;
     private int maxWidth = 3;
