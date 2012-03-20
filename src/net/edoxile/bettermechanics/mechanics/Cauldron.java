@@ -18,9 +18,11 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
 import org.bukkit.Material;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,19 +31,30 @@ import java.util.List;
  * @author Edoxile
  */
 public class Cauldron extends BlockMechanicListener {
+    
+    @Override
+    public void onBlockRightClick(PlayerEvent event){
+        //Map die shit
+    }
+    
     @Override
     public boolean isTriggeredByRedstone() {
         return false;
     }
 
     @Override
+    public boolean isTriggeredByPlayer() {
+        return true;
+    }
+
+    @Override
     public List<Material> getMechanicActivator() {
-        return null;
+        return Arrays.asList(Material.AIR);
     }
 
     @Override
     public List<Material> getMechanicTarget() {
-        return null;
+        return Arrays.asList(Material.AIR);
     }
 
     @Override

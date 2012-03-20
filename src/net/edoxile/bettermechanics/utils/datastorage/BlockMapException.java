@@ -29,7 +29,8 @@ public class BlockMapException extends Exception {
         NON_ORDINAL_SIGN("This sign is not placed in an ordinal direction (east, west, north or south)!"),
         MISPLACED_SIGN("This sign-type is wrong (wall sign <> sign post)!"),
         NON_ALLOWED_MATERIAL("This mechanic is not made of an allowed material!"),
-        SIZE_LIMIT_EXCEEDED("This mechanic exceeds the size limit in some way!");
+        SIZE_LIMIT_EXCEEDED("This mechanic exceeds the size limit in some way!"),
+        NO_BLOCKMAP("This mechanic doesn't have a BlockMap, but it was called anyway!");
 
         private String errorMessage;
 

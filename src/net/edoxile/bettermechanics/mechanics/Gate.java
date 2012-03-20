@@ -18,16 +18,14 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
-import net.edoxile.bettermechanics.BetterMechanics;
+import net.edoxile.bettermechanics.event.PlayerEvent;
+import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,39 +33,38 @@ import java.util.Set;
  * @author Edoxile
  */
 public class Gate extends SignMechanicListener {
-    private boolean enabled = true;
-    private int maxLength = 32;
-    private int maxWidth = 3;
-    private int maxHeight = 32;
-    Set<Material> materialList = null;
 
-    public Gate(BetterMechanics p) {
+    public Gate() {
         ConfigHandler.GateConfig config = ConfigHandler.getInstance().getGateConfig();
-        enabled = config.isEnabled();
-        maxLength = config.getMaxLength();
-        maxWidth = config.getMaxWidth();
-        maxHeight = config.getMaxHeight();
-        materialList = config.getAllowedMaterials();
     }
 
-    public void onSignPowerOn(Block sign) {
+    @Override
+    public void onSignPowerOn(RedstoneEvent event) {
         //Close gate
     }
 
-    public void onSignPowerOff(Block sign) {
+    @Override
+    public void onSignPowerOff(RedstoneEvent event) {
         //Open gate
     }
 
-    public void onPlayerRightClickSign(Player player, Block sign) {
+    @Override
+    public void onPlayerRightClickSign(PlayerEvent event) {
         //Toggle gate
     }
 
+    @Override
     public List<String> getIdentifier() {
-        return Arrays.asList("[Gate]", "[dGate]");
+        return Arrays.asList("[Gate]", "[dGate]", "[sGate]");
     }
 
     @Override
     public boolean isTriggeredByRedstone() {
+        return true;
+    }
+
+    @Override
+    public boolean isTriggeredByPlayer() {
         return true;
     }
 
@@ -81,19 +78,13 @@ public class Gate extends SignMechanicListener {
         return true;
     }
 
+    @Override
     public List<Material> getMechanicActivator() {
         return null;
     }
 
+    @Override
     public String getName() {
         return "Gate";
-    }
-    
-    private boolean isAllowedMaterial(Material material){
-        return materialList.contains(material);
-    }
-
-    public boolean mapBlocks(){
-        return false;
     }
 }

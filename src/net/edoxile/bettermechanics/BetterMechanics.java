@@ -20,8 +20,7 @@ package net.edoxile.bettermechanics;
 
 import net.edoxile.bettermechanics.handlers.MechanicsHandler;
 import net.edoxile.bettermechanics.handlers.PermissionHandler;
-import net.edoxile.bettermechanics.listeners.BMBlockListener;
-import net.edoxile.bettermechanics.listeners.BMPlayerListener;
+import net.edoxile.bettermechanics.listeners.BMListener;
 import net.edoxile.bettermechanics.mechanics.Bridge;
 import net.edoxile.bettermechanics.mechanics.Pen;
 import net.edoxile.bettermechanics.models.PermissionType;
@@ -47,8 +46,7 @@ public class BetterMechanics extends JavaPlugin {
     private static Logger logger = Logger.getLogger("Minecraft");
     private static boolean debugMode;
     private MechanicsHandler mechanicsHandler = new MechanicsHandler();
-    private BMPlayerListener playerListener = new BMPlayerListener(this);
-    private BMBlockListener blockListener = new BMBlockListener(this);
+    private BMListener listener = new BMListener(this);
 
     public void onEnable() {
         instance = this;
@@ -58,8 +56,7 @@ public class BetterMechanics extends JavaPlugin {
         mechanicsHandler.addMechanic(new Bridge());
 
         //Register different events
-        getServer().getPluginManager().registerEvents(blockListener, this);
-        getServer().getPluginManager().registerEvents(playerListener, this);
+        getServer().getPluginManager().registerEvents(listener, this);
 
         //TODO: fix this (deprecation etc.)
         loadConfig();

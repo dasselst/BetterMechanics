@@ -1,6 +1,7 @@
 package net.edoxile.bettermechanics.event;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,13 +15,23 @@ public class RedstoneEvent extends Event {
     }
 
     private final State state;
+    private BlockFace origin;
 
-    public RedstoneEvent(State s, Type t, Block b) {
-        super(t, b);
+    public RedstoneEvent(State s) {
+        super(null, null);
         state = s;
     }
-    
-    public State getState(){
+
+    public void setData(Type t, Block b, BlockFace o) {
+        super.setData(t, b);
+        origin = o;
+    }
+
+    public State getState() {
         return state;
+    }
+
+    public BlockFace getOrigin() {
+        return origin;
     }
 }

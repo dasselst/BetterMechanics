@@ -21,14 +21,18 @@ package net.edoxile.bettermechanics.listeners;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.Event;
 import net.edoxile.bettermechanics.event.PlayerEvent;
+import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.MechanicsHandler;
 import net.edoxile.bettermechanics.utils.SignUtil;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
@@ -36,14 +40,32 @@ import org.bukkit.event.player.PlayerInteractEvent;
  *
  * @author Edoxile
  */
-
-public class BMPlayerListener implements Listener {
-    private BetterMechanics plugin;
+public class BMListener implements Listener {
     private MechanicsHandler mechanicsHandler;
+    private BlockFace[] blockFaces = new BlockFace[]{
+            BlockFace.UP, BlockFace.DOWN, BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH
+    };
 
-    public BMPlayerListener(BetterMechanics bm) {
-        plugin = bm;
-        mechanicsHandler = bm.getMechanicsHandler();
+    public BMListener(BetterMechanics plugin) {
+        mechanicsHandler = plugin.getMechanicsHandler();
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onBlockRedstoneChange(BlockRedstoneEvent event) {
+        if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 && event.getOldCurrent() > 0)
+            return;
+        RedstoneEvent redstoneEvent = new RedstoneEvent(
+                (event.getNewCurrent() > 0) ? RedstoneEvent.State.ON : RedstoneEvent.State.OFF
+        );
+        for (BlockFace blockFace : blockFaces) {
+            Block block = event.getBlock().getRelative(blockFace);
+            redstoneEvent.setData(
+                    SignUtil.isSign(event.getBlock().getRelative(blockFace))? Event.Type.SIGN : Event.Type.BLOCK,
+                    event.getBlock(),
+                    blockFace.getOppositeFace()
+            );
+            mechanicsHandler.callRedstoneEvent(redstoneEvent);
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -71,7 +93,7 @@ public class BMPlayerListener implements Listener {
         PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer());
         mechanicsHandler.callPlayerEvent(playerEvent);
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockPlace(BlockPlaceEvent event){
         if (event.isCancelled())

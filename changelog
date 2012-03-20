@@ -1,5 +1,6 @@
 Changelog:
-- About 99% codechange, dunno anymore :P
+- Changed the events & listeners. Code is now cleaner.
+- Moved the bukkit event listener in to one class in stead of separate classes.
 
 TODO:
 - Something with onSignChange(), correcting mistakes/asking permission

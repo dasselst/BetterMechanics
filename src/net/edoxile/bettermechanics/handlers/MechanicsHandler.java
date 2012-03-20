@@ -134,35 +134,39 @@ public class MechanicsHandler {
             List<SignMechanicListener> listeners = getSignListeners(event);
             main:
             for (SignMechanicListener listener : listeners) {
-                switch (event.getAction()) {
-                    case RIGHT_CLICK:
-                        listener.onPlayerRightClickSign(event);
-                        break;
-                    case LEFT_CLICK:
-                        listener.onPlayerLeftClickSign(event);
-                        break;
-                    default:
-                        break main;
+                if (listener.isTriggeredByPlayer()) {
+                    switch (event.getAction()) {
+                        case RIGHT_CLICK:
+                            listener.onPlayerRightClickSign(event);
+                            break;
+                        case LEFT_CLICK:
+                            listener.onPlayerLeftClickSign(event);
+                            break;
+                        default:
+                            break main;
+                    }
                 }
             }
         } else {
             List<BlockMechanicListener> listeners = getBlockListeners(event);
             main:
             for (BlockMechanicListener listener : listeners) {
-                switch (event.getAction()) {
-                    case RIGHT_CLICK:
-                        listener.onBlockRightClick(event);
-                        break;
-                    case LEFT_CLICK:
-                        listener.onBlockLeftClick(event);
-                        break;
-                    case BREAK:
-                        listener.onBlockBreak(event);
-                        break;
-                    case PLACE:
-                        listener.onBlockPlace(event);
-                    default:
-                        break main;
+                if (listener.isTriggeredByPlayer()) {
+                    switch (event.getAction()) {
+                        case RIGHT_CLICK:
+                            listener.onBlockRightClick(event);
+                            break;
+                        case LEFT_CLICK:
+                            listener.onBlockLeftClick(event);
+                            break;
+                        case BREAK:
+                            listener.onBlockBreak(event);
+                            break;
+                        case PLACE:
+                            listener.onBlockPlace(event);
+                        default:
+                            break main;
+                    }
                 }
             }
         }
@@ -173,30 +177,34 @@ public class MechanicsHandler {
             List<SignMechanicListener> listeners = getSignListeners(event);
             main:
             for (SignMechanicListener listener : listeners) {
-                switch (event.getState()) {
-                    case ON:
-                        listener.onSignPowerOn(event);
-                        break;
-                    case OFF:
-                        listener.onSignPowerOff(event);
-                        break;
-                    default:
-                        break main;
+                if (listener.isTriggeredByRedstone()) {
+                    switch (event.getState()) {
+                        case ON:
+                            listener.onSignPowerOn(event);
+                            break;
+                        case OFF:
+                            listener.onSignPowerOff(event);
+                            break;
+                        default:
+                            break main;
+                    }
                 }
             }
         } else {
             List<BlockMechanicListener> listeners = getBlockListeners(event);
             main:
             for (BlockMechanicListener listener : listeners) {
-                switch (event.getState()) {
-                    case ON:
-                        listener.onBlockPowerOn(event);
-                        break;
-                    case OFF:
-                        listener.onBlockPowerOff(event);
-                        break;
-                    default:
-                        break main;
+                if (listener.isTriggeredByRedstone()) {
+                    switch (event.getState()) {
+                        case ON:
+                            listener.onBlockPowerOn(event);
+                            break;
+                        case OFF:
+                            listener.onBlockPowerOff(event);
+                            break;
+                        default:
+                            break main;
+                    }
                 }
             }
         }

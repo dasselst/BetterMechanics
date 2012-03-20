@@ -21,6 +21,7 @@ package net.edoxile.bettermechanics.mechanics.interfaces;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
+import net.edoxile.bettermechanics.models.blockbags.BlockBag;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMapException;
 import org.bukkit.Material;
@@ -36,6 +37,25 @@ import java.util.logging.Level;
  * @author Edoxile
  */
 public abstract class SignMechanicListener extends BlockMechanicListener {
+    
+    private BlockMap blockMap;
+    private BlockBag blockBag;
+    
+    public BlockMap getBlockMap(){
+        return blockMap;
+    }
+    
+    public BlockBag getBlockBag(){
+        return blockBag;
+    }
+    
+    protected void setBlockMap(BlockMap map){
+        blockMap = map;
+    }
+    
+    protected void setBlockBag(BlockBag bag){
+        blockBag = bag;
+    }
 
     public void onSignPowerOn(RedstoneEvent event) {
     }
@@ -53,9 +73,9 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
 
     public abstract boolean hasBlockBag();
 
-    public BlockMap mapBlocks(Sign s) throws BlockMapException {
+    public void mapBlocks(Sign s) throws BlockMapException {
         BetterMechanics.log("BlockMapper called but not implemented in this mechanic.", Level.WARNING);
-        return null;
+        throw new BlockMapException(BlockMapException.Type.NO_BLOCKMAP);
     }
 
     public abstract List<String> getIdentifier();

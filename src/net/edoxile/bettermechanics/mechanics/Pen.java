@@ -142,6 +142,11 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     @Override
+    public boolean isTriggeredByPlayer() {
+        return true;
+    }
+
+    @Override
     public boolean hasBlockMapper() {
         return false;
     }
