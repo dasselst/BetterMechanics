@@ -30,6 +30,7 @@ public class BlockMapException extends Exception {
         MISPLACED_SIGN("This sign-type is wrong (wall sign <> sign post)!"),
         NON_ALLOWED_MATERIAL("This mechanic is not made of an allowed material!"),
         SIZE_LIMIT_EXCEEDED("This mechanic exceeds the size limit in some way!"),
+        SIDES_DO_NOT_MATCH("Both sides of the bridge need to be made of the same material!"),
         NO_BLOCKMAP("This mechanic doesn't have a BlockMap, but it was called anyway!");
 
         private String errorMessage;

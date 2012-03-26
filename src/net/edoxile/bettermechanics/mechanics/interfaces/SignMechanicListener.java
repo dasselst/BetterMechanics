@@ -21,7 +21,10 @@ package net.edoxile.bettermechanics.mechanics.interfaces;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
-import net.edoxile.bettermechanics.models.blockbags.BlockBag;
+import net.edoxile.bettermechanics.handlers.BlockBagHandler;
+import net.edoxile.bettermechanics.models.blockbags.BlockBagException;
+import net.edoxile.bettermechanics.utils.PlayerNotifier;
+import net.edoxile.bettermechanics.utils.SignUtil;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMapException;
 import org.bukkit.Material;
@@ -37,24 +40,18 @@ import java.util.logging.Level;
  * @author Edoxile
  */
 public abstract class SignMechanicListener extends BlockMechanicListener {
-    
-    private BlockMap blockMap;
-    private BlockBag blockBag;
-    
-    public BlockMap getBlockMap(){
+
+    protected BlockMap blockMap;
+    protected BlockBagHandler blockBag;
+
+    @Deprecated
+    public BlockMap getBlockMap() {
         return blockMap;
     }
-    
-    public BlockBag getBlockBag(){
+
+    @Deprecated
+    public BlockBagHandler getBlockBag() {
         return blockBag;
-    }
-    
-    protected void setBlockMap(BlockMap map){
-        blockMap = map;
-    }
-    
-    protected void setBlockBag(BlockBag bag){
-        blockBag = bag;
     }
 
     public void onSignPowerOn(RedstoneEvent event) {
@@ -74,15 +71,54 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
     public abstract boolean hasBlockBag();
 
     public void mapBlocks(Sign s) throws BlockMapException {
-        BetterMechanics.log("BlockMapper called but not implemented in this mechanic.", Level.WARNING);
+        BetterMechanics.log("BlockMapper called but not implemented in " + getName() + ".", Level.WARNING);
         throw new BlockMapException(BlockMapException.Type.NO_BLOCKMAP);
     }
 
-    public abstract List<String> getIdentifier();
+    public abstract List<String> getIdentifiers();
 
-    public abstract List<Material> getMechanicActivator();
+    public abstract List<String> getPassiveIdentifiers();
+
+    public abstract List<Material> getMechanicActivators();
+
+    @Override
+    public List<Material> getMechanicTargets() {
+        return Arrays.asList(Material.SIGN_POST, Material.WALL_SIGN);
+    }
+
+    public boolean isThisMechanic(Sign sign) {
+        return isThisMechanic(sign, false);
+    }
+
+    public boolean isThisMechanic(Sign sign, boolean passive) {
+        String id = SignUtil.getMechanicsIdentifier(sign);
+        return (getIdentifiers().contains(id) || (getPassiveIdentifiers().contains(id) && passive));
+    }
 
     public List<Material> getMechanicTarget() {
         return Arrays.asList(Material.WALL_SIGN, Material.SIGN_POST);
+    }
+
+    protected void loadData(Sign sign) throws PlayerNotifier {
+        if (sign == null) {
+            BetterMechanics.log("A RedstoneEvent was thrown to a SignMechanic, but no Sign was passed.", Level.WARNING);
+            return;
+        }
+
+        if (hasBlockMapper()) {
+            try {
+                mapBlocks(sign);
+            } catch (BlockMapException e) {
+                throw new PlayerNotifier(e.getMessage(), PlayerNotifier.Level.SEVERE, sign.getLocation());
+            }
+        }
+
+        if (hasBlockBag()) {
+            try {
+                blockBag = BlockBagHandler.locate(sign);
+            } catch (BlockBagException e) {
+                throw new PlayerNotifier(e.getMessage(), PlayerNotifier.Level.SEVERE, sign.getLocation());
+            }
+        }
     }
 }

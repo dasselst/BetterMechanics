@@ -23,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import static net.edoxile.bettermechanics.utils.StringUtil.stripBrackets;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,6 +32,7 @@ import org.bukkit.block.Sign;
  */
 public class SignUtil {
 
+    //TODO: lolwhut, this has to be simplified
     public static BlockFace getFacing(Sign sign) {
         BlockState state = sign.getBlock().getState();
         if (state instanceof org.bukkit.material.Sign) {
@@ -87,14 +89,6 @@ public class SignUtil {
 
     public static void setMechanicsIdentifier(Sign sign, String identifier) {
         sign.setLine(1, identifier);
-    }
-
-    public static String stripBrackets(String string) {
-        if (string.charAt(0) == '[' && string.charAt(string.length() - 1) == ']') {
-            return string.substring(1, string.length() - 2);
-        } else {
-            return string;
-        }
     }
 
     public static Sign getSign(Block block) {

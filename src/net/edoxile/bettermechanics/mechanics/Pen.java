@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static net.edoxile.bettermechanics.utils.StringUtil.merge;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -57,7 +59,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
 
     public void onPlayerRightClickSign(Player player, Sign sign) {
         if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
-            setText(player, sign.getLines());
+            setLines(player, sign);
         } else {
             player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
         }
@@ -84,44 +86,44 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
         if (enabled && commandSender instanceof Player) {
             Player player = (Player) commandSender;
             if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
-                    if (args.length == 0) {
-                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
-                    } else {
-                        if (args[0].equalsIgnoreCase("set")) {
-                            if (args.length < 2) {
-                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                            } else {
-                                setLines(player, args);
-                            }
-                        } else if (args[0].equalsIgnoreCase("clear")) {
-                            clear(player);
-                            player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
-                        } else if (args[0].equalsIgnoreCase("dump")) {
-                            dump(player);
-                        } else if (args[0].equalsIgnoreCase("setline")) {
-                            if (args.length < 3) {
-                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                            } else {
-                                setLine(player, args);
-                            }
-                        } else if (args[0].equalsIgnoreCase("setline")) {
-                            if (args.length < 2) {
-                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                            } else {
-                                clearLine(player, args);
-                            }
-                        } else if (args[0].equalsIgnoreCase("help")) {
-                            player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");
-                            player.sendMessage("/pen set [text] | set the sign text");
-                            player.sendMessage("/pen setline [line] [text] | set one line of the text");
-                            player.sendMessage("/pen clearline [line] | clears the specified line");
-                            player.sendMessage("/pen clear | clears the current text");
-                            player.sendMessage("/pen dump | dumps the current text");
+                if (args.length == 0) {
+                    player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
+                } else {
+                    if (args[0].equalsIgnoreCase("set")) {
+                        if (args.length < 2) {
+                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
                         } else {
-                            player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen <set|clear>|setline|help>");
+                            setLines(player, args);
                         }
+                    } else if (args[0].equalsIgnoreCase("clear")) {
+                        clear(player);
+                        player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
+                    } else if (args[0].equalsIgnoreCase("dump")) {
+                        dump(player);
+                    } else if (args[0].equalsIgnoreCase("setline")) {
+                        if (args.length < 3) {
+                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                        } else {
+                            setLine(player, args);
+                        }
+                    } else if (args[0].equalsIgnoreCase("setline")) {
+                        if (args.length < 2) {
+                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                        } else {
+                            clearLine(player, args);
+                        }
+                    } else if (args[0].equalsIgnoreCase("help")) {
+                        player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");
+                        player.sendMessage("/pen set [text] | set the sign text");
+                        player.sendMessage("/pen setline [line] [text] | set one line of the text");
+                        player.sendMessage("/pen clearline [line] | clears the specified line");
+                        player.sendMessage("/pen clear | clears the current text");
+                        player.sendMessage("/pen dump | dumps the current text");
+                    } else {
+                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen <set|clear>|setline|help>");
                     }
-                    return true;
+                }
+                return true;
             } else {
                 player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
             }
@@ -166,29 +168,35 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
 
     private HashMap<Player, String[]> dataMap = new HashMap<Player, String[]>();
 
-    private void setLine(Player player, String[] args) {
+    private String[] getPlayerData(Player player) {
+        String[] data = dataMap.get(player);
+        if (data == null) {
+            player.sendMessage(ChatColor.YELLOW + "You didn't have a message set. Using an empty sign.");
+            return new String[]{"", "", "", ""};
+        } else {
+            return data;
+        }
+    }
+
+    private int getLineIndex(String arg) {
         try {
-            String[] data = dataMap.get(player);
-            if (data == null) {
-                player.sendMessage(ChatColor.YELLOW + "You didn't have a message set. Using an empty sign.");
-                data = new String[4];
-                data[0] = "";
-                data[1] = "";
-                data[2] = "";
-                data[3] = "";
-            }
-            int line = Integer.parseInt(args[1]);
-            String text = mergeString(args, " ", 2);
+            int number = Integer.parseInt(arg);
+            return ((number < 0 || number > 3) ? -1 : number - 1);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private void setLine(Player player, String[] args) {
+        String[] data = getPlayerData(player);
+        int line = getLineIndex(args[1]);
+        if (line > -1) {
+            String text = merge(args, " ", 2);
             data[line] = text;
             dataMap.put(player, data);
-            player.sendMessage(ChatColor.GOLD + "New pen text:");
-            for (String s : data) {
-                player.sendMessage(ChatColor.GOLD + "[" + s + "]");
-            }
-        } catch (NumberFormatException ex) {
-            player.sendMessage(ChatColor.RED + "Invalid number format for line number.");
-        } catch (IndexOutOfBoundsException ex) {
-            player.sendMessage(ChatColor.RED + "Invalid line number. Line numbers start at 0 and end at 3.");
+            dump(player);
+        } else {
+            player.sendMessage(ChatColor.RED + "Invalid line number. Line numbers start at 1 and end at 4.");
         }
     }
 
@@ -197,71 +205,52 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     private void clearLine(Player player, String[] args) {
-        try {
-            int line = Integer.parseInt(args[1]);
-            String[] data = dataMap.get(player);
+        String[] data = getPlayerData(player);
+        int line = getLineIndex(args[1]);
+        if (line > -1) {
             data[line] = "";
             dataMap.put(player, data);
-            player.sendMessage(ChatColor.GOLD + "New pen text:");
-            for (String s : data) {
-                player.sendMessage(ChatColor.GOLD + "[" + s + "]");
-            }
-        } catch (NumberFormatException ex) {
-            player.sendMessage(ChatColor.RED + "Invalid number format for line number.");
-        } catch (IndexOutOfBoundsException ex) {
-            player.sendMessage(ChatColor.RED + "Invalid line number. Line numbers start at 0 and end at 3.");
+            dump(player);
+        } else {
+            player.sendMessage(ChatColor.RED + "Invalid line number. Line numbers start at 1 and end at 4.");
         }
     }
 
     private void setLines(Player player, String[] args) {
-        try {
-            String[] data = parseText(args);
+        String[] data = parseLines(args);
+        if (data != null) {
             dataMap.put(player, data);
-            player.sendMessage(ChatColor.GOLD + "New pen text:");
-            for (String s : data) {
-                player.sendMessage(ChatColor.GOLD + "[" + s + "]");
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            player.sendMessage(ChatColor.DARK_RED + "Your text contains more than 4 lines.");
-        } catch (StringIndexOutOfBoundsException e) {
-            player.sendMessage(ChatColor.DARK_RED + "At least one of your lines has more than 15 chars.");
+            dump(player);
+        } else {
+            player.sendMessage(ChatColor.RED + "To many lines or lines to long ( < 15 characters ).");
         }
     }
 
-    private void setText(Player player, String[] args) {
-        dataMap.put(player, args);
-        player.sendMessage(ChatColor.GOLD + "New pen text:");
-        for (String s : args) {
-            player.sendMessage(ChatColor.GOLD + "[" + s + "]");
-        }
+    private void setLines(Player player, Sign otherSign) {
+        dataMap.put(player, otherSign.getLines());
+        dump(player);
     }
 
     public String[] getLines(Player player) {
         return dataMap.get(player);
     }
 
-    private String[] parseText(String[] data) throws ArrayIndexOutOfBoundsException, StringIndexOutOfBoundsException {
-        data = mergeString(data, " ", 1).split("\\^");
+    private String[] parseLines(String[] data) {
+
+        data = merge(data, " ", 1).split("\\^");
         if (data.length > 4) {
-            throw new ArrayIndexOutOfBoundsException();
+            return null;
         }
-        String[] lines = {"", "", "", ""};
+
+        String[] lines = new String[]{"", "", "", ""};
+
         for (int i = 0; i < data.length; i++) {
             if (data[i].length() > 15)
-                throw new StringIndexOutOfBoundsException();
+                return null;
             lines[i] = data[i];
         }
-        return lines;
-    }
 
-    private String mergeString(String[] data, String glue, int offset) {
-        String str = "";
-        for (int i = offset; i < data.length; i++) {
-            str += data[i];
-            if ((i + 1) != data.length)
-                str += glue;
-        }
-        return str;
+        return lines;
     }
 
     private void dump(Player player) {
@@ -269,7 +258,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
             player.sendMessage(ChatColor.GOLD + "Your pen is empty.");
         } else {
             String[] lines = dataMap.get(player);
-            player.sendMessage(ChatColor.GOLD + "Pen dump:");
+            player.sendMessage(ChatColor.GOLD + "Your pen contains:");
             for (String s : lines) {
                 player.sendMessage(ChatColor.GOLD + "[" + s + "]");
             }

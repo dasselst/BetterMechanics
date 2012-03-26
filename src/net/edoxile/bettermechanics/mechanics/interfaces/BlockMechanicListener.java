@@ -53,7 +53,7 @@ public abstract class BlockMechanicListener implements IMechanicListener {
 
     public abstract boolean isTriggeredByPlayer();
 
-    public abstract List<Material> getMechanicActivator();
+    public abstract List<Material> getMechanicActivators();
 
-    public abstract List<Material> getMechanicTarget();
+    public abstract List<Material> getMechanicTargets();
 }

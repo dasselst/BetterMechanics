@@ -59,7 +59,7 @@ public class MechanicsHandler {
         if (mechanicListener instanceof SignMechanicListener) {
             SignMechanicListener signMechanic = (SignMechanicListener) mechanicListener;
             if (signMechanic.isTriggeredByRedstone()) {
-                for (String identifier : signMechanic.getIdentifier()) {
+                for (String identifier : signMechanic.getIdentifiers()) {
                     ArrayList<SignMechanicListener> list = redstoneSignMechanicMap.get(identifier);
                     if (list == null) {
                         list = new ArrayList<SignMechanicListener>();
@@ -72,7 +72,7 @@ public class MechanicsHandler {
                 }
             }
             if (signMechanic.isTriggeredByPlayer()) {
-                for (String identifier : signMechanic.getIdentifier()) {
+                for (String identifier : signMechanic.getIdentifiers()) {
                     ArrayList<SignMechanicListener> list = signMechanicMap.get(identifier);
                     if (list == null) {
                         list = new ArrayList<SignMechanicListener>();
@@ -87,7 +87,7 @@ public class MechanicsHandler {
         } else if (mechanicListener instanceof BlockMechanicListener) {
             BlockMechanicListener blockMechanicListener = (BlockMechanicListener) mechanicListener;
             if (blockMechanicListener.isTriggeredByRedstone()) {
-                for (Material target : blockMechanicListener.getMechanicTarget()) {
+                for (Material target : blockMechanicListener.getMechanicTargets()) {
                     ArrayList<BlockMechanicListener> list = redstoneBlockMechanicMap.get(target);
                     if (list == null) {
                         list = new ArrayList<BlockMechanicListener>();
@@ -100,7 +100,7 @@ public class MechanicsHandler {
                 }
             }
             if (blockMechanicListener.isTriggeredByPlayer()) {
-                for (Material target : blockMechanicListener.getMechanicTarget()) {
+                for (Material target : blockMechanicListener.getMechanicTargets()) {
                     ArrayList<BlockMechanicListener> list = blockMechanicMap.get(target);
                     if (list == null) {
                         list = new ArrayList<BlockMechanicListener>();
