@@ -13,8 +13,8 @@ public abstract class Event {
         BLOCK
     }
 
-    protected Type type;
-    protected Block block;
+    private Type type;
+    private Block block;
 
     public Event(Type t, Block b) {
         type = t;

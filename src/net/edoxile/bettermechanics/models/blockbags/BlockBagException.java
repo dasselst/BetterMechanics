@@ -29,7 +29,7 @@ public class BlockBagException extends Exception{
         NO_SPACE_LEFT("This sign is not placed in an ordinal direction (east, west, north or south)!"),
         NOT_ENOUGH_MATERIALS("This sign-type is wrong (wall sign <> sign post)!");
 
-        private String errorMessage;
+        private final String errorMessage;
 
         private Type(String errorMsg) {
             errorMessage = errorMsg;

@@ -23,7 +23,7 @@ import java.util.List;
  * @author Edoxile
  */
 public class Bridge extends SignMechanicListener {
-    ConfigHandler.BridgeConfig config = ConfigHandler.getInstance().getBridgeConfig();
+    private final ConfigHandler.BridgeConfig config = ConfigHandler.getInstance().getBridgeConfig();
 
     public Bridge() {
     }
@@ -133,8 +133,10 @@ public class Bridge extends SignMechanicListener {
                                     Block currentBlock = startBlock.getRelative(direction);
                                     while (!currentBlock.equals(endBlock)) {
                                         blockList.add(currentBlock);
-                                        blockList.add(currentBlock.getRelative(BlockFace.EAST));
-                                        blockList.add(currentBlock.getRelative(BlockFace.WEST));
+                                        if (isSmall) {
+                                            blockList.add(currentBlock.getRelative(BlockFace.EAST));
+                                            blockList.add(currentBlock.getRelative(BlockFace.WEST));
+                                        }
                                         currentBlock = currentBlock.getRelative(direction);
                                     }
                                     blockMap = new BlockMap(blockList, startBlock, endBlock, type, data);
@@ -151,8 +153,10 @@ public class Bridge extends SignMechanicListener {
                                     Block currentBlock = startBlock.getRelative(direction);
                                     while (!currentBlock.equals(endBlock)) {
                                         blockList.add(currentBlock);
-                                        blockList.add(currentBlock.getRelative(BlockFace.NORTH));
-                                        blockList.add(currentBlock.getRelative(BlockFace.SOUTH));
+                                        if (isSmall) {
+                                            blockList.add(currentBlock.getRelative(BlockFace.NORTH));
+                                            blockList.add(currentBlock.getRelative(BlockFace.SOUTH));
+                                        }
                                         currentBlock = currentBlock.getRelative(direction);
                                     }
                                     blockMap = new BlockMap(blockList, startBlock, endBlock, type, data);

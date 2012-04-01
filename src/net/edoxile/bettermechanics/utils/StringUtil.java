@@ -15,12 +15,12 @@ public class StringUtil {
         }
     }
 
-    public static String merge(String[] data, String glue, int offset) {
+    public static String merge(String[] data, int offset) {
         String str = "";
         for (int i = offset; i < data.length; i++) {
             str += data[i];
             if ((i + 1) != data.length)
-                str += glue;
+                str += " ";
         }
         return str;
     }

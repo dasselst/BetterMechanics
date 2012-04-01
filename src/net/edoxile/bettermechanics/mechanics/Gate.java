@@ -54,8 +54,13 @@ public class Gate extends SignMechanicListener {
     }
 
     @Override
-    public List<String> getIdentifier() {
+    public List<String> getIdentifiers() {
         return Arrays.asList("[Gate]", "[dGate]", "[sGate]");
+    }
+
+    @Override
+    public List<String> getPassiveIdentifiers() {
+        return null;
     }
 
     @Override
@@ -79,7 +84,7 @@ public class Gate extends SignMechanicListener {
     }
 
     @Override
-    public List<Material> getMechanicActivator() {
+    public List<Material> getMechanicActivators() {
         return null;
     }
 

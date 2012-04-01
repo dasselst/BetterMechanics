@@ -106,6 +106,7 @@ public class MaterialMap {
             _values = values;
             size = _values.length;
         } catch (KeyNotFoundException e) {
+            //Do nothing, apparently the item does not exist.
         }
     }
 
@@ -149,7 +150,8 @@ public class MaterialMap {
     }
 
     @Override
-    public MaterialMap clone() {
+    public MaterialMap clone() throws CloneNotSupportedException {
+        super.clone();
         return new MaterialMap(_keys.clone(), _values.clone(), size);
     }
 
@@ -157,7 +159,7 @@ public class MaterialMap {
         return size == 0;
     }
 
-    public class KeyNotFoundException extends Exception {
+    private class KeyNotFoundException extends Exception {
     }
 }
 

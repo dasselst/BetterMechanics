@@ -27,8 +27,8 @@ import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
  * @author Edoxile
  */
 public class SignMechanicEventData {
-    private BlockMap blockMap;
-    private BlockBagHandler blockBag;
+    private final BlockMap blockMap;
+    private final BlockBagHandler blockBag;
     
     public SignMechanicEventData(BlockMap map, BlockBagHandler bag){
         blockMap = map;

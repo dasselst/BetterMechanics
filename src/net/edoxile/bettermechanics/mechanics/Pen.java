@@ -82,59 +82,68 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
         }
     }
 
+    @Override
     public boolean onCommand(CommandSender commandSender, Command command, String[] args) {
-        if (enabled && commandSender instanceof Player) {
-            Player player = (Player) commandSender;
-            if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
-                if (args.length == 0) {
-                    player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
-                } else {
-                    if (args[0].equalsIgnoreCase("set")) {
-                        if (args.length < 2) {
-                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                        } else {
-                            setLines(player, args);
-                        }
-                    } else if (args[0].equalsIgnoreCase("clear")) {
-                        clear(player);
-                        player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
-                    } else if (args[0].equalsIgnoreCase("dump")) {
-                        dump(player);
-                    } else if (args[0].equalsIgnoreCase("setline")) {
-                        if (args.length < 3) {
-                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                        } else {
-                            setLine(player, args);
-                        }
-                    } else if (args[0].equalsIgnoreCase("setline")) {
-                        if (args.length < 2) {
-                            player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
-                        } else {
-                            clearLine(player, args);
-                        }
-                    } else if (args[0].equalsIgnoreCase("help")) {
-                        player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");
-                        player.sendMessage("/pen set [text] | set the sign text");
-                        player.sendMessage("/pen setline [line] [text] | set one line of the text");
-                        player.sendMessage("/pen clearline [line] | clears the specified line");
-                        player.sendMessage("/pen clear | clears the current text");
-                        player.sendMessage("/pen dump | dumps the current text");
+        if (command.getName().equalsIgnoreCase("pen")) {
+            if (enabled && commandSender instanceof Player) {
+                Player player = (Player) commandSender;
+                if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
+                    if (args.length == 0) {
+                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
                     } else {
-                        player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen <set|clear>|setline|help>");
+                        if (args[0].equalsIgnoreCase("set")) {
+                            if (args.length < 2) {
+                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                            } else {
+                                setLines(player, args);
+                            }
+                        } else if (args[0].equalsIgnoreCase("clear")) {
+                            clear(player);
+                            player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
+                        } else if (args[0].equalsIgnoreCase("dump")) {
+                            dump(player);
+                        } else if (args[0].equalsIgnoreCase("setline")) {
+                            if (args.length < 3) {
+                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                            } else {
+                                setLine(player, args);
+                            }
+                        } else if (args[0].equalsIgnoreCase("setline")) {
+                            if (args.length < 2) {
+                                player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
+                            } else {
+                                clearLine(player, args);
+                            }
+                        } else if (args[0].equalsIgnoreCase("help")) {
+                            player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");
+                            player.sendMessage("/pen set [text] | set the sign text");
+                            player.sendMessage("/pen setline [line] [text] | set one line of the text");
+                            player.sendMessage("/pen clearline [line] | clears the specified line");
+                            player.sendMessage("/pen clear | clears the current text");
+                            player.sendMessage("/pen dump | dumps the current text");
+                        } else {
+                            player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen <set|clear>|setline|help>");
+                        }
                     }
+                } else {
+                    player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
                 }
-                return true;
             } else {
-                player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
+                commandSender.sendMessage("Pen disabled or using from commandline!");
             }
-
+            return true;
         } else {
-            commandSender.sendMessage("Pen disabled or using from commandline!");
+            return false;
         }
-        return true;
     }
 
-    public List<String> getIdentifier() {
+    @Override
+    public List<String> getIdentifiers() {
+        return null;
+    }
+
+    @Override
+    public List<String> getPassiveIdentifiers() {
         return null;
     }
 
@@ -158,15 +167,17 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
         return false;
     }
 
-    public List<Material> getMechanicActivator() {
+    @Override
+    public List<Material> getMechanicActivators() {
         return Arrays.asList(tool);
     }
 
+    @Override
     public String getName() {
         return "Pen";
     }
 
-    private HashMap<Player, String[]> dataMap = new HashMap<Player, String[]>();
+    private final HashMap<Player, String[]> dataMap = new HashMap<Player, String[]>();
 
     private String[] getPlayerData(Player player) {
         String[] data = dataMap.get(player);
@@ -191,7 +202,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
         String[] data = getPlayerData(player);
         int line = getLineIndex(args[1]);
         if (line > -1) {
-            String text = merge(args, " ", 2);
+            String text = merge(args, 2);
             data[line] = text;
             dataMap.put(player, data);
             dump(player);
@@ -231,13 +242,13 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
         dump(player);
     }
 
-    public String[] getLines(Player player) {
+    private String[] getLines(Player player) {
         return dataMap.get(player);
     }
 
     private String[] parseLines(String[] data) {
 
-        data = merge(data, " ", 1).split("\\^");
+        data = merge(data, 1).split("\\^");
         if (data.length > 4) {
             return null;
         }

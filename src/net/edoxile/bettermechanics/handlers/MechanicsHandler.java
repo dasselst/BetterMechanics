@@ -46,13 +46,13 @@ import java.util.logging.Level;
 
 public class MechanicsHandler {
 
-    private HashMap<String, ArrayList<SignMechanicListener>> redstoneSignMechanicMap = new HashMap<String, ArrayList<SignMechanicListener>>();
-    private HashMap<Material, ArrayList<BlockMechanicListener>> redstoneBlockMechanicMap = new HashMap<Material, ArrayList<BlockMechanicListener>>();
+    private final HashMap<String, ArrayList<SignMechanicListener>> redstoneSignMechanicMap = new HashMap<String, ArrayList<SignMechanicListener>>();
+    private final HashMap<Material, ArrayList<BlockMechanicListener>> redstoneBlockMechanicMap = new HashMap<Material, ArrayList<BlockMechanicListener>>();
 
-    private HashMap<String, ArrayList<SignMechanicListener>> signMechanicMap = new HashMap<String, ArrayList<SignMechanicListener>>();
-    private HashMap<Material, ArrayList<BlockMechanicListener>> blockMechanicMap = new HashMap<Material, ArrayList<BlockMechanicListener>>();
+    private final HashMap<String, ArrayList<SignMechanicListener>> signMechanicMap = new HashMap<String, ArrayList<SignMechanicListener>>();
+    private final HashMap<Material, ArrayList<BlockMechanicListener>> blockMechanicMap = new HashMap<Material, ArrayList<BlockMechanicListener>>();
 
-    private HashMap<String, IMechanicCommandListener> commandableMechanicMap = new HashMap<String, IMechanicCommandListener>();
+    private final HashMap<String, IMechanicCommandListener> commandableMechanicMap = new HashMap<String, IMechanicCommandListener>();
 
     public void addMechanic(IMechanicListener mechanicListener) {
         //TODO: check if this list works as it's supposed to (with passing a reference)

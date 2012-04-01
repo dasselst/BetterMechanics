@@ -41,8 +41,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
  * @author Edoxile
  */
 public class BMListener implements Listener {
-    private MechanicsHandler mechanicsHandler;
-    private BlockFace[] blockFaces = new BlockFace[]{
+    private final MechanicsHandler mechanicsHandler;
+    private final BlockFace[] blockFaces = new BlockFace[]{
             BlockFace.UP, BlockFace.DOWN, BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH
     };
 

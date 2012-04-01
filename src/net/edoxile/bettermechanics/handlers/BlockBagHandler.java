@@ -25,8 +25,6 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,8 +34,8 @@ import java.util.List;
 public class BlockBagHandler {
     public static BlockBagHandler locate(Sign sign) throws BlockBagException {
         BlockBag source = null, sink = null;
-        ArrayList<Block> signList = searchBlockType(sign.getBlock(), 2, Material.WALL_SIGN, Material.SIGN_POST);
-        ChestBag chestBag = new ChestBag((Chest) searchSingleBlockType(sign.getBlock(), 2, Material.CHEST).getState());
+        ArrayList<Block> signList = searchSigns(sign.getBlock(), 2);
+        ChestBag chestBag = new ChestBag((Chest) searchChest(sign.getBlock(), 2).getState());
         if (signList.isEmpty() && chestBag.isEmpty()) {
             throw new BlockBagException(BlockBagException.Type.NO_BAG_FOUND);
         } else {
@@ -97,9 +95,8 @@ public class BlockBagHandler {
         }
     }
 
-    private static ArrayList<Block> searchBlockType(Block block, int distance, Material... materials) {
+    private static ArrayList<Block> searchSigns(Block block, int distance) {
         ArrayList<Block> blockList = new ArrayList<Block>();
-        List<Material> materialList = Arrays.asList(materials);
         for (int dy = -distance; dy < 0; dy++) {
             for (int dx = -distance; dx <= distance; dx++) {
                 for (int dz = -distance; dz <= distance; dz++) {
@@ -107,7 +104,7 @@ public class BlockBagHandler {
                         continue;
                     }
                     Block toCheck = block.getRelative(dx, dy, dz);
-                    if (materialList.contains(toCheck.getType())) {
+                    if (toCheck.getTypeId() == Material.WALL_SIGN.getId() || toCheck.getTypeId() == Material.SIGN_POST.getId()) {
                         blockList.add(toCheck);
                     }
                 }
@@ -120,7 +117,7 @@ public class BlockBagHandler {
                         continue;
                     }
                     Block toCheck = block.getRelative(dx, dy, dz);
-                    if (materialList.contains(toCheck.getType())) {
+                    if (toCheck.getTypeId() == Material.WALL_SIGN.getId() || toCheck.getTypeId() == Material.SIGN_POST.getId()) {
                         blockList.add(toCheck);
                     }
                 }
@@ -129,7 +126,7 @@ public class BlockBagHandler {
         return blockList;
     }
 
-    private static Block searchSingleBlockType(Block block, int distance, Material material) {
+    private static Block searchChest(Block block, int distance) {
         for (int dy = -distance; dy < 0; dy++) {
             for (int dx = -distance; dx <= distance; dx++) {
                 for (int dz = -distance; dz <= distance; dz++) {
@@ -137,7 +134,7 @@ public class BlockBagHandler {
                         continue;
                     }
                     Block toCheck = block.getRelative(dx, dy, dz);
-                    if (toCheck.getTypeId() == material.getId()) {
+                    if (toCheck.getTypeId() == Material.CHEST.getId()) {
                         return toCheck;
                     }
                 }
@@ -150,7 +147,7 @@ public class BlockBagHandler {
                         continue;
                     }
                     Block toCheck = block.getRelative(dx, dy, dz);
-                    if (toCheck.getTypeId() == material.getId()) {
+                    if (toCheck.getTypeId() == Material.CHEST.getId()) {
                         return toCheck;
                     }
                 }

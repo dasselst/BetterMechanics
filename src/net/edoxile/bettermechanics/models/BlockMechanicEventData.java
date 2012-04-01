@@ -23,5 +23,6 @@ package net.edoxile.bettermechanics.models;
  *
  * @author Edoxile
  */
+@Deprecated
 public class BlockMechanicEventData {
 }

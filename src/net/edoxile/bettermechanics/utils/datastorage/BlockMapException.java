@@ -33,7 +33,7 @@ public class BlockMapException extends Exception {
         SIDES_DO_NOT_MATCH("Both sides of the bridge need to be made of the same material!"),
         NO_BLOCKMAP("This mechanic doesn't have a BlockMap, but it was called anyway!");
 
-        private String errorMessage;
+        private final String errorMessage;
 
         private Type(String errorMsg) {
             errorMessage = errorMsg;
@@ -44,7 +44,7 @@ public class BlockMapException extends Exception {
         }
     }
 
-    private Type type;
+    private final Type type;
 
     public BlockMapException(Type type) {
         super(type.getErrorMessage());

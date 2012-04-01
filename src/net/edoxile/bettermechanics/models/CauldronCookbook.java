@@ -42,7 +42,7 @@ import java.util.logging.Level;
  * @author sk89q, Edoxile
  */
 public class CauldronCookbook {
-    private List<Recipe> recipes = new ArrayList<Recipe>();
+    private final List<Recipe> recipes = new ArrayList<Recipe>();
 
     @SuppressWarnings("unchecked")
     public CauldronCookbook() {
@@ -105,7 +105,7 @@ public class CauldronCookbook {
         }
     }
 
-    public void add(Recipe recipe) {
+    private void add(Recipe recipe) {
         recipes.add(recipe);
     }
 

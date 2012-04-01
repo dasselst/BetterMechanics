@@ -23,7 +23,6 @@ import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.listeners.BMListener;
 import net.edoxile.bettermechanics.mechanics.Bridge;
 import net.edoxile.bettermechanics.mechanics.Pen;
-import net.edoxile.bettermechanics.models.PermissionType;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -42,12 +41,13 @@ import java.util.logging.Logger;
  */
 public class BetterMechanics extends JavaPlugin {
     private static BetterMechanics instance = null;
-    private static PermissionHandler permissionHandler = null;
-    private static Logger logger = Logger.getLogger("Minecraft");
+    private static PermissionHandler permissionHandler = new PermissionHandler();
+    private static final Logger logger = Logger.getLogger("Minecraft");
     private static boolean debugMode;
-    private MechanicsHandler mechanicsHandler = new MechanicsHandler();
-    private BMListener listener = new BMListener(this);
+    private final MechanicsHandler mechanicsHandler = new MechanicsHandler();
+    private final BMListener listener = new BMListener(this);
 
+    @Override
     public void onEnable() {
         instance = this;
         permissionHandler = new PermissionHandler();
@@ -65,11 +65,13 @@ public class BetterMechanics extends JavaPlugin {
         log("Enabled! Version: " + getDescription().getVersion() + ".");
     }
 
+    @Override
     public void onDisable() {
         instance = null;
         log("Disabled.");
     }
 
+    @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         return mechanicsHandler.callCommandEvent(command, commandSender, args);
     }
@@ -78,8 +80,8 @@ public class BetterMechanics extends JavaPlugin {
         return mechanicsHandler;
     }
 
-    public boolean hasPermission(Player player, Block block, PermissionType type) {
-        return true;
+    public boolean hasPermission(Player player, Block block, String node, PermissionHandler.Checks checks) {
+        return permissionHandler.hasPermission(player, block, node, checks);
     }
 
     public static void log(String msg) {
@@ -104,6 +106,7 @@ public class BetterMechanics extends JavaPlugin {
         return getFile();
     }
 
+    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -117,6 +120,5 @@ public class BetterMechanics extends JavaPlugin {
     }
 
     public void loadConfig(){
-
     }
 }

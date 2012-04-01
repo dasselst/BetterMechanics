@@ -38,9 +38,9 @@ import java.util.logging.Level;
  * @author Edoxile
  */
 public class ConfigHandler {
-    private static ConfigHandler instance = new ConfigHandler();
-    private static BetterMechanics plugin = BetterMechanics.getInstance();
-    private static File configFile = new File(plugin.getDataFolder(), "config.yml");
+    private static final ConfigHandler instance = new ConfigHandler();
+    private static final BetterMechanics plugin = BetterMechanics.getInstance();
+    private static final File configFile = new File(plugin.getDataFolder(), "config.yml");
     private static FileConfiguration config = new YamlConfiguration();
 
     private ConfigHandler() {
@@ -63,16 +63,16 @@ public class ConfigHandler {
         return instance;
     }
 
-    private FileConfiguration configuration = BetterMechanics.getInstance().getPluginConfig();
-    private BridgeConfig bridgeConfig;
-    private GateConfig gateConfig;
-    private DoorConfig doorConfig;
-    private LiftConfig liftConfig;
-    private TeleLiftConfig teleLiftConfig;
-    private HiddenSwitchConfig hiddenSwitchConfig;
-    private AmmeterConfig ammeterConfig;
+    private final FileConfiguration configuration = BetterMechanics.getInstance().getPluginConfig();
+    private final BridgeConfig bridgeConfig;
+    private final GateConfig gateConfig;
+    private final DoorConfig doorConfig;
+    private final LiftConfig liftConfig;
+    private final TeleLiftConfig teleLiftConfig;
+    private final HiddenSwitchConfig hiddenSwitchConfig;
+    private final AmmeterConfig ammeterConfig;
     private CauldronConfig cauldronConfig;
-    private PenConfig penConfig;
+    private final PenConfig penConfig;
     private PermissionsConfig permisionsConfig;
 
     public FileConfiguration getConfiguration() {
@@ -109,7 +109,7 @@ public class ConfigHandler {
     }
 
     public class BridgeConfig {
-        private List<Material> defaultMaterials = Arrays.asList(
+        private final List<Material> defaultMaterials = Arrays.asList(
                 Material.WOOD, Material.SPONGE, Material.LAPIS_BLOCK, Material.WOOL, Material.GOLD_BLOCK, Material.IRON_BLOCK,
                 Material.STEP, Material.BRICK, Material.BOOKSHELF, Material.DIAMOND_BLOCK, Material.SNOW_BLOCK
         );
@@ -150,7 +150,7 @@ public class ConfigHandler {
     }
 
     public class GateConfig {
-        private List<Material> defaultMaterials = Arrays.asList(
+        private final List<Material> defaultMaterials = Arrays.asList(
                 Material.FENCE, Material.IRON_FENCE
         );
         private final boolean enabled;
@@ -220,7 +220,7 @@ public class ConfigHandler {
     }
 
     public class DoorConfig {
-        private List<Material> defaultMaterials = Arrays.asList(
+        private final List<Material> defaultMaterials = Arrays.asList(
                 Material.WOOD, Material.SPONGE, Material.LAPIS_BLOCK, Material.WOOL, Material.GOLD_BLOCK, Material.IRON_BLOCK,
                 Material.STEP, Material.BRICK, Material.BOOKSHELF, Material.DIAMOND_BLOCK, Material.SNOW_BLOCK
         );

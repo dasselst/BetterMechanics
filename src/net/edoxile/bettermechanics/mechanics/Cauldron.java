@@ -22,7 +22,6 @@ import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
 import org.bukkit.Material;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,13 +47,13 @@ public class Cauldron extends BlockMechanicListener {
     }
 
     @Override
-    public List<Material> getMechanicActivator() {
-        return Arrays.asList(Material.AIR);
+    public List<Material> getMechanicActivators() {
+        return null;
     }
 
     @Override
-    public List<Material> getMechanicTarget() {
-        return Arrays.asList(Material.AIR);
+    public List<Material> getMechanicTargets() {
+        return null;
     }
 
     @Override

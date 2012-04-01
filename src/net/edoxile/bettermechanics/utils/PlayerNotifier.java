@@ -17,7 +17,7 @@ public class PlayerNotifier extends Throwable {
         WARNING(ChatColor.RED),
         SEVERE(ChatColor.DARK_RED);
 
-        private ChatColor color;
+        private final ChatColor color;
 
         private Level(ChatColor c) {
             color = c;
@@ -28,9 +28,9 @@ public class PlayerNotifier extends Throwable {
         }
     }
 
-    private String message;
-    private Level level;
-    private Location location;
+    private final String message;
+    private final Level level;
+    private final Location location;
 
     public PlayerNotifier(String msg, Level lvl, Location loc) {
         level = lvl;

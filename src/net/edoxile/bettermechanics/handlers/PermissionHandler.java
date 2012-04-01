@@ -41,9 +41,9 @@ import static com.sk89q.worldguard.bukkit.BukkitUtil.toVector;
  */
 public class PermissionHandler {
 
-    public boolean enabled;
-    public boolean zonesEnabled;
-    public boolean worldGuardEnabled;
+    private final boolean enabled;
+    private final boolean zonesEnabled;
+    private final boolean worldGuardEnabled;
 
     private Zones zones = null;
     private WorldGuardPlugin worldGuard = null;
@@ -103,7 +103,7 @@ public class PermissionHandler {
         return !enabled || player.isOp() || player.hasPermission("BetterMechanics." + node);
     }
 
-    public boolean playerCanBuild(Player player, Block block) {
+    private boolean playerCanBuild(Player player, Block block) {
         if (enabled) {
             boolean returnValue = false;
             if (zonesEnabled) {
@@ -123,7 +123,7 @@ public class PermissionHandler {
         }
     }
 
-    public boolean playerCanHit(Player player, Block block) {
+    private boolean playerCanHit(Player player, Block block) {
         if (enabled) {
             boolean returnValue = false;
             if (zonesEnabled) {

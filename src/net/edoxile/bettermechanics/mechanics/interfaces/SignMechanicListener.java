@@ -79,6 +79,7 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
 
     public abstract List<String> getPassiveIdentifiers();
 
+    @Override
     public abstract List<Material> getMechanicActivators();
 
     @Override
@@ -90,7 +91,7 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
         return isThisMechanic(sign, false);
     }
 
-    public boolean isThisMechanic(Sign sign, boolean passive) {
+    private boolean isThisMechanic(Sign sign, boolean passive) {
         String id = SignUtil.getMechanicsIdentifier(sign);
         return (getIdentifiers().contains(id) || (getPassiveIdentifiers().contains(id) && passive));
     }

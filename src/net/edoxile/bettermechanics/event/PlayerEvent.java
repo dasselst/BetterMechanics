@@ -16,8 +16,8 @@ public class PlayerEvent extends Event {
         BREAK
     }
 
-    private Player player;
-    private Action action;
+    private final Player player;
+    private final Action action;
     
     public PlayerEvent(Type t, Block b, Action a, Player p){
         super(t, b);

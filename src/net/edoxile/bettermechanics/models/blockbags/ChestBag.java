@@ -27,7 +27,7 @@ import org.bukkit.block.Chest;
  * @author Edoxile
  */
 public class ChestBag extends BlockBag {
-    Chest chest;
+    private final Chest chest;
 
     public ChestBag(Chest c) {
         chest = c;
