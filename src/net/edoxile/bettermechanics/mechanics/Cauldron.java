@@ -21,6 +21,7 @@ package net.edoxile.bettermechanics.mechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 
 import java.util.List;
 
@@ -33,7 +34,17 @@ public class Cauldron extends BlockMechanicListener {
 
     @Override
     public void onBlockRightClick(PlayerEvent event) {
-        //Map die shit
+        Block block = event.getBlock();
+        //
+        if (isLava(block.getRelative(0, -1, 0))) {
+            //
+        } else if (isLava(block.getRelative(0, -2, 0))) {
+            //
+        } else if (isLava(block.getRelative(0, -3, 0))) {
+            //
+        } else if (isLava(block.getRelative(0, -4, 0))) {
+            //
+        }
     }
 
     @Override
@@ -59,5 +70,9 @@ public class Cauldron extends BlockMechanicListener {
     @Override
     public String getName() {
         return "Cauldron";
+    }
+
+    private boolean isLava(Block block) {
+        return block.getTypeId() == Material.STATIONARY_LAVA.getId() || block.getTypeId() == Material.LAVA.getId();
     }
 }
