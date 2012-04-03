@@ -16,21 +16,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.models.blockbags;
+package net.edoxile.debug;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public class BlackHole extends BlockBag {
+public class TestEntry<I, O> {
 
-    @Override
-    public void storeItems(int id, byte data, int amount) throws BlockBagException {
+    private I input;
+    private O output;
+    private Object[] extraArgs;
+    private Object invokeObject;
+
+    public TestEntry(I in, O out, Object invoke, Object... args) {
+        input = in;
+        output = out;
+        invokeObject = invoke;
+        extraArgs = args;
     }
 
-    @Override
-    public Direction getDirection() {
-        return Direction.SINK;
+    public I getInput() {
+        return input;
+    }
+
+    public O getOutput() {
+        return output;
+    }
+
+    public Object getInvokeObject() {
+        return invokeObject;
+    }
+
+    public boolean hasMoreArgs() {
+        return extraArgs == null || extraArgs.length == 0;
+    }
+
+    public Object[] getExtraArgs() {
+        return extraArgs;
     }
 }

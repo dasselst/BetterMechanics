@@ -23,7 +23,7 @@ package net.edoxile.bettermechanics.models.blockbags;
  *
  * @author Edoxile
  */
-public class BlockBagException extends Exception{
+public class BlockBagException extends Exception {
     public enum Type {
         NO_BAG_FOUND("A BlockBag could not be found!"),
         NO_SPACE_LEFT("This sign is not placed in an ordinal direction (east, west, north or south)!"),
@@ -40,7 +40,7 @@ public class BlockBagException extends Exception{
         }
     }
 
-    public BlockBagException(Type type){
+    public BlockBagException(Type type) {
         super(type.getErrorMessage());
     }
 }

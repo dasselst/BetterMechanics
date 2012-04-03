@@ -18,7 +18,6 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
-import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanicCommandListener;
@@ -58,7 +57,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     public void onPlayerRightClickSign(Player player, Sign sign) {
-        if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
+        if (PermissionHandler.getInstance().playerHasNode(player, "pen")) {
             setLines(player, sign);
         } else {
             player.sendMessage(ChatColor.DARK_RED + "You aren't allowed to use /pen!");
@@ -66,7 +65,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     public void onPlayerLeftClickSign(Player player, Sign sign) {
-        if (BetterMechanics.getPermissionHandler().hasPermission(player, sign.getBlock(), "pen", PermissionHandler.Checks.ALL)) {
+        if (PermissionHandler.getInstance().hasPermission(player, sign.getBlock(), "pen", PermissionHandler.Checks.ALL)) {
             String[] lines = getLines(player);
             if (lines != null) {
                 for (int i = 0; i < 4; i++) {
@@ -87,7 +86,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
         if (command.getName().equalsIgnoreCase("pen")) {
             if (enabled && commandSender instanceof Player) {
                 Player player = (Player) commandSender;
-                if (BetterMechanics.getPermissionHandler().playerHasNode(player, "pen")) {
+                if (PermissionHandler.getInstance().playerHasNode(player, "pen")) {
                     if (args.length == 0) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
                     } else {

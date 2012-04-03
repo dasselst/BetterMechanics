@@ -30,12 +30,12 @@ import java.util.List;
  * @author Edoxile
  */
 public class Cauldron extends BlockMechanicListener {
-    
+
     @Override
-    public void onBlockRightClick(PlayerEvent event){
+    public void onBlockRightClick(PlayerEvent event) {
         //Map die shit
     }
-    
+
     @Override
     public boolean isTriggeredByRedstone() {
         return false;

@@ -41,6 +41,12 @@ import static com.sk89q.worldguard.bukkit.BukkitUtil.toVector;
  */
 public class PermissionHandler {
 
+    private static final PermissionHandler instance = new PermissionHandler();
+
+    public static PermissionHandler getInstance() {
+        return instance;
+    }
+
     private final boolean enabled;
     private final boolean zonesEnabled;
     private final boolean worldGuardEnabled;
@@ -71,7 +77,7 @@ public class PermissionHandler {
         }
     }
 
-    public PermissionHandler() {
+    private PermissionHandler() {
         ConfigHandler.PermissionsConfig config = ConfigHandler.getInstance().getPermissionsConfig();
         enabled = config.isEnabled();
         if (config.canUseZones()) {

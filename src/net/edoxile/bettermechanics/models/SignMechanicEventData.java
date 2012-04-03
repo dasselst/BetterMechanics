@@ -29,17 +29,17 @@ import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 public class SignMechanicEventData {
     private final BlockMap blockMap;
     private final BlockBagHandler blockBag;
-    
-    public SignMechanicEventData(BlockMap map, BlockBagHandler bag){
+
+    public SignMechanicEventData(BlockMap map, BlockBagHandler bag) {
         blockMap = map;
         blockBag = bag;
     }
-    
-    public BlockMap getBlockMap(){
+
+    public BlockMap getBlockMap() {
         return blockMap;
     }
-    
-    public BlockBagHandler getBlockBagHandler(){
+
+    public BlockBagHandler getBlockBagHandler() {
         return blockBag;
     }
 }

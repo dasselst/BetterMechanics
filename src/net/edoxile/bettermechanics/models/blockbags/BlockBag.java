@@ -44,7 +44,7 @@ public abstract class BlockBag {
         removeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
     }
 
-    public void removeItems(int id, int amount) throws BlockBagException{
+    public void removeItems(int id, int amount) throws BlockBagException {
         removeItems(id, (byte) 0, amount);
     }
 
@@ -53,19 +53,19 @@ public abstract class BlockBag {
         throw new BlockBagException(BlockBagException.Type.NOT_ENOUGH_MATERIALS);
     }
 
-    public void storeItems(ItemStack itemStack) throws BlockBagException{
+    public void storeItems(ItemStack itemStack) throws BlockBagException {
         storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), itemStack.getAmount());
     }
 
-    public void storeItems(ItemStack itemStack, int amount) throws BlockBagException{
+    public void storeItems(ItemStack itemStack, int amount) throws BlockBagException {
         storeItems(itemStack.getTypeId(), (byte) itemStack.getDurability(), amount);
     }
 
-    public void storeItems(int id, int amount) throws BlockBagException{
+    public void storeItems(int id, int amount) throws BlockBagException {
         storeItems(id, (byte) 0, amount);
     }
 
-    public void storeItems(int id, byte data, int amount) throws BlockBagException{
+    public void storeItems(int id, byte data, int amount) throws BlockBagException {
         BetterMechanics.log("Method 'storeItems' was called but not overwritten", Level.WARNING);
         throw new BlockBagException(BlockBagException.Type.NO_SPACE_LEFT);
     }

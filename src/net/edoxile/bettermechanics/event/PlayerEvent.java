@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
  * @author Edoxile
  */
 public class PlayerEvent extends Event {
-    public enum Action{
+    public enum Action {
         RIGHT_CLICK,
         LEFT_CLICK,
         PLACE,
@@ -18,18 +18,18 @@ public class PlayerEvent extends Event {
 
     private final Player player;
     private final Action action;
-    
-    public PlayerEvent(Type t, Block b, Action a, Player p){
+
+    public PlayerEvent(Type t, Block b, Action a, Player p) {
         super(t, b);
         player = p;
         action = a;
     }
-    
-    public Player getPlayer(){
+
+    public Player getPlayer() {
         return player;
     }
-    
-    public Action getAction(){
+
+    public Action getAction() {
         return action;
     }
 }

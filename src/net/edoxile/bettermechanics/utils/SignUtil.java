@@ -23,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+
 import static net.edoxile.bettermechanics.utils.StringUtil.stripBrackets;
 
 /**

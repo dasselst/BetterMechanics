@@ -60,7 +60,7 @@ public class BMListener implements Listener {
         for (BlockFace blockFace : blockFaces) {
             Block block = event.getBlock().getRelative(blockFace);
             redstoneEvent.setData(
-                    SignUtil.isSign(event.getBlock().getRelative(blockFace))? Event.Type.SIGN : Event.Type.BLOCK,
+                    SignUtil.isSign(event.getBlock().getRelative(blockFace)) ? Event.Type.SIGN : Event.Type.BLOCK,
                     event.getBlock(),
                     blockFace.getOppositeFace()
             );
@@ -95,7 +95,7 @@ public class BMListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onBlockPlace(BlockPlaceEvent event){
+    public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled())
             return;
 
