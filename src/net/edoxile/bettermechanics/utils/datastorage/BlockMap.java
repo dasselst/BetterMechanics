@@ -21,7 +21,7 @@ package net.edoxile.bettermechanics.utils.datastorage;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,13 +29,13 @@ import java.util.List;
  * @author Edoxile
  */
 public class BlockMap {
-    private final List<Block> blockList;
+    private final Set<Block> blockList;
     private final Block startBlock;
     private final Block endBlock;
     private final Material material;
     private final byte materialData;
 
-    public BlockMap(List<Block> blocks, Block start, Block end, Material type, byte data) {
+    public BlockMap(Set<Block> blocks, Block start, Block end, Material type, byte data) {
         blockList = blocks;
         startBlock = start;
         endBlock = end;
@@ -43,7 +43,7 @@ public class BlockMap {
         materialData = data;
     }
 
-    public List<Block> getList() {
+    public Set<Block> getList() {
         return blockList;
     }
 
