@@ -13,9 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -129,7 +127,7 @@ public class Bridge extends SignMechanicListener {
                                 if (blocksEqual(type, data,
                                         startBlock.getRelative(BlockFace.EAST), startBlock.getRelative(BlockFace.WEST),
                                         endBlock.getRelative(BlockFace.EAST), endBlock.getRelative(BlockFace.WEST))) {
-                                    List<Block> blockList = new ArrayList<Block>();
+                                    Set<Block> blockList = new HashSet<Block>();
                                     Block currentBlock = startBlock.getRelative(direction);
                                     while (!currentBlock.equals(endBlock)) {
                                         blockList.add(currentBlock);
@@ -149,7 +147,7 @@ public class Bridge extends SignMechanicListener {
                                 if (blocksEqual(type, data,
                                         startBlock.getRelative(BlockFace.NORTH), startBlock.getRelative(BlockFace.SOUTH),
                                         endBlock.getRelative(BlockFace.NORTH), endBlock.getRelative(BlockFace.SOUTH))) {
-                                    List<Block> blockList = new ArrayList<Block>();
+                                    Set<Block> blockList = new HashSet<Block>();
                                     Block currentBlock = startBlock.getRelative(direction);
                                     while (!currentBlock.equals(endBlock)) {
                                         blockList.add(currentBlock);
