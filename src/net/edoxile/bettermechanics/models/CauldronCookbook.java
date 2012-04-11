@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -8,12 +8,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package net.edoxile.bettermechanics.models;
@@ -27,6 +27,7 @@ package net.edoxile.bettermechanics.models;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.utils.datastorage.MaterialMap;
 import net.edoxile.bettermechanics.utils.datastorage.MaterialMapIterator;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -48,10 +49,10 @@ public class CauldronCookbook {
     public CauldronCookbook() {
         try {
             File configFile = new File("plugins/BetterMechanics/cauldron-recipes.yml");
+            if(BetterMechanics.debugMode)
             BetterMechanics.log("Loading cauldron recipes from " + configFile.getAbsolutePath());
-            YamlConfiguration config = new YamlConfiguration();
+            FileConfiguration config = new YamlConfiguration();
             config.load(configFile);
-            //TODO: check if this fix actually works
             Set<String> keys = config.getKeys(true);
             HashSet<String> names = new HashSet<String>();
             for (String key : keys) {
@@ -152,6 +153,9 @@ public class CauldronCookbook {
             return results;
         }
 
+        //Why would anyone like to know what ingredients there are in a recipe? Maybe if you'd do '/bm cauldron recipes'
+        //or something similar, but have to check if wanted by players
+        @Deprecated
         public MaterialMap getIngredients() {
             return ingredients;
         }

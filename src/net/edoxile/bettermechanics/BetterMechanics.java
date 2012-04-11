@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -8,12 +8,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package net.edoxile.bettermechanics;
@@ -21,8 +21,8 @@ package net.edoxile.bettermechanics;
 import net.edoxile.bettermechanics.handlers.MechanicsHandler;
 import net.edoxile.bettermechanics.listeners.BMListener;
 import net.edoxile.bettermechanics.mechanics.Bridge;
+import net.edoxile.bettermechanics.mechanics.Cauldron;
 import net.edoxile.bettermechanics.mechanics.Pen;
-import net.edoxile.debug.DebugManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 public class BetterMechanics extends JavaPlugin {
     private static BetterMechanics instance = null;
     private static final Logger logger = Logger.getLogger("minecraft");
-    private static boolean debugMode;
+    public static final boolean DEBUG = false;
     private final MechanicsHandler mechanicsHandler = new MechanicsHandler();
     private final BMListener listener = new BMListener(this);
 
@@ -50,6 +50,7 @@ public class BetterMechanics extends JavaPlugin {
         //Register different Mechanics
         mechanicsHandler.addMechanic(new Pen());
         mechanicsHandler.addMechanic(new Bridge());
+        mechanicsHandler.addMechanic(new Cauldron());
 
         //Register different events
         getServer().getPluginManager().registerEvents(listener, this);
@@ -57,16 +58,14 @@ public class BetterMechanics extends JavaPlugin {
         //TODO: fix this (deprecation etc.)
         loadConfig();
 
-        debugMode = getPluginConfig().getBoolean("debug-mode", false);
-        if (debugMode)
-            DebugManager.getInstance().runDebug();
-        log("Enabled! Version: " + getDescription().getVersion() + ".");
+        //log("Enabled! Version: " + getDescription().getVersion() + ".");
+
     }
 
     @Override
     public void onDisable() {
         instance = null;
-        log("Disabled.");
+        //log("Disabled.");
     }
 
     @Override
@@ -83,9 +82,9 @@ public class BetterMechanics extends JavaPlugin {
     }
 
     public static void log(String msg, Level level) {
-        if (level == Level.FINEST && !debugMode) {
+        if (level == Level.FINEST && !DEBUG) {
             return;
-        } else if (debugMode && level == Level.FINEST) {
+        } else if (DEBUG && level == Level.FINEST) {
             level = Level.INFO;
         }
         logger.log(level, msg);
