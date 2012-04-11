@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,7 @@ package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.MechanicsType;
 import net.edoxile.bettermechanics.exceptions.*;
-import net.edoxile.bettermechanics.utils.BlockMapper;
-import net.edoxile.bettermechanics.utils.BlockbagUtil;
-import net.edoxile.bettermechanics.utils.MechanicsConfig;
-import net.edoxile.bettermechanics.utils.SignUtil;
+import net.edoxile.bettermechanics.utils.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,27 +44,28 @@ public class Gate {
     private MechanicsConfig.GateConfig config;
     private boolean smallGate;
     private Set<Block> blockSet;
-    private Chest chest;
     private Material gateMaterial;
+    private BlockBagManager blockBagManager;
 
-    public Gate(MechanicsConfig c, Sign s, Player p) {
+    public Gate(MechanicsConfig c, BlockBagManager bbm, Sign s, Player p) {
         sign = s;
         player = p;
         config = c.getGateConfig();
+        blockBagManager = bbm;
     }
 
     public boolean map() throws NonCardinalDirectionException, ChestNotFoundException, OutOfBoundsException, BlockNotFoundException {
         if (!config.enabled)
             return false;
-        Block chestBlock = BlockMapper.mapCuboidRegion(sign.getBlock(), 3, Material.CHEST);
+        /* Block chestBlock = BlockMapper.mapCuboidRegion(sign.getBlock(), 3, Material.CHEST);
         if (chestBlock == null) {
             throw new ChestNotFoundException();
         } else {
-            chest = BlockbagUtil.getChest(chestBlock);
+             chest = BlockbagUtil.getChest(chestBlock);
             if (chest == null) {
                 throw new ChestNotFoundException();
             }
-        }
+        } */
         smallGate = (SignUtil.getMechanicsType(sign) == MechanicsType.SMALL_GATE);
         int sw = (smallGate ? 1 : 4);
         Block startBlock = sign.getBlock().getRelative(SignUtil.getBackBlockFace(sign));
@@ -92,10 +90,15 @@ public class Gate {
         }
     }
 
-    public void toggleOpen() {
+    public void toggleOpen() throws ChestNotFoundException {
         int amount = 0;
         Block tempBlock;
         try {
+
+            BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), true, false);
+            if(tmpbag == null)
+                throw new ChestNotFoundException();
+
             for (Block b : blockSet) {
                 tempBlock = b.getRelative(BlockFace.DOWN);
                 while (tempBlock.getType() == gateMaterial) {
@@ -104,7 +107,11 @@ public class Gate {
                     amount++;
                 }
             }
-            BlockbagUtil.safeAddItems(chest, new ItemStack(gateMaterial, amount));
+            // BlockbagUtil.safeAddItems(chest, new ItemStack(gateMaterial, amount));
+
+            tmpbag.safeAddItems(new ItemStack(gateMaterial, amount));
+
+
             if (player != null) {
                 player.sendMessage(ChatColor.GOLD + "Gate opened!");
             }
@@ -125,10 +132,15 @@ public class Gate {
         }
     }
 
-    public void toggleClosed() {
+    public void toggleClosed() throws ChestNotFoundException {
         int amount = 0;
         Block tempBlock;
         try {
+
+            BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), false, true);
+            if(tmpbag == null)
+                throw new ChestNotFoundException();
+
             for (Block b : blockSet) {
                 tempBlock = b.getRelative(BlockFace.DOWN);
                 while (canPassThrough(tempBlock.getType())) {
@@ -137,7 +149,10 @@ public class Gate {
                     amount++;
                 }
             }
-            BlockbagUtil.safeRemoveItems(chest, new ItemStack(gateMaterial, amount));
+            // BlockbagUtil.safeRemoveItems(chest, new ItemStack(gateMaterial, amount));
+
+            tmpbag.safeRemoveItems(new ItemStack(gateMaterial, amount));
+
             if (player != null) {
                 player.sendMessage(ChatColor.GOLD + "Gate closed!");
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,10 +20,7 @@ package net.edoxile.bettermechanics.mechanics;
 
 import net.edoxile.bettermechanics.MechanicsType;
 import net.edoxile.bettermechanics.exceptions.*;
-import net.edoxile.bettermechanics.utils.BlockMapper;
-import net.edoxile.bettermechanics.utils.BlockbagUtil;
-import net.edoxile.bettermechanics.utils.MechanicsConfig;
-import net.edoxile.bettermechanics.utils.SignUtil;
+import net.edoxile.bettermechanics.utils.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,52 +40,45 @@ import java.util.logging.Logger;
 public class Bridge {
     private Logger log = Logger.getLogger("Minecraft");
     private Sign sign;
+    private Sign endSign;
     private Player player;
-    private Chest chest;
     private MechanicsConfig.BridgeConfig config;
     private Set<Block> blockSet;
     private MaterialData bridgeMaterial;
+    private BlockBagManager blockBagManager;
+    private BlockBag bag;
 
-    public Bridge(MechanicsConfig c, Sign s, Player p) {
+    public Bridge(MechanicsConfig c, BlockBagManager bbm, Sign s, Player p) {
         sign = s;
         player = p;
         config = c.getBridgeConfig();
+        blockBagManager = bbm;
     }
 
-    public boolean map() throws NonCardinalDirectionException, BlockNotFoundException, InvalidMaterialException, ChestNotFoundException {
+    public boolean map() throws NonCardinalDirectionException, BlockNotFoundException, InvalidMaterialException {
         if (!config.enabled)
             return false;
         BlockFace bf;
         if (config.canUseBlock(sign.getBlock().getRelative(BlockFace.UP).getType())) {
             bf = BlockFace.UP;
             bridgeMaterial = new MaterialData(sign.getBlock().getRelative(BlockFace.UP).getType(), sign.getBlock().getRelative(BlockFace.UP).getData());
+            // System.out.println("Using UP");
         } else if (config.canUseBlock(sign.getBlock().getRelative(BlockFace.DOWN).getType())) {
             bf = BlockFace.DOWN;
             bridgeMaterial = new MaterialData(sign.getBlock().getRelative(BlockFace.DOWN).getType(), sign.getBlock().getRelative(BlockFace.DOWN).getData());
+            // System.out.println("Using DOWN");
         } else {
             throw new InvalidMaterialException();
         }
 
         MechanicsType bridgeType = SignUtil.getMechanicsType(sign);
 
-        Sign endSign = BlockMapper.findMechanicsSign(sign.getBlock(), SignUtil.getBackBlockFace(sign), bridgeType, config.maxLength);
-        Block startBlock = sign.getBlock().getRelative(SignUtil.getBackBlockFace(sign)).getRelative(bf);
+        endSign = BlockMapper.findMechanicsSign(sign.getBlock(), SignUtil.getBackFacingDirection(sign), bridgeType, config.maxLength);
+        Block startBlock = sign.getBlock().getRelative(SignUtil.getBackFacingDirection(sign)).getRelative(bf);
         Block endBlock = endSign.getBlock().getRelative(bf);
         try {
-            blockSet = BlockMapper.mapHorizontal(SignUtil.getBackBlockFace(sign), startBlock, endBlock, bridgeType == MechanicsType.SMALL_BRIDGE);
+            blockSet = BlockMapper.mapHorizontal(SignUtil.getBackFacingDirection(sign), startBlock, endBlock, bridgeType == MechanicsType.SMALL_BRIDGE);
             if (!blockSet.isEmpty()) {
-                Block chestBlock = BlockMapper.mapCuboidRegion(sign.getBlock(), 3, Material.CHEST);
-                if (chestBlock == null) {
-                    //Check other sign
-                    chestBlock = BlockMapper.mapCuboidRegion(endSign.getBlock(), 3, Material.CHEST);
-                    if (chestBlock == null) {
-                        throw new ChestNotFoundException();
-                    }
-                }
-                chest = BlockbagUtil.getChest(chestBlock);
-                if (chest == null) {
-                    throw new ChestNotFoundException();
-                }
                 return true;
             } else {
                 log.info("[BetterMechanics] Empty blockSet?");
@@ -100,16 +90,26 @@ public class Bridge {
         }
     }
 
-    public void toggleOpen() {
+    public void toggleOpen() throws ChestNotFoundException {
         int amount = 0;
         try {
+
+            BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), false, true);
+
+            if(tmpbag == null)
+                tmpbag = blockBagManager.searchBlockBag(endSign.getBlock(), false, true);
+
+            if(tmpbag == null)
+                throw new ChestNotFoundException();
+
             for (Block b : blockSet) {
                 if (b.getType() == bridgeMaterial.getItemType()) {
                     b.setType(Material.AIR);
                     amount++;
                 }
             }
-            BlockbagUtil.safeAddItems(chest, bridgeMaterial.toItemStack(amount));
+            tmpbag.safeAddItems(bridgeMaterial.toItemStack(amount));
+
             if (player != null) {
                 player.sendMessage(ChatColor.GOLD + "Bridge opened!");
             }
@@ -130,9 +130,17 @@ public class Bridge {
         }
     }
 
-    public void toggleClosed() {
+    public void toggleClosed() throws ChestNotFoundException {
         int amount = 0;
         try {
+            BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), true, false);
+
+            if(tmpbag == null)
+                tmpbag = blockBagManager.searchBlockBag(endSign.getBlock(), true, false);
+
+            if(tmpbag == null)
+                throw new ChestNotFoundException();
+
             for (Block b : blockSet) {
                 if (canPassThrough(b.getType())) {
                     b.setType(bridgeMaterial.getItemType());
@@ -140,7 +148,9 @@ public class Bridge {
                     amount++;
                 }
             }
-            BlockbagUtil.safeRemoveItems(chest, bridgeMaterial.toItemStack(amount));
+
+            tmpbag.safeRemoveItems(bridgeMaterial.toItemStack(amount));
+
             if (player != null) {
                 player.sendMessage(ChatColor.GOLD + "Bridge closed!");
             }

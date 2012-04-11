@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,17 +21,18 @@ package net.edoxile.bettermechanics.listeners;
 import net.edoxile.bettermechanics.MechanicsType;
 import net.edoxile.bettermechanics.exceptions.*;
 import net.edoxile.bettermechanics.mechanics.*;
+import net.edoxile.bettermechanics.utils.BlockBagManager;
 import net.edoxile.bettermechanics.utils.MechanicsConfig;
 import net.edoxile.bettermechanics.utils.SignUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 
 import java.util.logging.Logger;
 
@@ -40,13 +41,15 @@ import java.util.logging.Logger;
  * User: Edoxile
  */
 
-public class MechanicsPlayerListener extends PlayerListener {
+public class MechanicsPlayerListener implements Listener {
     private static final Logger log = Logger.getLogger("Minecraft");
     private MechanicsConfig config;
     private MechanicsConfig.PermissionConfig permissions;
+    private BlockBagManager bagmanager;
 
-    public MechanicsPlayerListener(MechanicsConfig c) {
+    public MechanicsPlayerListener(MechanicsConfig c, BlockBagManager manager) {
         config = c;
+        bagmanager = manager;
         permissions = c.getPermissionConfig();
     }
 
@@ -69,7 +72,7 @@ public class MechanicsPlayerListener extends PlayerListener {
                             case SMALL_BRIDGE:
                                 if (!permissions.check(event.getPlayer(), SignUtil.getActiveMechanicsType(sign).name().toLowerCase().concat(".use"), event.getClickedBlock(), false))
                                     return;
-                                Bridge bridge = new Bridge(config, sign, event.getPlayer());
+                                Bridge bridge = new Bridge(config, bagmanager, sign, event.getPlayer());
                                 try {
                                     if (!bridge.map())
                                         return;
@@ -93,7 +96,7 @@ public class MechanicsPlayerListener extends PlayerListener {
                             case SMALL_GATE:
                                 if (!permissions.check(event.getPlayer(), SignUtil.getActiveMechanicsType(sign).name().toLowerCase().concat(".use"), event.getClickedBlock(), false))
                                     return;
-                                Gate gate = new Gate(config, sign, event.getPlayer());
+                                Gate gate = new Gate(config, bagmanager, sign, event.getPlayer());
                                 try {
                                     if (!gate.map())
                                         return;
@@ -117,7 +120,7 @@ public class MechanicsPlayerListener extends PlayerListener {
                             case SMALL_DOOR:
                                 if (!permissions.check(event.getPlayer(), SignUtil.getActiveMechanicsType(sign).name().toLowerCase().concat(".use"), event.getClickedBlock(), false))
                                     return;
-                                Door door = new Door(config, sign, event.getPlayer());
+                                Door door = new Door(config, bagmanager, sign, event.getPlayer());
                                 try {
                                     if (!door.map())
                                         return;

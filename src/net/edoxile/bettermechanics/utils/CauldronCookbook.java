@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile, sk89q
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,11 +25,13 @@ package net.edoxile.bettermechanics.utils;
 
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.exceptions.KeyNotFoundException;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -41,22 +43,27 @@ public class CauldronCookbook {
     private List<Recipe> recipes = new ArrayList<Recipe>();
     private static final Logger log = Logger.getLogger("Minecraft");
     private BetterMechanics instance;
-    private Configuration config;
+    private YamlConfiguration config;
 
     @SuppressWarnings("unchecked")
     public CauldronCookbook(BetterMechanics plugin) {
         instance = plugin;
-        config = instance.getConfiguration();
+        config = (YamlConfiguration) instance.getConfig();
         try {
-            File configFile = new File("plugins/BetterMechanics/cauldron-recipes.yml");
+            File configFile = new File(plugin.getDataFolder(), "cauldron-recipes.yml");
             log.info("[BetterMechanics] Loading cauldron recipes from " + configFile.getAbsolutePath());
-            config = new Configuration(configFile);
-            config.load();
+            config = new YamlConfiguration();
+                        config.load(configFile);
         } catch (Exception e) {
             log.warning("[BetterMechanics] Something went wrong loading the config file.");
             return;
         }
-        List<String> recipeNames = config.getKeys("recipes");
+        // List<String> recipeNames = config.getKeys("recipes");
+        ConfigurationSection section = config.getConfigurationSection("recipes");
+        if(section==null)
+            return;
+
+        Set <String> recipeNames = section.getKeys(false);
         if (recipeNames == null) {
             log.warning("[BetterMechanics] Error loading cauldron recipes: no recipes found! (you probably messed up the yml format somewhere)");
             return;
@@ -65,11 +72,13 @@ public class CauldronCookbook {
             MaterialMap ingredients = new MaterialMap();
             MaterialMap results = new MaterialMap();
             try {
-                List<List<Integer>> list = (List<List<Integer>>) config.getProperty("recipes." + name + ".ingredients");
+                List<List<Integer>> list = (List<List<Integer>>) config.get("recipes." + name + ".ingredients");
+
                 for (List<Integer> l : list) {
                     ingredients.put(l.get(0), l.get(1));
                 }
-                list = (List<List<Integer>>) config.getProperty("recipes." + name + ".results");
+                list = (List<List<Integer>>) config.get("recipes." + name + ".results");
+
                 for (List<Integer> l : list) {
                     results.put(l.get(0), l.get(1));
                 }

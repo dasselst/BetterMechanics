@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,10 +47,10 @@ public class SignUtil {
 
     public static MechanicsType getMechanicsType(String str) {
         if (str.equalsIgnoreCase("[Lift Up]")
-         || str.equalsIgnoreCase("[Lift Down]")
-         || str.equalsIgnoreCase("[Lift]"))
+                || str.equalsIgnoreCase("[Lift Down]")
+                || str.equalsIgnoreCase("[Lift]"))
             return MechanicsType.LIFT;
-        
+
         if (str.equalsIgnoreCase("[TeleLift]"))
             return MechanicsType.TELELIFT;
 
@@ -61,21 +61,21 @@ public class SignUtil {
             return MechanicsType.SMALL_GATE;
 
         if (str.equalsIgnoreCase("[Bridge]")
-         || str.equalsIgnoreCase("[Bridge End]"))
+                || str.equalsIgnoreCase("[Bridge End]"))
             return MechanicsType.BRIDGE;
 
         if (str.equalsIgnoreCase("[sBridge]")
-         || str.equalsIgnoreCase("[sBridge End]"))
+                || str.equalsIgnoreCase("[sBridge End]"))
             return MechanicsType.SMALL_BRIDGE;
 
         if (str.equalsIgnoreCase("[Door]")
-         || str.equalsIgnoreCase("[Door Down]")
-         || str.equalsIgnoreCase("[Door Up]"))
+                || str.equalsIgnoreCase("[Door Down]")
+                || str.equalsIgnoreCase("[Door Up]"))
             return MechanicsType.DOOR;
 
         if (str.equalsIgnoreCase("[sDoor]")
-         || str.equalsIgnoreCase("[sDoor Down]")
-         || str.equalsIgnoreCase("[sDoor Up]"))
+                || str.equalsIgnoreCase("[sDoor Down]")
+                || str.equalsIgnoreCase("[sDoor Up]"))
             return MechanicsType.SMALL_DOOR;
 
         if (str.equalsIgnoreCase("[X]"))
@@ -99,7 +99,7 @@ public class SignUtil {
 
     public static MechanicsType getActiveMechanicsType(String str) {
         if (str.equalsIgnoreCase("[Lift Up]")
-         || str.equalsIgnoreCase("[Lift Down]"))
+                || str.equalsIgnoreCase("[Lift Down]"))
             return MechanicsType.LIFT;
 
         if (str.equalsIgnoreCase("[TeleLift]"))
@@ -118,15 +118,15 @@ public class SignUtil {
             return MechanicsType.SMALL_BRIDGE;
 
         if (str.equalsIgnoreCase("[Door Down]")
-         || str.equalsIgnoreCase("[Door Up]"))
+                || str.equalsIgnoreCase("[Door Up]"))
             return MechanicsType.DOOR;
 
         if (str.equalsIgnoreCase("[sDoor Down]")
-         || str.equalsIgnoreCase("[sDoor Up]"))
+                || str.equalsIgnoreCase("[sDoor Up]"))
             return MechanicsType.SMALL_DOOR;
 
         if (str.equalsIgnoreCase("[sDoor Down]")
-         || str.equalsIgnoreCase("[sDoor Up]"))
+                || str.equalsIgnoreCase("[sDoor Up]"))
             return MechanicsType.DOOR;
 
         if (str.equalsIgnoreCase("[X]"))
@@ -160,6 +160,39 @@ public class SignUtil {
                     return BlockFace.SOUTH;
                 case 0x5:
                     return BlockFace.NORTH;
+                default:
+                    throw new NonCardinalDirectionException();
+            }
+        } else {
+            //This should never happen...
+            return null;
+        }
+    }
+
+    public static BlockFace getBackFacingDirection(Sign s) throws NonCardinalDirectionException {
+        if (s.getType() == Material.SIGN_POST) {
+            switch (s.getData().getData()) {
+                case 0x0:
+                    return BlockFace.EAST;
+                case 0x4:
+                    return BlockFace.SOUTH;
+                case 0x8:
+                    return BlockFace.WEST;
+                case 0xC:
+                    return BlockFace.NORTH;
+                default:
+                    throw new NonCardinalDirectionException();
+            }
+        } else if (s.getType() == Material.WALL_SIGN) {
+            switch (s.getData().getData()) {
+                case 0x2:
+                    return BlockFace.NORTH;
+                case 0x3:
+                    return BlockFace.EAST;
+                case 0x4:
+                    return BlockFace.SOUTH;
+                case 0x5:
+                    return BlockFace.WEST;
                 default:
                     throw new NonCardinalDirectionException();
             }

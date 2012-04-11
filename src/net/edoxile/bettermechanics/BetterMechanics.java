@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@ import net.edoxile.bettermechanics.exceptions.ConfigWriteException;
 import net.edoxile.bettermechanics.listeners.MechanicsBlockListener;
 import net.edoxile.bettermechanics.listeners.MechanicsPlayerListener;
 import net.edoxile.bettermechanics.mechanics.Pen;
+import net.edoxile.bettermechanics.utils.BlockBagManager;
 import net.edoxile.bettermechanics.utils.MechanicsConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -46,6 +47,7 @@ public class BetterMechanics extends JavaPlugin {
     private MechanicsBlockListener blockListener;
     private TweakcraftUtils tcutils = null;
     private MechanicsConfig configManager;
+    private BlockBagManager blockBagManager;
     private File configFile;
 
     public void onDisable() {
@@ -56,8 +58,10 @@ public class BetterMechanics extends JavaPlugin {
         try {
             configFile = this.getFile();
             configManager = new MechanicsConfig(this);
-            blockListener = new MechanicsBlockListener(configManager);
-            playerListener = new MechanicsPlayerListener(configManager);
+            blockBagManager = new BlockBagManager(configManager);
+            blockListener = new MechanicsBlockListener(configManager, blockBagManager);
+            playerListener = new MechanicsPlayerListener(configManager, blockBagManager);
+
             registerEvents();
             if (configManager.useTweakcraftUtils) {
                 log.info("[BetterMechanics] Using TweakcraftUtils!");
@@ -74,17 +78,19 @@ public class BetterMechanics extends JavaPlugin {
         return configFile;
     }
 
-    public String getName() {
+    public String getPluginName() {
         return getDescription().getName();
     }
 
     public void registerEvents() {
         PluginManager pm = this.getServer().getPluginManager();
-        pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
+        /* pm.registerEvent(Event.Type.SIGN_CHANGE, blockListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.REDSTONE_CHANGE, blockListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.Normal, this);
         pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
+        pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this); */
+        pm.registerEvents(blockListener, this);
+        pm.registerEvents(playerListener, this);
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

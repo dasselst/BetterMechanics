@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012.
+ * Copyright (c) 2012 Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,7 +59,7 @@ public class TeleLift {
         destination = parseDestination();
         if (destination == null)
             return false;
-        if (destination.getY() <= 127) {
+        if (destination.getY() <= destination.getWorld().getMaxHeight()) {
             Block dest1 = destination.getBlock();
             Block dest2 = dest1.getRelative(BlockFace.UP);
             Block dest3 = dest1.getRelative(BlockFace.DOWN);
