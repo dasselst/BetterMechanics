@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) 2012 Edoxile
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package net.edoxile.bettermechanics.utils;
 
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.exceptions.ConfigWriteException;
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
+
+import java.io.*;
+import java.util.logging.Logger;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
 import com.zones.model.ZoneBase;
@@ -11,13 +30,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.config.Configuration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -30,7 +47,7 @@ import java.util.logging.Logger;
 public class MechanicsConfig {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static BetterMechanics plugin;
-    private static Configuration config;
+    private static YamlConfiguration config;
 
     public BridgeConfig bridgeConfig;
     public GateConfig gateConfig;
@@ -47,8 +64,13 @@ public class MechanicsConfig {
 
     public MechanicsConfig(BetterMechanics p) throws ConfigWriteException {
         plugin = p;
-        config = plugin.getConfiguration();
-        config.load();
+        config = (YamlConfiguration) plugin.getConfig();
+        try {
+            config.load(new File(plugin.getDataFolder(), "config.yml"));
+        } catch (Exception e) {
+            log.severe("[BetterMechanics] Exception thrown when loading config!");
+            createConfig();
+        }
         if (config == null) {
             createConfig();
         } else {
@@ -77,9 +99,9 @@ public class MechanicsConfig {
     }
 
     public static class BlockBagConfig {
-        
+
         public int searchWidth;
-        
+
         public BlockBagConfig() {
             searchWidth = config.getInt("blockbag.search-width", 3);
         }
@@ -97,7 +119,7 @@ public class MechanicsConfig {
         public BridgeConfig() {
             enabled = config.getBoolean("bridge.enabled", true);
             maxLength = config.getInt("bridge.max-length", 32);
-            List<Integer> list = config.getIntList("bridge.allowed-materials", Arrays.asList(3, 4, 5, 22, 35, 41, 42, 45, 47, 57, 87, 88, 89, 91));
+            List<Integer> list = config.getIntegerList("door.allowed-materials");//, Arrays.asList(3, 4, 5, 22, 35, 41, 42, 45, 47, 57, 87, 88, 89, 91));
             Set<Material> hashSet = new HashSet<Material>();
             for (int m : list)
                 hashSet.add(Material.getMaterial(m));
@@ -141,7 +163,7 @@ public class MechanicsConfig {
         public DoorConfig() {
             enabled = config.getBoolean("door.enabled", true);
             maxHeight = config.getInt("door.max-height", 32);
-            List<Integer> list = config.getIntList("door.allowed-materials", Arrays.asList(3, 4, 5, 22, 35, 41, 42, 45, 47, 57, 87, 88, 89, 91));
+            List<Integer> list = config.getIntegerList("door.allowed-materials");//,Arrays.asList(3, 4, 5, 22, 35, 41, 42, 45, 47, 57, 87, 88, 89, 91));
             Set<Material> hashSet = new HashSet<Material>();
             for (int m : list)
                 hashSet.add(Material.getMaterial(m));
@@ -212,7 +234,7 @@ public class MechanicsConfig {
         public final boolean useWorldGuard;
         public final boolean useZones;
         private WorldGuardPlugin worldGuard = null;
-        private PermissionHandler permissionHandler = null;
+        // private PermissionHandler permissionHandler = null;
         private Zones zones = null;
 
         public PermissionConfig() {
@@ -220,8 +242,8 @@ public class MechanicsConfig {
             useWorldGuard = config.getBoolean("use-worldguard", true);
             useZones = config.getBoolean("use-zones", true);
             if (usePermissions) {
-                this.setupPermissions();
-                log.info("[BetterMechanics] Using Permissions");
+                // this.setupPermissions();
+                log.info("[BetterMechanics] Using DinnerPermissions");
             }
             if (useWorldGuard) {
                 this.setupWorldGuard();
@@ -242,6 +264,10 @@ public class MechanicsConfig {
             }
         }
 
+        //
+        // TODO : Using DinnerPerms!
+        //
+        /*
         private void setupPermissions() {
             Plugin permissionsPlugin = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
@@ -253,6 +279,7 @@ public class MechanicsConfig {
                 }
             }
         }
+        */
 
         private void setupZones() {
             Plugin z = plugin.getServer().getPluginManager().getPlugin("Zones");
@@ -290,11 +317,11 @@ public class MechanicsConfig {
         }
 
         public boolean checkPermissions(Player player, String permission) {
-            if (permissionHandler == null) {
+            /* if (permissionHandler == null) {
                 return true;
-            } else {
-                return player.isOp() || permissionHandler.permission(player, "bettermechanics." + permission);
-            }
+            } else { */
+                return player.hasPermission("bettermechanics." + permission);
+            /* } */
         }
 
         public boolean checkWorldGuard(Player player, Block clickedBlock) {
@@ -383,7 +410,7 @@ public class MechanicsConfig {
                 is.read(buf, 0, (int) entry.getSize());
                 os.write(buf);
                 os.close();
-                plugin.getConfiguration().load();
+                plugin.getConfig().load(configFile);
             } catch (Exception e) {
                 throw new ConfigWriteException();
             }

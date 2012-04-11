@@ -1,7 +1,26 @@
-package net.edoxile.bettermechanics.utils;
+/*
+ * Copyright (c) 2012 Edoxile
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+package net.edoxile.bettermechanics.utils.BlockBags;
 
 import net.edoxile.bettermechanics.exceptions.OutOfMaterialException;
 import net.edoxile.bettermechanics.exceptions.OutOfSpaceException;
+import net.edoxile.bettermechanics.utils.BlockBag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -14,14 +33,20 @@ import java.util.logging.Logger;
  * Created by IntelliJ IDEA.
  * User: Edoxile
  */
-public class BlockbagUtil {
-    private static final Logger log = Logger.getLogger("Minecraft");
+public class ChestBag extends BlockBag {
 
-    public static boolean safeRemoveItems(ItemStack itemStack) throws OutOfMaterialException {
+    private Chest chest = null;
+
+    public ChestBag(Block bag) {
+        super(bag);
+    }
+
+    public boolean safeRemoveItems(ItemStack itemStack) throws OutOfMaterialException {
         boolean checkData = true;
         if (itemStack.getData() == null) {
             checkData = false;
         }
+        if(itemStack.getAmount() < 1) return false;
         ItemStack[] stacks = chest.getInventory().getContents();
         ItemStack tempStack;
         for (int i = 0; i < stacks.length; i++) {
@@ -56,8 +81,8 @@ public class BlockbagUtil {
             }
         }
         if (itemStack.getAmount() > 0) {
-            log.warning("[BetterMechanics] Not enough items in chest, no changes were made.");
-            log.warning("[BetterMechanics] Chest location: " + chest.getBlock().getLocation().toString() + ".");
+            /* log.warning("[BetterMechanics] Not enough items in chest, no changes were made.");
+            log.warning("[BetterMechanics] Chest location: " + chest.getBlock().getLocation().toString() + "."); */
             throw new OutOfMaterialException(itemStack.getAmount());
         } else {
             chest.getInventory().setContents(stacks);
@@ -65,7 +90,7 @@ public class BlockbagUtil {
         }
     }
 
-    public static boolean safeAddItems(ItemStack itemStack) throws OutOfSpaceException {
+    public boolean safeAddItems(ItemStack itemStack) throws OutOfSpaceException {
         int amount = itemStack.getAmount();
         ItemStack[] stacks = chest.getInventory().getContents();
         for (int i = 0; i < stacks.length; i++) {

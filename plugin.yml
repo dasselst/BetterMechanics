@@ -1,6 +1,6 @@
 name: BetterMechanics
 main: old.bettermechanics.BetterMechanics
-version: 2.0.0-prealpha
+version: 1.12-blockbags
 authors: [Edoxile, GuntherDW]
 website: https://github.com/TweakCraft/BetterMechanics
 commands:
