@@ -19,6 +19,7 @@
 package net.edoxile.bettermechanics.models.blockbags;
 
 import net.edoxile.bettermechanics.BetterMechanics;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Level;
@@ -71,4 +72,6 @@ public abstract class BlockBag {
     }
 
     public abstract Direction getDirection();
+
+    public abstract Location getLocation();
 }

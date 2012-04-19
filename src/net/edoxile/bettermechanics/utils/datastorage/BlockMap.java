@@ -29,22 +29,22 @@ import java.util.Set;
  * @author Edoxile
  */
 public class BlockMap {
-    private final Set<Block> blockList;
+    private final Set<Block> blockSet;
     private final Block startBlock;
     private final Block endBlock;
     private final Material material;
     private final byte materialData;
 
     public BlockMap(Set<Block> blocks, Block start, Block end, Material type, byte data) {
-        blockList = blocks;
+        blockSet = blocks;
         startBlock = start;
         endBlock = end;
         material = type;
         materialData = data;
     }
 
-    public Set<Block> getList() {
-        return blockList;
+    public Set<Block> getSet() {
+        return blockSet;
     }
 
     public Block getStartBlock() {

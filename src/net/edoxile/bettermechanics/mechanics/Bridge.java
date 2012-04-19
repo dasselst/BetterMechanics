@@ -21,17 +21,20 @@ package net.edoxile.bettermechanics.mechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
+import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
 import net.edoxile.bettermechanics.utils.PlayerNotifier;
 import net.edoxile.bettermechanics.utils.SignUtil;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMapException;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,44 +42,14 @@ import java.util.*;
  * @author Edoxile
  */
 public class Bridge extends SignMechanicListener {
+
     private final ConfigHandler.BridgeConfig config = ConfigHandler.getInstance().getBridgeConfig();
-
-    private enum Type {
-        NORMAL("Bridge", "Bridge End"),
-        SMALL("sBridge", "sBridge End");
-
-        private static HashMap<String, Type> types = new HashMap<String, Type>();
-        private String[] identifiers;
-
-        private Type(String... ids) {
-            identifiers = ids;
-        }
-
-        static{
-            for(Type t : values()){
-                for(String id : t.getIdentifiers()){
-                    types.put(id,t);
-                }
-            }
-        }
-
-        public String[] getIdentifiers(){
-            return identifiers;
-        }
-
-        public static Type getType(String id){
-            return types.get(id);
-        }
-    }
-
-    public Bridge() {
-    }
 
     @Override
     public void onSignPowerOn(RedstoneEvent event) {
         try {
             loadData(SignUtil.getSign(event.getBlock()));
-            //Close gate
+            close();
         } catch (PlayerNotifier playerNotifier) {
             playerNotifier.log();
         }
@@ -86,7 +59,7 @@ public class Bridge extends SignMechanicListener {
     public void onSignPowerOff(RedstoneEvent event) {
         try {
             loadData(SignUtil.getSign(event.getBlock()));
-            //Open gate
+            open();
         } catch (PlayerNotifier playerNotifier) {
             playerNotifier.log();
         }
@@ -95,21 +68,31 @@ public class Bridge extends SignMechanicListener {
     @Override
     public void onPlayerRightClickSign(PlayerEvent event) {
         try {
+            String node = SignUtil.getMechanicsIdentifier(SignUtil.getSign(event.getBlock()));
+            if (!PermissionHandler.getInstance().hasPermission(event.getPlayer(), event.getBlock(), node, PermissionHandler.Checks.HIT))
+                throw new PlayerNotifier("Seems like you don't have permission to do this!", PlayerNotifier.Level.INFO, event.getBlock().getLocation());
             loadData(SignUtil.getSign(event.getBlock()));
-            //Toggle gate
+            if (isOpen()) {
+                close();
+                event.getPlayer().sendMessage(ChatColor.GOLD + "Bridge closed!");
+            } else {
+                open();
+                event.getPlayer().sendMessage(ChatColor.GOLD + "Bridge opened!");
+            }
         } catch (PlayerNotifier playerNotifier) {
+            playerNotifier.notify(event.getPlayer());
             playerNotifier.log();
         }
     }
 
     @Override
-    public List<String> getIdentifiers() {
-        return Arrays.asList("Bridge", "sBridge");
+    public String[] getIdentifiers() {
+        return new String[]{"Bridge", "sBridge"};
     }
 
     @Override
-    public List<String> getPassiveIdentifiers() {
-        return Arrays.asList("Bridge", "sBridge", "Bridge End", "sBridge End");
+    public String[] getPassiveIdentifiers() {
+        return new String[]{"Bridge", "sBridge", "Bridge End", "sBridge End"};
     }
 
     @Override
@@ -133,7 +116,7 @@ public class Bridge extends SignMechanicListener {
     }
 
     @Override
-    public List<Material> getMechanicActivators() {
+    public Material[] getMechanicActivators() {
         return null;
     }
 
@@ -145,81 +128,85 @@ public class Bridge extends SignMechanicListener {
     @Override
     public void mapBlocks(Sign sign) throws BlockMapException {
         final int maxDistance = config.getMaxLength();
-        final boolean isSmall = SignUtil.getMechanicsIdentifier(sign).equals("sBridge");
+        String node = SignUtil.getMechanicsIdentifier(sign);
+        final boolean isSmall = node.equals("sBridge");
         BlockFace direction = SignUtil.getFacing(sign).getOppositeFace();
-        //TODO: Check if facing is correct (ordinal direction);
-        Block startBlock = sign.getBlock();
-        Block endBlock = sign.getBlock();
-        for (int check = 0; check < maxDistance; check++) {
-            endBlock = endBlock.getRelative(direction);
-            if (SignUtil.isSign(endBlock) && isThisMechanic(SignUtil.getSign(endBlock))) {
-                if (SignUtil.getFacing(SignUtil.getSign(endBlock)).equals(direction)) {
-                    BlockFace bridgeLocation = (
-                            config.canUseMaterial(startBlock.getRelative(BlockFace.UP).getType())
-                                    ? BlockFace.UP : ((config.canUseMaterial(startBlock.getRelative(BlockFace.DOWN).getType()))
-                                    ? BlockFace.DOWN : BlockFace.SELF)
-                    );
-                    if (bridgeLocation.equals(BlockFace.SELF)) {
-                        throw new BlockMapException(BlockMapException.Type.NON_ALLOWED_MATERIAL);
-                    }
-                    startBlock = startBlock.getRelative(bridgeLocation);
-                    endBlock = endBlock.getRelative(bridgeLocation);
-                    if (endBlock.getTypeId() == startBlock.getTypeId()) {
-                        Material type = startBlock.getType();
-                        byte data = startBlock.getData();
-                        switch (direction) {
-                            case NORTH:
-                            case SOUTH:
-                                if (blocksEqual(type, data,
-                                        startBlock.getRelative(BlockFace.EAST), startBlock.getRelative(BlockFace.WEST),
-                                        endBlock.getRelative(BlockFace.EAST), endBlock.getRelative(BlockFace.WEST))) {
-                                    Set<Block> blockList = new HashSet<Block>();
-                                    Block currentBlock = startBlock.getRelative(direction);
-                                    while (!currentBlock.equals(endBlock)) {
-                                        blockList.add(currentBlock);
-                                        if (isSmall) {
-                                            blockList.add(currentBlock.getRelative(BlockFace.EAST));
-                                            blockList.add(currentBlock.getRelative(BlockFace.WEST));
+        if (SignUtil.isOrdinal(direction)) {
+            Block startBlock = sign.getBlock();
+            Block endBlock = sign.getBlock();
+            for (int check = 0; check < maxDistance; check++) {
+                endBlock = endBlock.getRelative(direction);
+                if (SignUtil.isSign(endBlock) && isThisMechanic(SignUtil.getSign(endBlock))) {
+                    if (SignUtil.getFacing(SignUtil.getSign(endBlock)).equals(direction)) {
+                        BlockFace bridgeLocation = (
+                                config.canUseMaterial(startBlock.getRelative(BlockFace.UP).getType())
+                                        ? BlockFace.UP : ((config.canUseMaterial(startBlock.getRelative(BlockFace.DOWN).getType()))
+                                        ? BlockFace.DOWN : BlockFace.SELF)
+                        );
+                        if (bridgeLocation.equals(BlockFace.SELF)) {
+                            throw new BlockMapException(BlockMapException.Type.NON_ALLOWED_MATERIAL);
+                        }
+                        startBlock = startBlock.getRelative(bridgeLocation);
+                        endBlock = endBlock.getRelative(bridgeLocation);
+                        if (endBlock.getTypeId() == startBlock.getTypeId()) {
+                            Material type = startBlock.getType();
+                            byte data = startBlock.getData();
+                            switch (direction) {
+                                case NORTH:
+                                case SOUTH:
+                                    if (blocksEqual(type, data,
+                                            startBlock.getRelative(BlockFace.EAST), startBlock.getRelative(BlockFace.WEST),
+                                            endBlock.getRelative(BlockFace.EAST), endBlock.getRelative(BlockFace.WEST))) {
+                                        Set<Block> blockList = new HashSet<Block>();
+                                        Block currentBlock = startBlock.getRelative(direction);
+                                        while (!currentBlock.equals(endBlock)) {
+                                            blockList.add(currentBlock);
+                                            if (isSmall) {
+                                                blockList.add(currentBlock.getRelative(BlockFace.EAST));
+                                                blockList.add(currentBlock.getRelative(BlockFace.WEST));
+                                            }
+                                            currentBlock = currentBlock.getRelative(direction);
                                         }
-                                        currentBlock = currentBlock.getRelative(direction);
+                                        blockMap = new BlockMap(blockList, startBlock, endBlock, type, data);
+                                        return;
+                                    } else {
+                                        throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
                                     }
-                                    blockMap = new BlockMap(blockList, startBlock, endBlock, type, data);
-                                    return;
-                                } else {
-                                    throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
-                                }
-                            case EAST:
-                            case WEST:
-                                if (blocksEqual(type, data,
-                                        startBlock.getRelative(BlockFace.NORTH), startBlock.getRelative(BlockFace.SOUTH),
-                                        endBlock.getRelative(BlockFace.NORTH), endBlock.getRelative(BlockFace.SOUTH))) {
-                                    Set<Block> blockList = new HashSet<Block>();
-                                    Block currentBlock = startBlock.getRelative(direction);
-                                    while (!currentBlock.equals(endBlock)) {
-                                        blockList.add(currentBlock);
-                                        if (isSmall) {
-                                            blockList.add(currentBlock.getRelative(BlockFace.NORTH));
-                                            blockList.add(currentBlock.getRelative(BlockFace.SOUTH));
+                                case EAST:
+                                case WEST:
+                                    if (blocksEqual(type, data,
+                                            startBlock.getRelative(BlockFace.NORTH), startBlock.getRelative(BlockFace.SOUTH),
+                                            endBlock.getRelative(BlockFace.NORTH), endBlock.getRelative(BlockFace.SOUTH))) {
+                                        Set<Block> blockList = new HashSet<Block>();
+                                        Block currentBlock = startBlock.getRelative(direction);
+                                        while (!currentBlock.equals(endBlock)) {
+                                            blockList.add(currentBlock);
+                                            if (isSmall) {
+                                                blockList.add(currentBlock.getRelative(BlockFace.NORTH));
+                                                blockList.add(currentBlock.getRelative(BlockFace.SOUTH));
+                                            }
+                                            currentBlock = currentBlock.getRelative(direction);
                                         }
-                                        currentBlock = currentBlock.getRelative(direction);
+                                        blockMap = new BlockMap(blockList, startBlock, endBlock, type, data);
+                                        return;
+                                    } else {
+                                        throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
                                     }
-                                    blockMap = new BlockMap(blockList, startBlock, endBlock, type, data);
-                                    return;
-                                } else {
-                                    throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
-                                }
-                            default:
-                                throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
+                                default:
+                                    throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
+                            }
+                        } else {
+                            throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
                         }
                     } else {
-                        throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
+                        throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
                     }
-                } else {
-                    throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
                 }
             }
+            throw new BlockMapException(BlockMapException.Type.END_NOT_FOUND);
+        } else {
+            throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
         }
-        throw new BlockMapException(BlockMapException.Type.END_NOT_FOUND);
     }
 
     private boolean blocksEqual(Material type, byte data, Block... blocks) {
@@ -229,5 +216,19 @@ public class Bridge extends SignMechanicListener {
             }
         }
         return true;
+    }
+
+    private boolean isOpen() {
+        if (hasBlockMapper()) {
+            for (Block b : blockMap.getSet()) {
+                if (b.getTypeId() == blockMap.getMaterial().getId() && b.getData() == blockMap.getMaterialData())
+                    return false;
+                else if (b.getTypeId() == Material.AIR.getId())
+                    return true;
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 }

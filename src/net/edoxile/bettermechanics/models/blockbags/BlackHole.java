@@ -18,12 +18,21 @@
 
 package net.edoxile.bettermechanics.models.blockbags;
 
+import org.bukkit.Location;
+import org.bukkit.block.Sign;
+
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
 public class BlackHole extends BlockBag {
+
+    private Sign sign;
+
+    public BlackHole(Sign s){
+        sign = s;
+    }
 
     @Override
     public void storeItems(int id, byte data, int amount) throws BlockBagException {
@@ -32,5 +41,14 @@ public class BlackHole extends BlockBag {
     @Override
     public Direction getDirection() {
         return Direction.SINK;
+    }
+
+    @Override
+    public Location getLocation() {
+        return sign.getLocation();
+    }
+
+    public Sign getSign(){
+        return sign;
     }
 }

@@ -30,7 +30,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -90,6 +89,8 @@ public class Cauldron extends BlockMechanicListener {
                     for(ItemStack stack : returnData.values()){
                         event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), stack);
                     }
+                    //TODO: check spelling
+                    event.getPlayer().sendMessage(ChatColor.GOLD + "In a proof of smoke you've made " +  recipe.getName());
                 } while(iterator.hasNext());
             } else {
                 event.getPlayer().sendMessage(ChatColor.DARK_RED + "The cauldron doesn't contain any known recipes.");
@@ -108,12 +109,12 @@ public class Cauldron extends BlockMechanicListener {
     }
 
     @Override
-    public List<Material> getMechanicActivators() {
+    public Material[] getMechanicActivators() {
         return null;
     }
 
     @Override
-    public List<Material> getMechanicTargets() {
+    public Material[] getMechanicTargets() {
         return null;
     }
 

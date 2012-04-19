@@ -25,13 +25,15 @@ package net.edoxile.bettermechanics.utils.datastorage;
  */
 public class BlockMapException extends Exception {
     public enum Type {
-        END_NOT_FOUND("The other side could not be found!"),
-        NON_ORDINAL_SIGN("This sign is not placed in an ordinal direction (east, west, north or south)!"),
-        MISPLACED_SIGN("This sign-type is wrong (wall sign <> sign post)!"),
-        NON_ALLOWED_MATERIAL("This mechanic is not made of an allowed material!"),
-        SIZE_LIMIT_EXCEEDED("This mechanic exceeds the size limit in some way!"),
-        SIDES_DO_NOT_MATCH("Both sides of the bridge need to be made of the same material!"),
-        NO_BLOCKMAP("This mechanic doesn't have a BlockMap, but it was called anyway!");
+        END_NOT_FOUND("The other side could not be found."),
+        MECHANIC_NOT_FOUND("The %s could not be found. Distance between Sign and %s might be to big."),
+        NON_ORDINAL_SIGN("This sign is not placed in an ordinal direction (east, west, north or south)."),
+        MISPLACED_SIGN("This sign-type is wrong (wall sign <> sign post)."),
+        NON_ALLOWED_MATERIAL("%s is not made of an allowed material."),
+        SIZE_LIMIT_EXCEEDED("%s exceeds the size limit in some way."),
+        SIDES_DO_NOT_MATCH("Both sides of the bridge need to be made of the same material."),
+        NO_BLOCKMAP("%s doesn't have a BlockMap, but it was called anyway."),
+        INVALID_KEY_ON_SIGN("%s was called, but the keyword on this sign doesn't belong to %s.");
 
         private final String errorMessage;
 

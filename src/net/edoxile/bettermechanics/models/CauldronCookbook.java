@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Edoxile
+ * Copyright (c) 2012 sk89q, Edoxile
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,8 +49,8 @@ public class CauldronCookbook {
     public CauldronCookbook() {
         try {
             File configFile = new File("plugins/BetterMechanics/cauldron-recipes.yml");
-            if(BetterMechanics.debugMode)
-            BetterMechanics.log("Loading cauldron recipes from " + configFile.getAbsolutePath());
+            if(BetterMechanics.DEBUG)
+                BetterMechanics.log("Loading cauldron recipes from " + configFile.getAbsolutePath());
             FileConfiguration config = new YamlConfiguration();
             config.load(configFile);
             Set<String> keys = config.getKeys(true);

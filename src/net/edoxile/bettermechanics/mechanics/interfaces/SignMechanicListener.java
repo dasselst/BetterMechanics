@@ -28,10 +28,9 @@ import net.edoxile.bettermechanics.utils.SignUtil;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMapException;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -75,16 +74,16 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
         throw new BlockMapException(BlockMapException.Type.NO_BLOCKMAP);
     }
 
-    public abstract List<String> getIdentifiers();
+    public abstract String[] getIdentifiers();
 
-    public abstract List<String> getPassiveIdentifiers();
-
-    @Override
-    public abstract List<Material> getMechanicActivators();
+    public abstract String[] getPassiveIdentifiers();
 
     @Override
-    public List<Material> getMechanicTargets() {
-        return Arrays.asList(Material.SIGN_POST, Material.WALL_SIGN);
+    public abstract Material[] getMechanicActivators();
+
+    @Override
+    public Material[] getMechanicTargets() {
+        return new Material[]{Material.SIGN_POST, Material.WALL_SIGN};
     }
 
     public boolean isThisMechanic(Sign sign) {
@@ -93,11 +92,24 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
 
     private boolean isThisMechanic(Sign sign, boolean passive) {
         String id = SignUtil.getMechanicsIdentifier(sign);
-        return (getIdentifiers().contains(id) || (getPassiveIdentifiers().contains(id) && passive));
+        if (getIdentifiers() == null)
+            return true;
+
+        for (String s : getIdentifiers()) {
+            if (s.equals(id))
+                return true;
+        }
+        if (passive) {
+            for (String s : getPassiveIdentifiers()) {
+                if (s.equals(id))
+                    return true;
+            }
+        }
+        return false;
     }
 
-    public List<Material> getMechanicTarget() {
-        return Arrays.asList(Material.WALL_SIGN, Material.SIGN_POST);
+    public Material[] getMechanicTarget() {
+        return new Material[]{Material.WALL_SIGN, Material.SIGN_POST};
     }
 
     protected void loadData(Sign sign) throws PlayerNotifier {
@@ -119,6 +131,60 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
                 blockBag = BlockBagHandler.locate(sign);
             } catch (BlockBagException e) {
                 throw new PlayerNotifier(e.getMessage(), PlayerNotifier.Level.SEVERE, sign.getLocation());
+            }
+        }
+    }
+
+    protected void open() throws PlayerNotifier {
+        if (hasBlockMapper()) {
+            int changed = 0;
+            for (Block b : blockMap.getSet()) {
+                if (b.getTypeId() == blockMap.getMaterial().getId() && b.getData() == blockMap.getMaterialData()) {
+                    b.setType(Material.AIR);
+                    changed++;
+                }
+            }
+            if (hasBlockBag() && changed > 0) {
+                if (!blockBag.storeItems(blockMap.getMaterial().getId(), blockMap.getMaterialData(), changed)) {
+                    for (Block b : blockMap.getSet()) {
+                        if (b.getTypeId() == Material.AIR.getId()) {
+                            b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
+                            changed--;
+                            if (changed == 0) {
+                                break;
+                            }
+                        }
+                    }
+                    //TODO: fix something so the users know how much space is missing
+                    throw new PlayerNotifier("There's no space left in the chest. Abort opening.", PlayerNotifier.Level.WARNING, blockBag.getLocation(true));
+                }
+            }
+        }
+    }
+
+    protected void close() throws PlayerNotifier {
+        if (hasBlockMapper()) {
+            int changed = 0;
+            for (Block b : blockMap.getSet()) {
+                if (b.getTypeId() == Material.AIR.getId()) {
+                    b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
+                    changed++;
+                }
+            }
+            if (hasBlockBag() && changed > 0) {
+                if (!blockBag.storeItems(blockMap.getMaterial().getId(), blockMap.getMaterialData(), changed)) {
+                    for (Block b : blockMap.getSet()) {
+                        if (b.getTypeId() == blockMap.getMaterial().getId() && b.getData() == blockMap.getMaterialData()) {
+                            b.setType(Material.AIR);
+                            changed--;
+                            if (changed == 0) {
+                                break;
+                            }
+                        }
+                    }
+                    //TODO: fix something so the users know how much is missing
+                    throw new PlayerNotifier("There are not enough items in the chest. Abort opening.", PlayerNotifier.Level.WARNING, blockBag.getLocation(true));
+                }
             }
         }
     }

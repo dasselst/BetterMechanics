@@ -19,6 +19,7 @@
 package net.edoxile.bettermechanics.models.blockbags;
 
 import net.edoxile.bettermechanics.handlers.InventoryHandler;
+import org.bukkit.Location;
 import org.bukkit.block.Chest;
 
 /**
@@ -50,6 +51,11 @@ public class ChestBag extends BlockBag {
     @Override
     public Direction getDirection() {
         return Direction.ANY;
+    }
+
+    @Override
+    public Location getLocation() {
+        return chest.getLocation();
     }
 
     public boolean isEmpty() {

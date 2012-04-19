@@ -22,6 +22,7 @@ import net.edoxile.bettermechanics.handlers.MechanicsHandler;
 import net.edoxile.bettermechanics.listeners.BMListener;
 import net.edoxile.bettermechanics.mechanics.Bridge;
 import net.edoxile.bettermechanics.mechanics.Cauldron;
+import net.edoxile.bettermechanics.mechanics.Gate;
 import net.edoxile.bettermechanics.mechanics.Pen;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -49,6 +50,7 @@ public class BetterMechanics extends JavaPlugin {
         instance = this;
         //Register different Mechanics
         mechanicsHandler.addMechanic(new Pen());
+        mechanicsHandler.addMechanic(new Gate());
         mechanicsHandler.addMechanic(new Bridge());
         mechanicsHandler.addMechanic(new Cauldron());
 

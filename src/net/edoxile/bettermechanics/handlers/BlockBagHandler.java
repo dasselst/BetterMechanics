@@ -19,6 +19,7 @@
 package net.edoxile.bettermechanics.handlers;
 
 import net.edoxile.bettermechanics.models.blockbags.*;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -44,9 +45,9 @@ public class BlockBagHandler {
                     Sign s = (Sign) b.getState();
                     String id = s.getLine(1);
                     if (sink == null && id.equals("BlackHole")) {
-                        sink = new BlackHole();
+                        sink = new BlackHole(s);
                     } else if (source == null && id.equals("BlockSource")) {
-                        source = new BlockSource();
+                        source = new BlockSource(s);
                     }
                 }
             }
@@ -154,5 +155,13 @@ public class BlockBagHandler {
             }
         }
         return null;
+    }
+
+    public Location getLocation(boolean store){
+        if(store){
+            return sink.getLocation();
+        } else {
+            return source.getLocation();
+        }
     }
 }

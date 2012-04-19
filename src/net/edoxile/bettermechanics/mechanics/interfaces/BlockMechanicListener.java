@@ -22,8 +22,6 @@ import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import org.bukkit.Material;
 
-import java.util.List;
-
 /**
  * Created by IntelliJ IDEA.
  *
@@ -53,7 +51,7 @@ public abstract class BlockMechanicListener implements IMechanicListener {
 
     public abstract boolean isTriggeredByPlayer();
 
-    public abstract List<Material> getMechanicActivators();
+    public abstract Material[] getMechanicActivators();
 
-    public abstract List<Material> getMechanicTargets();
+    public abstract Material[] getMechanicTargets();
 }

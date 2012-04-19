@@ -99,4 +99,24 @@ public class SignUtil {
             return null;
         }
     }
+
+    public static boolean isOrdinal(Sign sign) {
+        return isOrdinal(getFacing(sign));
+    }
+
+    public static boolean isOrdinal(BlockFace direction) {
+        switch (direction) {
+            case NORTH:
+            case SOUTH:
+            case EAST:
+            case WEST:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isWallSign(Sign s){
+        return s.getBlock().getType() == Material.WALL_SIGN;
+    }
 }

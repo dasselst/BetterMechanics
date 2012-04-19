@@ -29,9 +29,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import static net.edoxile.bettermechanics.utils.StringUtil.merge;
 
@@ -137,12 +135,12 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     @Override
-    public List<String> getIdentifiers() {
+    public String[] getIdentifiers() {
         return null;
     }
 
     @Override
-    public List<String> getPassiveIdentifiers() {
+    public String[] getPassiveIdentifiers() {
         return null;
     }
 
@@ -167,8 +165,8 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     @Override
-    public List<Material> getMechanicActivators() {
-        return Arrays.asList(tool);
+    public Material[] getMechanicActivators() {
+        return new Material[]{tool};
     }
 
     @Override
