@@ -18,6 +18,7 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
@@ -44,7 +45,94 @@ import static net.edoxile.bettermechanics.utils.BlockUtil.*;
  */
 public class Gate extends SignMechanicListener {
 
-    private final ConfigHandler.GateConfig config = ConfigHandler.getInstance().getGateConfig();
+    private final ConfigHandler.GateConfig config = BetterMechanics.getInstance().getConfigHandler().getGateConfig();
+
+    @Override
+    public void onSignPowerOn(RedstoneEvent event) {
+        try {
+            loadData(SignUtil.getSign(event.getBlock()));
+            if (isOpen())
+                close();
+        } catch (PlayerNotifier playerNotifier) {
+            playerNotifier.log();
+        }
+    }
+
+    @Override
+    public void onSignPowerOff(RedstoneEvent event) {
+        try {
+            loadData(SignUtil.getSign(event.getBlock()));
+            if (!isOpen())
+                open();
+        } catch (PlayerNotifier playerNotifier) {
+            playerNotifier.log();
+        }
+    }
+
+    @Override
+    public void onPlayerRightClickSign(PlayerEvent event) {
+        try {
+            String node = SignUtil.getMechanicsIdentifier(SignUtil.getSign(event.getBlock()));
+            if (!PermissionHandler.getInstance().hasPermission(event.getPlayer(), event.getBlock(), node, PermissionHandler.Checks.HIT))
+                throw new PlayerNotifier("Seems like you don't have permission to do this!", PlayerNotifier.Level.INFO, event.getBlock().getLocation());
+            loadData(SignUtil.getSign(event.getBlock()));
+            if (isOpen()) {
+                close();
+                event.getPlayer().sendMessage(ChatColor.GOLD + "Bridge closed!");
+            } else {
+                open();
+                event.getPlayer().sendMessage(ChatColor.GOLD + "Bridge opened!");
+            }
+        } catch (PlayerNotifier playerNotifier) {
+            playerNotifier.notify(event.getPlayer());
+        }
+
+    }
+
+    @Override
+    public String[] getIdentifiers() {
+        return new String[]{"[Gate]", "[dGate]", "[sGate]"};
+    }
+
+    @Override
+    public String[] getPassiveIdentifiers() {
+        return null;
+    }
+
+    @Override
+    public boolean isTriggeredByRedstone() {
+        return true;
+    }
+
+    @Override
+    public boolean isTriggeredByPlayer() {
+        return true;
+    }
+
+    @Override
+    public boolean hasBlockMapper() {
+        return true;
+    }
+
+    @Override
+    public boolean hasBlockBag() {
+        return true;
+    }
+
+    @Override
+    public Material[] getMechanicActivators() {
+        return voidActor;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return config.isEnabled();
+    }
+
+    @Override
+    public String getName() {
+        return "Gate";
+    }
 
     @Override
     public void mapBlocks(Sign sign) throws BlockMapException {
@@ -60,12 +148,6 @@ public class Gate extends SignMechanicListener {
         if (id.equals("[dGate]")) {
             dGate = true;
         } else if (id.equals("[sGate]")) {
-            smallGate = true;
-        } else if (id.equals("[Iron Gate]")) {
-            gateMaterial = Material.IRON_FENCE;
-        } else if (id.equals("[Iron dGate]")) {
-            dGate = true;
-        } else if (id.equals("[Iron sGate]")) {
             smallGate = true;
         } else {
             throw new BlockMapException(BlockMapException.Type.INVALID_KEY_ON_SIGN);
@@ -141,91 +223,17 @@ public class Gate extends SignMechanicListener {
         if (!blockSet.isEmpty()) {
             tempBlock = blockSet.iterator().next();
             blockMap = new BlockMap(blockSet, null, null, tempBlock.getType(), tempBlock.getData());
+        } else {
+            throw new BlockMapException(BlockMapException.Type.MECHANIC_NOT_FOUND);
         }
 
     }
 
-    @Override
-    public void onSignPowerOn(RedstoneEvent event) {
+    private boolean isOpen() throws PlayerNotifier {
         try {
-            loadData(SignUtil.getSign(event.getBlock()));
-            close();
-        } catch (PlayerNotifier playerNotifier) {
-            playerNotifier.log();
+            return blockMap.getSet().iterator().next().getRelative(BlockFace.DOWN).getType() == Material.AIR;
+        } catch (NullPointerException e) {
+            throw new PlayerNotifier("Couldn't find any gates, blocklist is empty!", PlayerNotifier.Level.WARNING, null);
         }
-    }
-
-    @Override
-    public void onSignPowerOff(RedstoneEvent event) {
-        try {
-            loadData(SignUtil.getSign(event.getBlock()));
-            open();
-        } catch (PlayerNotifier playerNotifier) {
-            playerNotifier.log();
-        }
-    }
-
-    @Override
-    public void onPlayerRightClickSign(PlayerEvent event) {
-        try {
-            String node = SignUtil.getMechanicsIdentifier(SignUtil.getSign(event.getBlock()));
-            if (!PermissionHandler.getInstance().hasPermission(event.getPlayer(), event.getBlock(), node, PermissionHandler.Checks.HIT))
-                throw new PlayerNotifier("Seems like you don't have permission to do this!", PlayerNotifier.Level.INFO, event.getBlock().getLocation());
-            loadData(SignUtil.getSign(event.getBlock()));
-            if (isOpen()) {
-                close();
-                event.getPlayer().sendMessage(ChatColor.GOLD + "Bridge closed!");
-            } else {
-                open();
-                event.getPlayer().sendMessage(ChatColor.GOLD + "Bridge opened!");
-            }
-        } catch (PlayerNotifier playerNotifier) {
-            playerNotifier.notify(event.getPlayer());
-        }
-
-    }
-
-    @Override
-    public String[] getIdentifiers() {
-        return new String[]{"[Gate]", "[dGate]", "[sGate]"};
-    }
-
-    @Override
-    public String[] getPassiveIdentifiers() {
-        return null;
-    }
-
-    @Override
-    public boolean isTriggeredByRedstone() {
-        return true;
-    }
-
-    @Override
-    public boolean isTriggeredByPlayer() {
-        return true;
-    }
-
-    @Override
-    public boolean hasBlockMapper() {
-        return true;
-    }
-
-    @Override
-    public boolean hasBlockBag() {
-        return true;
-    }
-
-    @Override
-    public Material[] getMechanicActivators() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return "Gate";
-    }
-
-    private boolean isOpen() {
-        //TODO: implement
     }
 }

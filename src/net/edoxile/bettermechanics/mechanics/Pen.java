@@ -18,6 +18,7 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanicCommandListener;
@@ -40,19 +41,7 @@ import static net.edoxile.bettermechanics.utils.StringUtil.merge;
  */
 public class Pen extends SignMechanicListener implements IMechanicCommandListener {
 
-    private boolean enabled;
-
-    private Material tool;
-
-    public Pen() {
-        reloadConfig();
-    }
-
-    public void reloadConfig() {
-        ConfigHandler.PenConfig config = ConfigHandler.getInstance().getPenConfig();
-        enabled = config.isEnabled();
-        tool = config.getPenTool();
-    }
+    ConfigHandler.PenConfig config = BetterMechanics.getInstance().getConfigHandler().getPenConfig();
 
     public void onPlayerRightClickSign(Player player, Sign sign) {
         if (PermissionHandler.getInstance().playerHasNode(player, "pen")) {
@@ -80,9 +69,14 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
     }
 
     @Override
+    public String getCommandName() {
+        return "pen";
+    }
+
+    @Override
     public boolean onCommand(CommandSender commandSender, Command command, String[] args) {
         if (command.getName().equalsIgnoreCase("pen")) {
-            if (enabled && commandSender instanceof Player) {
+            if (isEnabled() && commandSender instanceof Player) {
                 Player player = (Player) commandSender;
                 if (PermissionHandler.getInstance().playerHasNode(player, "pen")) {
                     if (args.length == 0) {
@@ -136,7 +130,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
 
     @Override
     public String[] getIdentifiers() {
-        return null;
+        return voidTarget;
     }
 
     @Override
@@ -166,7 +160,12 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
 
     @Override
     public Material[] getMechanicActivators() {
-        return new Material[]{tool};
+        return new Material[]{config.getPenTool()};
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return config.isEnabled();
     }
 
     @Override

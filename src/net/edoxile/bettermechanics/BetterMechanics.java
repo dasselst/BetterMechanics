@@ -18,12 +18,10 @@
 
 package net.edoxile.bettermechanics;
 
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.handlers.MechanicsHandler;
 import net.edoxile.bettermechanics.listeners.BMListener;
-import net.edoxile.bettermechanics.mechanics.Bridge;
-import net.edoxile.bettermechanics.mechanics.Cauldron;
-import net.edoxile.bettermechanics.mechanics.Gate;
-import net.edoxile.bettermechanics.mechanics.Pen;
+import net.edoxile.bettermechanics.mechanics.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -39,29 +37,48 @@ import java.util.logging.Logger;
  * @author Edoxile
  */
 public class BetterMechanics extends JavaPlugin {
-    private static BetterMechanics instance = null;
+    private static BetterMechanics instance;
     private static final Logger logger = Logger.getLogger("minecraft");
-    public static final boolean DEBUG = false;
+    public static boolean DEBUG = false;
+    private final File dataFolder;
+    private final File jarFile;
+
     private final MechanicsHandler mechanicsHandler = new MechanicsHandler();
     private final BMListener listener = new BMListener(this);
+    private ConfigHandler configHandler;
+
+    public BetterMechanics() {
+        instance = this;
+
+        dataFolder = new File("./plugins/BetterMechanics");
+        jarFile = new File("./plugins/BetterMechanics.jar");
+
+        if(!dataFolder.exists()) {
+            if(dataFolder.mkdirs()) {
+                log("Creating new config");
+                ConfigHandler.createConfig(this);
+            }else{
+                log("The config was missing, but couldn't create new config files");
+                setEnabled(false);
+            }
+        }
+        configHandler = new ConfigHandler(this);
+    }
 
     @Override
     public void onEnable() {
-        instance = this;
         //Register different Mechanics
         mechanicsHandler.addMechanic(new Pen());
         mechanicsHandler.addMechanic(new Gate());
         mechanicsHandler.addMechanic(new Bridge());
         mechanicsHandler.addMechanic(new Cauldron());
+        mechanicsHandler.addMechanic(new Cycler());
+        mechanicsHandler.addMechanic(new Cycler.SignCycler());
 
         //Register different events
         getServer().getPluginManager().registerEvents(listener, this);
 
-        //TODO: fix this (deprecation etc.)
-        loadConfig();
-
         //log("Enabled! Version: " + getDescription().getVersion() + ".");
-
     }
 
     @Override
@@ -89,16 +106,20 @@ public class BetterMechanics extends JavaPlugin {
         } else if (DEBUG && level == Level.FINEST) {
             level = Level.INFO;
         }
-        logger.log(level, msg);
-
+        logger.log(level, "[BetterMechanics] " + msg);
     }
 
     public FileConfiguration getPluginConfig() {
-        return this.getConfig();
+        return getConfig();
+    }
+
+    @Override
+    public File getDataFolder(){
+        return dataFolder;
     }
 
     public File getJarFile() {
-        return getFile();
+        return jarFile;
     }
 
     @Override
@@ -110,6 +131,7 @@ public class BetterMechanics extends JavaPlugin {
         return instance;
     }
 
-    public void loadConfig() {
+    public ConfigHandler getConfigHandler() {
+        return configHandler;
     }
 }

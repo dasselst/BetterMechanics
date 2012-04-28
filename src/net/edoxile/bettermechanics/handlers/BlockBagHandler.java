@@ -157,8 +157,8 @@ public class BlockBagHandler {
         return null;
     }
 
-    public Location getLocation(boolean store){
-        if(store){
+    public Location getLocation(boolean store) {
+        if (store) {
             return sink.getLocation();
         } else {
             return source.getLocation();

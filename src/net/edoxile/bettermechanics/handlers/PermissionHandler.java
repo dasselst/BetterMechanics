@@ -78,7 +78,7 @@ public class PermissionHandler {
     }
 
     private PermissionHandler() {
-        ConfigHandler.PermissionsConfig config = ConfigHandler.getInstance().getPermissionsConfig();
+        ConfigHandler.PermissionsConfig config = BetterMechanics.getInstance().getConfigHandler().getPermissionsConfig();
         enabled = config.isEnabled();
         if (config.canUseZones()) {
             Plugin p = BetterMechanics.getInstance().getServer().getPluginManager().getPlugin("Zones");
@@ -106,7 +106,7 @@ public class PermissionHandler {
     }
 
     public boolean playerHasNode(Player player, String node) {
-        return !enabled || player.isOp() || player.hasPermission("BetterMechanics." + node);
+        return !enabled || player.isOp() || player.hasPermission("bettermechanics." + node);
     }
 
     private boolean playerCanBuild(Player player, Block block) {

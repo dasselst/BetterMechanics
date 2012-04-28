@@ -40,6 +40,8 @@ import java.util.logging.Level;
  */
 public abstract class SignMechanicListener extends BlockMechanicListener {
 
+    protected String[] voidTarget = new String[]{""};
+
     protected BlockMap blockMap;
     protected BlockBagHandler blockBag;
 
@@ -81,11 +83,6 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
     @Override
     public abstract Material[] getMechanicActivators();
 
-    @Override
-    public Material[] getMechanicTargets() {
-        return new Material[]{Material.SIGN_POST, Material.WALL_SIGN};
-    }
-
     public boolean isThisMechanic(Sign sign) {
         return isThisMechanic(sign, false);
     }
@@ -108,7 +105,8 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
         return false;
     }
 
-    public Material[] getMechanicTarget() {
+    @Override
+    public Material[] getMechanicTargets() {
         return new Material[]{Material.WALL_SIGN, Material.SIGN_POST};
     }
 

@@ -33,9 +33,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -46,23 +46,25 @@ import java.util.logging.Level;
 
 public class MechanicsHandler {
 
-    private final HashMap<String, ArrayList<SignMechanicListener>> redstoneSignMechanicMap = new HashMap<String, ArrayList<SignMechanicListener>>();
-    private final HashMap<Material, ArrayList<BlockMechanicListener>> redstoneBlockMechanicMap = new HashMap<Material, ArrayList<BlockMechanicListener>>();
+    private final HashMap<String, HashSet<SignMechanicListener>> redstoneSignMechanicMap = new HashMap<String, HashSet<SignMechanicListener>>();
+    private final HashMap<Material, HashSet<BlockMechanicListener>> redstoneBlockMechanicMap = new HashMap<Material, HashSet<BlockMechanicListener>>();
 
-    private final HashMap<String, ArrayList<SignMechanicListener>> signMechanicMap = new HashMap<String, ArrayList<SignMechanicListener>>();
-    private final HashMap<Material, ArrayList<BlockMechanicListener>> blockMechanicMap = new HashMap<Material, ArrayList<BlockMechanicListener>>();
+    private final HashMap<String, HashSet<SignMechanicListener>> signMechanicMap = new HashMap<String, HashSet<SignMechanicListener>>();
+    private final HashMap<Material, HashSet<BlockMechanicListener>> blockMechanicMap = new HashMap<Material, HashSet<BlockMechanicListener>>();
 
     private final HashMap<String, IMechanicCommandListener> commandableMechanicMap = new HashMap<String, IMechanicCommandListener>();
 
     public void addMechanic(IMechanicListener mechanicListener) {
         //TODO: check if this list works as it's supposed to (with passing a reference)
+        if (!mechanicListener.isEnabled())
+            return;
         if (mechanicListener instanceof SignMechanicListener) {
             SignMechanicListener signMechanic = (SignMechanicListener) mechanicListener;
             if (signMechanic.isTriggeredByRedstone()) {
                 for (String identifier : signMechanic.getIdentifiers()) {
-                    ArrayList<SignMechanicListener> list = redstoneSignMechanicMap.get(identifier);
+                    HashSet<SignMechanicListener> list = redstoneSignMechanicMap.get(identifier);
                     if (list == null) {
-                        list = new ArrayList<SignMechanicListener>();
+                        list = new HashSet<SignMechanicListener>();
                         list.add(signMechanic);
                         redstoneSignMechanicMap.put(identifier, list);
                     } else {
@@ -73,9 +75,9 @@ public class MechanicsHandler {
             }
             if (signMechanic.isTriggeredByPlayer()) {
                 for (String identifier : signMechanic.getIdentifiers()) {
-                    ArrayList<SignMechanicListener> list = signMechanicMap.get(identifier);
+                    HashSet<SignMechanicListener> list = signMechanicMap.get(identifier);
                     if (list == null) {
-                        list = new ArrayList<SignMechanicListener>();
+                        list = new HashSet<SignMechanicListener>();
                         list.add(signMechanic);
                         signMechanicMap.put(identifier, list);
                     } else {
@@ -88,9 +90,9 @@ public class MechanicsHandler {
             BlockMechanicListener blockMechanicListener = (BlockMechanicListener) mechanicListener;
             if (blockMechanicListener.isTriggeredByRedstone()) {
                 for (Material target : blockMechanicListener.getMechanicTargets()) {
-                    ArrayList<BlockMechanicListener> list = redstoneBlockMechanicMap.get(target);
+                    HashSet<BlockMechanicListener> list = redstoneBlockMechanicMap.get(target);
                     if (list == null) {
-                        list = new ArrayList<BlockMechanicListener>();
+                        list = new HashSet<BlockMechanicListener>();
                         list.add(blockMechanicListener);
                         redstoneBlockMechanicMap.put(target, list);
                     } else {
@@ -101,9 +103,9 @@ public class MechanicsHandler {
             }
             if (blockMechanicListener.isTriggeredByPlayer()) {
                 for (Material target : blockMechanicListener.getMechanicTargets()) {
-                    ArrayList<BlockMechanicListener> list = blockMechanicMap.get(target);
+                    HashSet<BlockMechanicListener> list = blockMechanicMap.get(target);
                     if (list == null) {
-                        list = new ArrayList<BlockMechanicListener>();
+                        list = new HashSet<BlockMechanicListener>();
                         list.add(blockMechanicListener);
                         blockMechanicMap.put(target, list);
                     } else {
@@ -116,10 +118,10 @@ public class MechanicsHandler {
 
         if (mechanicListener instanceof IMechanicCommandListener) {
             IMechanicCommandListener mechanicCommandListener = (IMechanicCommandListener) mechanicListener;
-            if (commandableMechanicMap.containsKey(mechanicCommandListener.getName())) {
+            if (commandableMechanicMap.containsKey(mechanicCommandListener.getCommandName())) {
                 BetterMechanics.log("Mechanic: " + mechanicCommandListener.getName() + " tried to register a command that has already been registered!", Level.SEVERE);
             } else {
-                commandableMechanicMap.put(mechanicCommandListener.getName(), mechanicCommandListener);
+                commandableMechanicMap.put(mechanicCommandListener.getCommandName(), mechanicCommandListener);
             }
         }
     }
@@ -131,7 +133,7 @@ public class MechanicsHandler {
 
     public void callPlayerEvent(PlayerEvent event) {
         if (SignUtil.isSign(event.getBlock())) {
-            List<SignMechanicListener> listeners = getSignListeners(event);
+            Set<SignMechanicListener> listeners = getSignListeners(event);
             main:
             for (SignMechanicListener listener : listeners) {
                 if (listener.isTriggeredByPlayer()) {
@@ -148,7 +150,7 @@ public class MechanicsHandler {
                 }
             }
         } else {
-            List<BlockMechanicListener> listeners = getBlockListeners(event);
+            Set<BlockMechanicListener> listeners = getBlockListeners(event);
             main:
             for (BlockMechanicListener listener : listeners) {
                 if (listener.isTriggeredByPlayer()) {
@@ -174,7 +176,7 @@ public class MechanicsHandler {
 
     public void callRedstoneEvent(RedstoneEvent event) {
         if (SignUtil.isSign(event.getBlock())) {
-            List<SignMechanicListener> listeners = getSignListeners(event);
+            Set<SignMechanicListener> listeners = getSignListeners(event);
             main:
             for (SignMechanicListener listener : listeners) {
                 if (listener.isTriggeredByRedstone()) {
@@ -191,7 +193,7 @@ public class MechanicsHandler {
                 }
             }
         } else {
-            List<BlockMechanicListener> listeners = getBlockListeners(event);
+            Set<BlockMechanicListener> listeners = getBlockListeners(event);
             main:
             for (BlockMechanicListener listener : listeners) {
                 if (listener.isTriggeredByRedstone()) {
@@ -210,11 +212,11 @@ public class MechanicsHandler {
         }
     }
 
-    private List<SignMechanicListener> getSignListeners(Event event) {
+    private Set<SignMechanicListener> getSignListeners(Event event) {
         if (!SignUtil.isSign(event.getBlock()))
             return null;
 
-        List<SignMechanicListener> listeners = new ArrayList<SignMechanicListener>();
+        Set<SignMechanicListener> listeners = new HashSet<SignMechanicListener>();
         Sign sign = (Sign) event.getBlock().getState();
 
         if (event instanceof RedstoneEvent) {
@@ -230,11 +232,11 @@ public class MechanicsHandler {
         return listeners;
     }
 
-    private List<BlockMechanicListener> getBlockListeners(Event event) {
+    private Set<BlockMechanicListener> getBlockListeners(Event event) {
         if (SignUtil.isSign(event.getBlock()))
             return null;
 
-        List<BlockMechanicListener> listeners = new ArrayList<BlockMechanicListener>();
+        Set<BlockMechanicListener> listeners = new HashSet<BlockMechanicListener>();
         Block block = event.getBlock();
 
         if (event instanceof RedstoneEvent) {

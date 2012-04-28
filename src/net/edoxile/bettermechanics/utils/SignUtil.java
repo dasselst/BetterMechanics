@@ -116,7 +116,7 @@ public class SignUtil {
         }
     }
 
-    public static boolean isWallSign(Sign s){
+    public static boolean isWallSign(Sign s) {
         return s.getBlock().getType() == Material.WALL_SIGN;
     }
 }

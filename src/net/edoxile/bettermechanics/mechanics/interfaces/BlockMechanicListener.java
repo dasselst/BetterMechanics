@@ -29,6 +29,8 @@ import org.bukkit.Material;
  */
 public abstract class BlockMechanicListener implements IMechanicListener {
 
+    protected Material[] voidActor = new Material[]{Material.AIR};
+
     public void onBlockRightClick(PlayerEvent event) {
     }
 

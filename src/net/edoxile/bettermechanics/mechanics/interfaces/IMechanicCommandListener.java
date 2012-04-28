@@ -27,5 +27,8 @@ import org.bukkit.command.CommandSender;
  * @author Edoxile
  */
 public interface IMechanicCommandListener extends IMechanicListener {
+
+    public String getCommandName();
+
     public boolean onCommand(CommandSender commandSender, Command command, String[] args);
 }

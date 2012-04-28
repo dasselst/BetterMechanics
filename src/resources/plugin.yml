@@ -5,6 +5,12 @@ author: Edoxile
 website: https://github.com/Edoxile/BetterMechanics
 commands:
     bettermechanics:
-        description: Change the text of signs
-        usage: /<command> reload <cauldron>
+        description: Management command of BetterMechanics
+        usage: /<command> reload [cauldron]
         aliases: bm
+    pen:
+        description: Change the text on signs
+        usage: /<command> help
+    cauldron:
+        description: Manage cauldron and show recipes
+        usage: /cauldron help

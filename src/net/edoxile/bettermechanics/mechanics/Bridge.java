@@ -18,6 +18,7 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
@@ -43,7 +44,7 @@ import java.util.Set;
  */
 public class Bridge extends SignMechanicListener {
 
-    private final ConfigHandler.BridgeConfig config = ConfigHandler.getInstance().getBridgeConfig();
+    private final ConfigHandler.BridgeConfig config = BetterMechanics.getInstance().getConfigHandler().getBridgeConfig();
 
     @Override
     public void onSignPowerOn(RedstoneEvent event) {
@@ -117,7 +118,12 @@ public class Bridge extends SignMechanicListener {
 
     @Override
     public Material[] getMechanicActivators() {
-        return null;
+        return new Material[]{Material.AIR};
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return config.isEnabled();
     }
 
     @Override

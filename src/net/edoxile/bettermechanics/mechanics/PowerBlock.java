@@ -16,39 +16,49 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.models.blockbags;
+package net.edoxile.bettermechanics.mechanics;
 
-import org.bukkit.Location;
-import org.bukkit.block.Sign;
+import net.edoxile.bettermechanics.BetterMechanics;
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
+import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
+import org.bukkit.Material;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public class BlackHole extends BlockBag {
+public class PowerBlock extends BlockMechanicListener {
 
-    private Sign sign;
+    private ConfigHandler.PowerBlockConfig config = BetterMechanics.getInstance().getConfigHandler().getPowerBlockConfig();
 
-    public BlackHole(Sign s) {
-        sign = s;
+    @Override
+    public boolean isTriggeredByRedstone() {
+        return true;
     }
 
     @Override
-    public void storeItems(int id, byte data, int amount) throws BlockBagException {
+    public boolean isTriggeredByPlayer() {
+        return false;
     }
 
     @Override
-    public Direction getDirection() {
-        return Direction.SINK;
+    public Material[] getMechanicActivators() {
+        return null;
     }
 
     @Override
-    public Location getLocation() {
-        return sign.getLocation();
+    public Material[] getMechanicTargets() {
+        return voidActor;
     }
 
-    public Sign getSign() {
-        return sign;
+    @Override
+    public String getName() {
+        return "PowerBlock";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return config.isEnabled();
     }
 }

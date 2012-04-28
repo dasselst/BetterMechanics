@@ -20,18 +20,21 @@ package net.edoxile.bettermechanics.models;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Edoxile
+ *
+ * @author Edoxile
  */
 
 
 import net.edoxile.bettermechanics.BetterMechanics;
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.utils.datastorage.MaterialMap;
 import net.edoxile.bettermechanics.utils.datastorage.MaterialMapIterator;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,67 +46,67 @@ import java.util.logging.Level;
  * @author sk89q, Edoxile
  */
 public class CauldronCookbook {
-    private final List<Recipe> recipes = new ArrayList<Recipe>();
+    private final Set<Recipe> recipes = new HashSet<Recipe>();
+
+    private final ConfigHandler configHandler;
+
+    private File cauldronConfigFile;
+    private FileConfiguration cauldronConfig;
 
     @SuppressWarnings("unchecked")
-    public CauldronCookbook() {
-        try {
-            File configFile = new File("plugins/BetterMechanics/cauldron-recipes.yml");
-            if(BetterMechanics.DEBUG)
-                BetterMechanics.log("Loading cauldron recipes from " + configFile.getAbsolutePath());
-            FileConfiguration config = new YamlConfiguration();
-            config.load(configFile);
-            Set<String> keys = config.getKeys(true);
-            HashSet<String> names = new HashSet<String>();
-            for (String key : keys) {
-                if (key.startsWith("recipes")) {
-                    String[] splitKeys = key.split(".");
-                    if (splitKeys.length > 2) {
-                        names.add(splitKeys[1]);
+    public CauldronCookbook(ConfigHandler c) {
+        configHandler = c;
+
+        cauldronConfigFile = configHandler.getCauldronConfigFile();
+        cauldronConfig = configHandler.getCauldronConfiguration();
+
+        Set<String> keys = cauldronConfig.getKeys(true);
+        HashSet<String> names = new HashSet<String>();
+        for (String key : keys) {
+            String[] splitKeys = key.split("\\.");
+            if (splitKeys.length == 2) {
+                names.add(splitKeys[1]);
+            }
+        }
+        if (names.isEmpty()) {
+            BetterMechanics.log("Error loading cauldron recipes: no recipes found! (you probably messed up the yml format somewhere)");
+            return;
+        }
+        for (String name : names) {
+            MaterialMap ingredients = new MaterialMap();
+            MaterialMap results = new MaterialMap();
+
+            try {
+                List<List<Integer>> list = (List<List<Integer>>) cauldronConfig.get("recipes." + name + ".ingredients");
+                for (List<Integer> l : list) {
+                    if (l.size() == 2) {
+                        ingredients.put(l.get(0), (byte) 0, l.get(1));
+                    } else if (l.size() == 3) {
+                        ingredients.put(l.get(0), l.get(1).byteValue(), l.get(2));
+                    } else {
+                        BetterMechanics.log("Cauldron recipes contains a typo in the ingredients of " + name, Level.WARNING);
                     }
                 }
-            }
-            if (names.isEmpty()) {
-                BetterMechanics.log("Error loading cauldron recipes: no recipes found! (you probably messed up the yml format somewhere)");
+
+                list = (List<List<Integer>>) cauldronConfig.get("recipes." + name + ".results");
+                for (List<Integer> l : list) {
+                    if (l.size() == 2) {
+                        results.put(l.get(0), (byte) 0, l.get(1));
+                    } else if (l.size() == 3) {
+                        results.put(l.get(0), l.get(1).byteValue(), l.get(2));
+                    } else {
+                        BetterMechanics.log("Cauldron recipes contains a typo in the results of " + name, Level.WARNING);
+                    }
+                }
+            } catch (Exception e) {
+                recipes.clear();
+                BetterMechanics.log("Error loading cauldron recipes: " + e.getMessage() + "(" + e.getClass().getName() + ") (you probably messed up the yaml format somewhere)");
                 return;
             }
-            for (String name : names) {
-                MaterialMap ingredients = new MaterialMap();
-                MaterialMap results = new MaterialMap();
 
-                try {
-                    List<List<Integer>> list = (List<List<Integer>>) config.get("recipes." + name + ".ingredients");
-                    for (List<Integer> l : list) {
-                        if (l.size() == 2) {
-                            ingredients.put(l.get(0), (byte) 0, l.get(1));
-                        } else if (l.size() == 3) {
-                            ingredients.put(l.get(0), l.get(1).byteValue(), l.get(2));
-                        } else {
-                            BetterMechanics.log("Cauldron recipes contains a typo in the ingredients of " + name, Level.WARNING);
-                        }
-                    }
-                    list = (List<List<Integer>>) config.get("recipes." + name + ".results");
-                    for (List<Integer> l : list) {
-                        if (l.size() == 2) {
-                            ingredients.put(l.get(0), (byte) 0, l.get(1));
-                        } else if (l.size() == 3) {
-                            results.put(l.get(0), l.get(1).byteValue(), l.get(2));
-                        } else {
-                            BetterMechanics.log("Cauldron recipes contains a typo in the results of " + name, Level.WARNING);
-                        }
-                    }
-                } catch (Exception e) {
-                    recipes.clear();
-                    BetterMechanics.log("Error loading cauldron recipes: " + e.getMessage() + "(" + e.getClass().getName() + ") (you probably messed up the yaml format somewhere)");
-                    return;
-                }
-
-                add(new Recipe(name, ingredients, results));
-            }
-            BetterMechanics.log("Cauldron loaded " + size() + " recipes");
-        } catch (Exception e) {
-            BetterMechanics.log("Something went wrong loading the config file");
+            add(new Recipe(name, ingredients, results, cauldronConfig.getBoolean("recipes." + name + ".hidden", false)));
         }
+        BetterMechanics.log("Cauldron loaded " + size() + " recipes");
     }
 
     private void add(Recipe recipe) {
@@ -123,15 +126,21 @@ public class CauldronCookbook {
         return recipes.size();
     }
 
+    public Set<Recipe> getRecipes(){
+        return recipes;
+    }
+
     public static final class Recipe {
         private final String name;
         private final MaterialMap ingredients;
         private final MaterialMap results;
+        private final boolean hidden;
 
-        public Recipe(String name, MaterialMap ingredients, MaterialMap results) {
+        public Recipe(String name, MaterialMap ingredients, MaterialMap results, boolean hidden) {
             this.name = name;
             this.ingredients = ingredients;
             this.results = results;
+            this.hidden = hidden;
         }
 
         public String getName() {
@@ -153,11 +162,24 @@ public class CauldronCookbook {
             return results;
         }
 
-        //Why would anyone like to know what ingredients there are in a recipe? Maybe if you'd do '/bm cauldron recipes'
-        //or something similar, but have to check if wanted by players
-        @Deprecated
         public MaterialMap getIngredients() {
             return ingredients;
+        }
+
+        public boolean isHidden() {
+            return hidden;
+        }
+    }
+
+    public void reloadConfigFile() {
+        try {
+            cauldronConfigFile = configHandler.getCauldronConfigFile();
+            cauldronConfig = new YamlConfiguration();
+            cauldronConfig.load(cauldronConfigFile);
+        } catch (IOException e) {
+            BetterMechanics.log("Error reading cauldron-recipes.yml");
+        } catch (InvalidConfigurationException e) {
+            BetterMechanics.log("Error loading cauldron-recipes.yml: " + e.getMessage());
         }
     }
 }

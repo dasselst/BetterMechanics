@@ -39,11 +39,11 @@ public class MaterialMapIterator {
     }
 
     private byte getData(int key) {
-        return (byte) (key & 0xffff);
+        return (byte) (key & 0xff);
     }
 
     private int getId(int key) {
-        return ((key >> 8) & 0xffff);
+        return ((key >> 8) & 0xff);
     }
 
     public boolean hasNext() {
@@ -108,7 +108,7 @@ public class MaterialMapIterator {
             return "[0 items] {} @ 0";
         String msg = "[" + size + " items] :: { ";
         for (int index = 0; index < size; index++) {
-            msg += "[" + _keys[index] + ", " + _values[index] + "], ";
+            msg += "[" + getId(_keys[index]) + ":" + getData(_keys[index]) + ", " + _values[index] + "], ";
         }
         return msg.substring(0, msg.length() - 2) + " } @ " + pointer;
     }

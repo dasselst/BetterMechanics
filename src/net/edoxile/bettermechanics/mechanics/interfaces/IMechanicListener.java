@@ -25,4 +25,6 @@ package net.edoxile.bettermechanics.mechanics.interfaces;
  */
 public interface IMechanicListener {
     public String getName();
+
+    public boolean isEnabled();
 }

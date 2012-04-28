@@ -21,12 +21,11 @@ package net.edoxile.bettermechanics.handlers;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.models.CauldronCookbook;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -38,16 +37,31 @@ import java.util.logging.Level;
  * @author Edoxile
  */
 public class ConfigHandler {
-    private static final ConfigHandler instance = new ConfigHandler();
-    private static final BetterMechanics plugin = BetterMechanics.getInstance();
-    private static final File configFile = new File(plugin.getDataFolder(), "config.yml");
-    private static FileConfiguration config = new YamlConfiguration();
+    private static File configFile;
+    private static FileConfiguration configuration;
+    private static File cauldronConfigFile;
+    private static FileConfiguration cauldronConfiguration;
 
-    private ConfigHandler() {
-        if (configuration == null) {
-            createConfig();
-            BetterMechanics.log("A new config file was created. It is recommended that you reload Bukkit.");
+    public ConfigHandler(BetterMechanics plugin) {
+
+        if (configFile == null)
+            configFile = new File(plugin.getDataFolder(), "config.yml");
+        if (cauldronConfigFile == null)
+            cauldronConfigFile = new File(plugin.getDataFolder(), "cauldron-recipes.yml");
+        try {
+            configuration = new YamlConfiguration();
+            configuration.load(configFile);
+
+            cauldronConfiguration = new YamlConfiguration();
+            cauldronConfiguration.load(cauldronConfigFile);
+        } catch (FileNotFoundException e) {
+            BetterMechanics.log("The config-file was not found: " + e.getMessage(), Level.WARNING);
+        } catch (InvalidConfigurationException e) {
+            BetterMechanics.log("The config-file has an invalid syntax: " + e.getMessage(), Level.WARNING);
+        } catch (IOException e) {
+            BetterMechanics.log("The config-file could not be read", Level.WARNING);
         }
+
         bridgeConfig = new BridgeConfig();
         gateConfig = new GateConfig();
         doorConfig = new DoorConfig();
@@ -55,15 +69,12 @@ public class ConfigHandler {
         teleLiftConfig = new TeleLiftConfig();
         hiddenSwitchConfig = new HiddenSwitchConfig();
         ammeterConfig = new AmmeterConfig();
-        cauldronConfig = new CauldronConfig();
+        cauldronConfig = new CauldronConfig(this);
         penConfig = new PenConfig();
+        cyclerConfig = new CyclerConfig();
+        powerBlockConfig = new PowerBlockConfig();
     }
 
-    public static ConfigHandler getInstance() {
-        return instance;
-    }
-
-    private final FileConfiguration configuration = BetterMechanics.getInstance().getPluginConfig();
     private final BridgeConfig bridgeConfig;
     private final GateConfig gateConfig;
     private final DoorConfig doorConfig;
@@ -72,6 +83,8 @@ public class ConfigHandler {
     private final HiddenSwitchConfig hiddenSwitchConfig;
     private final AmmeterConfig ammeterConfig;
     private CauldronConfig cauldronConfig;
+    private final CyclerConfig cyclerConfig;
+    private PowerBlockConfig powerBlockConfig;
     private final PenConfig penConfig;
     private PermissionsConfig permisionsConfig;
 
@@ -79,33 +92,41 @@ public class ConfigHandler {
         return configuration;
     }
 
-    private void createConfig() {
-        if (!configFile.canRead()) {
-            try {
-                if (configFile.getParentFile().mkdirs()) {
-                    JarFile jar = new JarFile(plugin.getJarFile());
-                    JarEntry entry = jar.getJarEntry("config.yml");
-                    InputStream is = jar.getInputStream(entry);
-                    FileOutputStream os = new FileOutputStream(configFile);
-                    byte[] buf = new byte[(int) entry.getSize()];
-                    if (is.read(buf, 0, (int) entry.getSize()) == (int) entry.getSize()) {
-                        os.write(buf);
-                        os.close();
-                        plugin.getConfig().load(configFile);
-                    } else {
-                        BetterMechanics.log("Error while creating new config: buffer overflow.", Level.WARNING);
-                    }
-                } else {
-                    BetterMechanics.log("Error while creating directories: no permission.", Level.WARNING);
-                }
-            } catch (Exception e) {
-                BetterMechanics.log("Error while creating new config: " + e.getMessage());
+    public static void createConfig(BetterMechanics plugin) {
+        configFile = new File(plugin.getDataFolder(), "config.yml");
+        cauldronConfigFile = new File(plugin.getDataFolder(), "cauldron-recipes.yml");
+
+        try {
+            JarFile jar = new JarFile(plugin.getJarFile());
+            JarEntry entry = jar.getJarEntry("config.yml");
+            InputStream is = jar.getInputStream(entry);
+            FileOutputStream os = new FileOutputStream(configFile);
+            byte[] buf = new byte[(int) entry.getSize()];
+            if (is.read(buf, 0, (int) entry.getSize()) == (int) entry.getSize()) {
+                os.write(buf);
+                os.close();
+            } else {
+                BetterMechanics.log("Error while creating new config: buffer overflow", Level.WARNING);
             }
+
+            jar = new JarFile(plugin.getJarFile());
+            entry = jar.getJarEntry("cauldron-recipes.yml");
+            is = jar.getInputStream(entry);
+            os = new FileOutputStream(cauldronConfigFile);
+            buf = new byte[(int) entry.getSize()];
+            if (is.read(buf, 0, (int) entry.getSize()) == (int) entry.getSize()) {
+                os.write(buf);
+                os.close();
+            } else {
+                BetterMechanics.log("Error while creating new cauldron-config: buffer overflow", Level.WARNING);
+            }
+        } catch (IOException e) {
+            BetterMechanics.log("Couldn't write to config file");
         }
     }
 
     public void reloadCauldronConfig() {
-        cauldronConfig = new CauldronConfig();
+        cauldronConfig.getCookBook().reloadConfigFile();
     }
 
     public class BridgeConfig {
@@ -219,6 +240,24 @@ public class ConfigHandler {
         }
     }
 
+    public class CyclerConfig {
+        private final boolean enabled;
+        private final Material cyclerTool;
+
+        public CyclerConfig() {
+            enabled = configuration.getBoolean("cycler.enabled", true);
+            cyclerTool = Material.getMaterial(configuration.getInt("cycler.material", 280));
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public Material getCyclerTool() {
+            return cyclerTool;
+        }
+    }
+
     public class DoorConfig {
         private final List<Material> defaultMaterials = Arrays.asList(
                 Material.WOOD, Material.SPONGE, Material.LAPIS_BLOCK, Material.WOOL, Material.GOLD_BLOCK, Material.IRON_BLOCK,
@@ -298,13 +337,65 @@ public class ConfigHandler {
         }
     }
 
+    public class PowerBlockConfig {
+        private final boolean enabled;
+        private HashMap<Material, Material> powerMap = new HashMap<Material, Material>();
+        private HashMap<Material, Material> unpowerMap = new HashMap<Material, Material>();
+
+        public PowerBlockConfig() {
+            enabled = configuration.getBoolean("powered-block.enabled", false);
+            if (enabled) {
+                Set<String> keys = configuration.getKeys(true);
+
+                HashSet<String> names = new HashSet<String>();
+                for (String key : keys) {
+                    String[] splitKeys = key.split("\\.");
+                    if (splitKeys.length == 2) {
+                        names.add(splitKeys[1]);
+                    }
+                }
+                if (names.isEmpty()) {
+                    BetterMechanics.log("Error loading powered blocks: no blockchanges found! (you probably messed up the yml format somewhere)");
+                    return;
+                }
+                for (String name : names) {
+                    Material powered = Material.getMaterial(configuration.getInt("powered-block.blocks." + name + ".powered"));
+                    Material unpowered = Material.getMaterial(configuration.getInt("powered-block.blocks." + name + ".unpowered"));
+
+                    if (powered != null && unpowered != null) {
+                        powerMap.put(unpowered, powered);
+                        unpowerMap.put(powered, unpowered);
+                    } else {
+                        if(powered == null){
+                            BetterMechanics.log("The 'powered' blockid of " + name + " is an invalid Material.", Level.WARNING);
+                        } else {
+                            BetterMechanics.log("The 'unpowered' blockid of " + name + " is an invalid Material.", Level.WARNING);
+                        }
+                    }
+                }
+            }
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public Material getPoweredBlock(Material unpowered){
+            return powerMap.get(unpowered);
+        }
+
+        public Material getUnpoweredBlock(Material powered){
+            return unpowerMap.get(powered);
+        }
+    }
+
     public class CauldronConfig {
         private final boolean enabled;
         private final CauldronCookbook cauldronCookbook;
 
-        public CauldronConfig() {
+        public CauldronConfig(ConfigHandler ch) {
             if (configuration.getBoolean("cauldron.enabled", true)) {
-                cauldronCookbook = new CauldronCookbook();
+                cauldronCookbook = new CauldronCookbook(ch);
                 if (cauldronCookbook.size() > 0) {
                     enabled = true;
                 } else {
@@ -400,5 +491,21 @@ public class ConfigHandler {
 
     public PermissionsConfig getPermissionsConfig() {
         return permisionsConfig;
+    }
+
+    public CyclerConfig getCyclerConfig() {
+        return cyclerConfig;
+    }
+
+    public PowerBlockConfig getPowerBlockConfig() {
+        return powerBlockConfig;
+    }
+
+    public File getCauldronConfigFile() {
+        return cauldronConfigFile;
+    }
+
+    public FileConfiguration getCauldronConfiguration() {
+        return cauldronConfiguration;
     }
 }

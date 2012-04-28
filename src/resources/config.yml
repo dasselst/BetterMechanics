@@ -22,6 +22,16 @@ cauldron:
 pen:
     enabled: true
     material: 263
+cycler:
+    enabled: true
+# TODO: check material number (wooden hoe)
+    material: 288
+power-block:
+    enabled: true
+    blocks:
+        Pumpkin:
+            unpowered: 30
+            powered: 31
 
 use-permissions: true
 use-worldguard: false

@@ -18,8 +18,11 @@
 
 package net.edoxile.bettermechanics.mechanics;
 
+import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
+import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
+import net.edoxile.bettermechanics.mechanics.interfaces.IMechanicCommandListener;
 import net.edoxile.bettermechanics.models.CauldronCookbook;
 import net.edoxile.bettermechanics.utils.datastorage.MaterialMap;
 import net.edoxile.bettermechanics.utils.datastorage.MaterialMapIterator;
@@ -27,6 +30,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -36,7 +41,9 @@ import java.util.HashMap;
  *
  * @author Edoxile
  */
-public class Cauldron extends BlockMechanicListener {
+public class Cauldron extends BlockMechanicListener implements IMechanicCommandListener {
+    private ConfigHandler.CauldronConfig config = BetterMechanics.getInstance().getConfigHandler().getCauldronConfig();
+    private CauldronCookbook cookbook = config.getCookBook();
 
     @Override
     public void onBlockRightClick(PlayerEvent event) {
@@ -79,19 +86,18 @@ public class Cauldron extends BlockMechanicListener {
                     }
                 }
             }
-            CauldronCookbook cookbook = new CauldronCookbook();
             CauldronCookbook.Recipe recipe = cookbook.find(map);
-            if(recipe!=null) {
+            if (recipe != null) {
                 MaterialMapIterator iterator = recipe.getResults().iterator();
                 do {
                     iterator.next();
                     HashMap<Integer, ItemStack> returnData = event.getPlayer().getInventory().addItem(new ItemStack(iterator.id(), iterator.value(), iterator.data()));
-                    for(ItemStack stack : returnData.values()){
+                    for (ItemStack stack : returnData.values()) {
                         event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), stack);
                     }
                     //TODO: check spelling
-                    event.getPlayer().sendMessage(ChatColor.GOLD + "In a proof of smoke you've made " +  recipe.getName());
-                } while(iterator.hasNext());
+                    event.getPlayer().sendMessage(ChatColor.GOLD + "In a proof of smoke you've made " + recipe.getName());
+                } while (iterator.hasNext());
             } else {
                 event.getPlayer().sendMessage(ChatColor.DARK_RED + "The cauldron doesn't contain any known recipes.");
             }
@@ -110,12 +116,17 @@ public class Cauldron extends BlockMechanicListener {
 
     @Override
     public Material[] getMechanicActivators() {
-        return null;
+        return voidActor;
     }
 
     @Override
     public Material[] getMechanicTargets() {
-        return null;
+        return voidActor;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return config.isEnabled();
     }
 
     @Override
@@ -125,5 +136,86 @@ public class Cauldron extends BlockMechanicListener {
 
     private boolean isLava(Block block) {
         return block.getTypeId() == Material.STATIONARY_LAVA.getId() || block.getTypeId() == Material.LAVA.getId();
+    }
+
+    @Override
+    public String getCommandName() {
+        return "cauldron";
+    }
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String[] args) {
+        if (command.getName().equals(getCommandName())) {
+            if (args.length > 0) {
+                args[0] = args[0].toLowerCase();
+                if (args[0].equals("recipes")) {
+                    String recipes = "";
+                    for (CauldronCookbook.Recipe recipe : cookbook.getRecipes()) {
+                        if (recipe.isHidden()) {
+                            recipes += ChatColor.AQUA + recipe.getName() + ChatColor.WHITE + ", ";
+                        } else {
+                            recipes += ChatColor.GOLD + recipe.getName() + ChatColor.WHITE + ", ";
+                        }
+                    }
+                    if(recipes.length() > 0){
+                        commandSender.sendMessage("No (active) recipes found!");
+                    }else{
+                        commandSender.sendMessage(ChatColor.GREEN + "Active cauldron recipes:");
+                        commandSender.sendMessage(recipes.substring(0, recipes.length() -2));
+                    }
+                }else if(args[0].equals("recipe")){
+                    if (args.length == 1) {
+                        commandSender.sendMessage(ChatColor.DARK_RED + "I need to have a name to get the ingredients for you...");
+                    } else {
+                        CauldronCookbook.Recipe recipe = null;
+                        for (CauldronCookbook.Recipe testRecipe : cookbook.getRecipes()) {
+                            if (testRecipe.getName().equalsIgnoreCase(args[1])) {
+                                recipe = testRecipe;
+                                break;
+                            }
+                        }
+                        if (recipe != null) {
+                            commandSender.sendMessage(ChatColor.GREEN + "Recipe '" + recipe.getName() + "':");
+                            String ingredients = "Ingredients: ";
+                            String result = "Result: ";
+                            if (recipe.isHidden()) {
+                                ingredients += ChatColor.RED + "???";
+                                result += ChatColor.RED + "???";
+                            } else {
+                                MaterialMapIterator iterator = recipe.getIngredients().iterator();
+                                while(iterator.hasNext()) {
+                                    iterator.next();
+                                    ingredients += iterator.value() + "x " + Material.getMaterial(iterator.id());
+                                    if (iterator.data() > 0) {
+                                        ingredients += " [" + iterator.data() + "]";
+                                    }
+                                    ingredients += ", ";
+                                }
+
+                                iterator = recipe.getResults().iterator();
+                                while(iterator.hasNext()) {
+                                    iterator.next();
+                                    result += iterator.value() + "x " + Material.getMaterial(iterator.id());
+                                    if (iterator.data() > 0) {
+                                        result += " [" + iterator.data() + "]";
+                                    }
+                                    result += ", ";
+                                }
+
+                                ingredients = ingredients.substring(0, ingredients.length() - 2);
+                                result = result.substring(0, result.length() - 2);
+                            }
+
+                            commandSender.sendMessage(ChatColor.GOLD + ingredients);
+                            commandSender.sendMessage(ChatColor.GOLD + result);
+                        }
+                    }
+                }
+            } else {
+                commandSender.sendMessage("Invalid syntax! See /cauldron help for correct usage.");
+            }
+            return true;
+        }
+        return false;
     }
 }
