@@ -33,10 +33,12 @@ public abstract class Event {
 
     private Type type;
     private Block block;
+    private org.bukkit.event.Event bukkitEvent;
 
-    public Event(Type t, Block b) {
+    public Event(Type t, Block b, org.bukkit.event.Event bEvent) {
         type = t;
         block = b;
+        bukkitEvent = bEvent;
     }
 
     public Type getType() {
@@ -58,5 +60,9 @@ public abstract class Event {
     public void setData(Type t, Block b) {
         type = t;
         block = b;
+    }
+
+    public org.bukkit.event.Event getBukkitEvent(){
+        return bukkitEvent;
     }
 }

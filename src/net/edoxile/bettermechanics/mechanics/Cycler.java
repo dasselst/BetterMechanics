@@ -39,13 +39,23 @@ public class Cycler extends BlockMechanicListener {
 
     private final Material[] targets = new Material[]{
             Material.CHEST,
-            /*Material.SIGN_POST,
-            Material.WALL_SIGN,*/
+
             Material.LEVER,
+
             Material.STONE_BUTTON,
+
             Material.RAILS,
             Material.POWERED_RAIL,
-            Material.DETECTOR_RAIL
+            Material.DETECTOR_RAIL,
+
+            Material.NETHER_BRICK_STAIRS,
+            Material.SMOOTH_STAIRS,
+            Material.BRICK_STAIRS,
+            Material.WOOD_STAIRS,
+            Material.COBBLESTONE_STAIRS,
+
+            Material.IRON_DOOR,
+            Material.WOOD_DOOR
     };
 
     @Override
@@ -81,16 +91,58 @@ public class Cycler extends BlockMechanicListener {
     @Override
     public void onBlockRightClick(PlayerEvent event) {
         if (PermissionHandler.getInstance().playerHasNode(event.getPlayer(), "cycler")) {
-            byte maxData = getMaxData(event.getBlock().getType());
-            if (maxData != 0) {
-                byte data = event.getBlock().getData();
-                data++;
-
-                if (data >= maxData)
-                    data = 0;
-
-                event.getBlock().setData(data, false);
+            byte data = event.getBlock().getData();
+            switch (event.getBlock().getType()) {
+                case CHEST:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case LEVER:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case STONE_BUTTON:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case RAILS:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case POWERED_RAIL:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case DETECTOR_RAIL:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case WOOD_STAIRS:
+                case BRICK_STAIRS:
+                case COBBLESTONE_STAIRS:
+                case SMOOTH_STAIRS:
+                case NETHER_BRICK_STAIRS:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                case WOODEN_DOOR:
+                case IRON_DOOR:
+                    data++;
+                    if (data > 3)
+                        data = 0;
+                    break;
+                default:
+                    event.getPlayer().sendMessage(ChatColor.DARK_RED + "This blocktype can't be cycled...");
+                    return;
             }
+            event.getBlock().setData(data, false);
         } else {
             event.getPlayer().sendMessage(ChatColor.DARK_RED + "Seems like you don't have permissions to use the cycler...");
         }
@@ -100,10 +152,6 @@ public class Cycler extends BlockMechanicListener {
         switch (m) {
             case CHEST:
                 return 4;
-            /*case SIGN_POST:
-                return 4;
-            case WALL_SIGN:
-                return 4;*/
             case LEVER:
                 return 4;
             case STONE_BUTTON:
@@ -114,12 +162,15 @@ public class Cycler extends BlockMechanicListener {
                 return 8;
             case DETECTOR_RAIL:
                 return 3;
+            case WOOD_STAIRS:
+            case BRICK_STAIRS:
+            case NETHER_BRICK_STAIRS:
+                return 8;
             default:
                 return 0;
         }
     }
 
-    //TODO: Mooie manier hier voor verzinnen? Misschien een SignAndBlockMech, maar dat is weer gelijk zo lomp...
     public static class SignCycler extends SignMechanicListener {
 
         @Override
@@ -128,7 +179,7 @@ public class Cycler extends BlockMechanicListener {
             data++;
             if (event.getBlock().getType() == Material.WALL_SIGN && data > 3)
                 data = 0;
-            else if (event.getBlock().getType() == Material.SIGN_POST && data > 12)
+            else if (event.getBlock().getType() == Material.SIGN_POST && data > 11)
                 data = 0;
 
             event.getBlock().setData(data, false);

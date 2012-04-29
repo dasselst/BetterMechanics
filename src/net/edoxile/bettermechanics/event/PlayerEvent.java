@@ -37,8 +37,8 @@ public class PlayerEvent extends Event {
     private final Player player;
     private final Action action;
 
-    public PlayerEvent(Type t, Block b, Action a, Player p) {
-        super(t, b);
+    public PlayerEvent(Type t, Block b, Action a, Player p, org.bukkit.event.Event e) {
+        super(t, b, e);
         player = p;
         action = a;
     }

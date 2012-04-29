@@ -35,8 +35,8 @@ public class RedstoneEvent extends Event {
     private final State state;
     private BlockFace origin;
 
-    public RedstoneEvent(State s) {
-        super(null, null);
+    public RedstoneEvent(State s, org.bukkit.event.Event e) {
+        super(null, null, e);
         state = s;
     }
 

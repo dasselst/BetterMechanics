@@ -55,7 +55,7 @@ public class BMListener implements Listener {
         if (event.getNewCurrent() == event.getOldCurrent() || event.getNewCurrent() > 0 && event.getOldCurrent() > 0)
             return;
         RedstoneEvent redstoneEvent = new RedstoneEvent(
-                (event.getNewCurrent() > 0) ? RedstoneEvent.State.ON : RedstoneEvent.State.OFF
+                (event.getNewCurrent() > 0) ? RedstoneEvent.State.ON : RedstoneEvent.State.OFF, event
         );
         for (BlockFace blockFace : blockFaces) {
             Block block = event.getBlock().getRelative(blockFace);
@@ -78,7 +78,8 @@ public class BMListener implements Listener {
                     SignUtil.isSign(event.getClickedBlock()) ? Event.Type.SIGN : Event.Type.BLOCK,
                     event.getClickedBlock(),
                     event.getAction() == Action.LEFT_CLICK_BLOCK ? PlayerEvent.Action.LEFT_CLICK : PlayerEvent.Action.RIGHT_CLICK,
-                    event.getPlayer()
+                    event.getPlayer(),
+                    event
             );
 
             mechanicsHandler.callPlayerEvent(playerEvent);
@@ -90,7 +91,7 @@ public class BMListener implements Listener {
         if (event.isCancelled())
             return;
 
-        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer());
+        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer(), event);
         mechanicsHandler.callPlayerEvent(playerEvent);
     }
 
@@ -99,7 +100,7 @@ public class BMListener implements Listener {
         if (event.isCancelled())
             return;
 
-        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.PLACE, event.getPlayer());
+        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.PLACE, event.getPlayer(), event);
         mechanicsHandler.callPlayerEvent(playerEvent);
     }
 }
