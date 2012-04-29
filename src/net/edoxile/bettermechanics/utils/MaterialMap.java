@@ -8,12 +8,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package net.edoxile.bettermechanics.utils;
@@ -108,8 +108,8 @@ public class MaterialMap {
 
         size--;
 
-        int[] keys = new int[size];
-        int[] values = new int[size];
+        int[] keys = new int[size - 1];
+        int[] values = new int[size - 1];
 
         int index = 0;
         for (int k = 0; k < size + 1; k++) {
@@ -119,6 +119,9 @@ public class MaterialMap {
             keys[index] = _keys[k];
             index++;
         }
+
+        _keys = keys;
+        _values = values;
 
         size = _values.length;
     }
@@ -159,7 +162,8 @@ public class MaterialMap {
     }
 
     @Override
-    public MaterialMap clone() {
+    public MaterialMap clone() throws CloneNotSupportedException {
+        super.clone();
         MaterialMap clone = new MaterialMap();
         MaterialMapIterator iterator = iterator();
         while (iterator.hasNext()) {

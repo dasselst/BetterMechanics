@@ -8,12 +8,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package net.edoxile.bettermechanics.listeners;
@@ -28,6 +28,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -54,6 +56,7 @@ public class MechanicsBlockListener implements Listener {
         config = c;
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSignChange(SignChangeEvent event) {
         String str = event.getLine(1);
         if (SignUtil.getMechanicsType(str) == null) {
@@ -118,10 +121,10 @@ public class MechanicsBlockListener implements Listener {
             event.setLine(1, "[X]");
             event.getPlayer().sendMessage(ChatColor.AQUA + "You created a hidden switch!");
         } else if (str.equalsIgnoreCase("[black hole]")) {
-            if(!permissions.checkPermissions(event.getPlayer(), "blackhole.create")) {
+            if (!permissions.checkPermissions(event.getPlayer(), "blackhole.create")) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED+"You don't have permission to create a black hole!");
-                if(event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST)) {
+                event.getPlayer().sendMessage(ChatColor.RED + "You don't have permission to create a black hole!");
+                if (event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST)) {
                     event.getBlock().setTypeId(0);
                     event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.SIGN, 1));
                 }
@@ -130,10 +133,10 @@ public class MechanicsBlockListener implements Listener {
                 event.getPlayer().sendMessage(ChatColor.AQUA + "You created a black hole!");
             }
         } else if (str.equalsIgnoreCase("[block source]")) {
-            if(!permissions.checkPermissions(event.getPlayer(), "blocksource.create")) {
+            if (!permissions.checkPermissions(event.getPlayer(), "blocksource.create")) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED+"You don't have permission to create a block source!");
-                if(event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST)) {
+                event.getPlayer().sendMessage(ChatColor.RED + "You don't have permission to create a block source!");
+                if (event.getBlock().getType().equals(Material.WALL_SIGN) || event.getBlock().getType().equals(Material.SIGN_POST)) {
                     event.getBlock().setTypeId(0);
                     event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), new ItemStack(Material.SIGN, 1));
                 }
@@ -141,11 +144,10 @@ public class MechanicsBlockListener implements Listener {
                 event.setLine(1, "[Block Source]");
                 event.getPlayer().sendMessage(ChatColor.AQUA + "You created a block source!");
             }
-        } else {
-            return;
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockPlace(BlockPlaceEvent event) {
         Block block = event.getBlockAgainst();
         if (SignUtil.isSign(block)) {
@@ -156,6 +158,7 @@ public class MechanicsBlockListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         if ((event.getNewCurrent() == event.getOldCurrent()) || (event.getNewCurrent() > 0 && event.getOldCurrent() > 0))
             return;
@@ -215,7 +218,7 @@ public class MechanicsBlockListener implements Listener {
                     } else {
                         bridge.toggleOpen();
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             break;
@@ -230,7 +233,7 @@ public class MechanicsBlockListener implements Listener {
                     } else {
                         gate.toggleOpen();
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             break;
@@ -245,12 +248,10 @@ public class MechanicsBlockListener implements Listener {
                     } else {
                         door.toggleOpen();
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             break;
-            default:
-                return;
         }
     }
 }

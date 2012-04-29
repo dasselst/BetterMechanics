@@ -8,12 +8,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package net.edoxile.bettermechanics.listeners;
@@ -28,6 +28,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
@@ -57,10 +59,12 @@ public class MechanicsPlayerListener implements Listener {
         config = c;
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Pen.clear(event.getPlayer());
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (SignUtil.isSign(event.getClickedBlock())) {
@@ -170,9 +174,9 @@ public class MechanicsPlayerListener implements Listener {
                         if (permissions.check(event.getPlayer(), "pen", event.getClickedBlock(), false)) {
                             String[] text = Pen.getLines(event.getPlayer());
                             if (text != null) {
-                                String firstline = ((Sign)sign.getBlock().getState()).getLine(0);
+                                String firstline = ((Sign) sign.getBlock().getState()).getLine(0);
                                 Boolean LocketteSign = firstline.equals("[Private]") || firstline.equals("[More Users]");
-                                if(!LocketteSign) {
+                                if (!LocketteSign) {
                                     SignChangeEvent evt = new SignChangeEvent(sign.getBlock(), event.getPlayer(), text);
                                     event.getPlayer().getServer().getPluginManager().callEvent(evt);
                                     if (!evt.isCancelled()) {
@@ -201,12 +205,10 @@ public class MechanicsPlayerListener implements Listener {
                 Ammeter ammeter = new Ammeter(config, event.getClickedBlock(), event.getPlayer());
                 ammeter.measure();
             } else if (event.getClickedBlock().getTypeId() == Material.CHEST.getId() && event.getPlayer().getItemInHand().getTypeId() == Material.WOOD_HOE.getId()) {
-                if(!Cycler.cycle(event.getPlayer(), event.getClickedBlock(), config)){
+                if (!Cycler.cycle(event.getPlayer(), event.getClickedBlock(), config)) {
                     event.getPlayer().sendMessage(ChatColor.DARK_RED + "You don't have permissions to cycle chests here!");
-                    return;
                 } else {
                     event.setCancelled(true);
-                    return;
                 }
             } else {
                 if (!event.getPlayer().getItemInHand().getType().isBlock() || event.getPlayer().getItemInHand().getType() == Material.AIR) {

@@ -53,17 +53,17 @@ public class CauldronCookbook {
             File configFile = new File(plugin.getDataFolder(), "cauldron-recipes.yml");
             log.info("[BetterMechanics] Loading cauldron recipes from " + configFile.getAbsolutePath());
             config = new YamlConfiguration();
-                        config.load(configFile);
+            config.load(configFile);
         } catch (Exception e) {
             log.warning("[BetterMechanics] Something went wrong loading the config file.");
             return;
         }
         // List<String> recipeNames = config.getKeys("recipes");
         ConfigurationSection section = config.getConfigurationSection("recipes");
-        if(section==null)
+        if (section == null)
             return;
 
-        Set <String> recipeNames = section.getKeys(false);
+        Set<String> recipeNames = section.getKeys(false);
         if (recipeNames == null) {
             log.warning("[BetterMechanics] Error loading cauldron recipes: no recipes found! (you probably messed up the yml format somewhere)");
             return;

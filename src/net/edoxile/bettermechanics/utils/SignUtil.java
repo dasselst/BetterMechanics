@@ -91,7 +91,7 @@ public class SignUtil {
 
     public static MechanicsType getActiveMechanicsType(Sign s) {
         String str = s.getLine(1);
-        if (s.equals("") || s == null)
+        if (str == null || str.equals(""))
             return null;
         else
             return getActiveMechanicsType(str);

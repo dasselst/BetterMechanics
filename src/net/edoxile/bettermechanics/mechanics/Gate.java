@@ -25,11 +25,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -69,7 +69,7 @@ public class Gate {
         smallGate = (SignUtil.getMechanicsType(sign) == MechanicsType.SMALL_GATE);
         int sw = (smallGate ? 1 : 4);
         Block startBlock = sign.getBlock().getRelative(SignUtil.getBackBlockFace(sign));
-        Block tempBlock = null;
+        Block tempBlock;
         tempBlock = BlockMapper.mapColumn(startBlock, sw, sw, Material.FENCE);
         if (tempBlock == null) {
             tempBlock = BlockMapper.mapColumn(startBlock, sw, sw, Material.IRON_FENCE);
@@ -96,7 +96,7 @@ public class Gate {
         try {
 
             BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), true, false);
-            if(tmpbag == null)
+            if (tmpbag == null)
                 throw new ChestNotFoundException();
 
             for (Block b : blockSet) {
@@ -138,7 +138,7 @@ public class Gate {
         try {
 
             BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), false, true);
-            if(tmpbag == null)
+            if (tmpbag == null)
                 throw new ChestNotFoundException();
 
             for (Block b : blockSet) {
@@ -174,10 +174,8 @@ public class Gate {
     }
 
     public boolean isClosed() {
-        for (Block b : blockSet) {
-            return b.getRelative(BlockFace.DOWN).getType() == gateMaterial;
-        }
-        return false;
+        Iterator<Block> blockIterator = blockSet.iterator();
+        return blockIterator.hasNext() && blockIterator.next().getType() == gateMaterial;
     }
 
     private boolean canPassThrough(Material m) {

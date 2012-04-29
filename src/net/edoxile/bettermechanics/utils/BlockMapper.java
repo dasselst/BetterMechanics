@@ -61,8 +61,8 @@ public class BlockMapper {
                         tempBlock = tempBlock.getRelative(direction);
                         traversed++;
                     }
-                    if(traversed>=maxTraverse) {
-                        log.severe("[BetterMechanics] MaxTraverse hit on "+start.getLocation());
+                    if (traversed >= maxTraverse) {
+                        log.severe("[BetterMechanics] MaxTraverse hit on " + start.getLocation());
                     }
                 }
             }
@@ -83,8 +83,8 @@ public class BlockMapper {
                         tempBlock = tempBlock.getRelative(direction);
                         traversed++;
                     }
-                    if(traversed>=maxTraverse) {
-                        log.severe("[BetterMechanics] MaxTraverse hit on "+start.getLocation());
+                    if (traversed >= maxTraverse) {
+                        log.severe("[BetterMechanics] MaxTraverse hit on " + start.getLocation());
                     }
                 }
             }
@@ -105,8 +105,8 @@ public class BlockMapper {
                         tempBlock = tempBlock.getRelative(direction);
                         traversed++;
                     }
-                    if(traversed>=maxTraverse) {
-                        log.severe("[BetterMechanics] MaxTraverse hit on "+start.getLocation());
+                    if (traversed >= maxTraverse) {
+                        log.severe("[BetterMechanics] MaxTraverse hit on " + start.getLocation());
                     }
                 }
             }
@@ -127,8 +127,8 @@ public class BlockMapper {
                         tempBlock = tempBlock.getRelative(direction);
                         traversed++;
                     }
-                    if(traversed>=maxTraverse) {
-                        log.severe("[BetterMechanics] MaxTraverse hit on "+start.getLocation());
+                    if (traversed >= maxTraverse) {
+                        log.severe("[BetterMechanics] MaxTraverse hit on " + start.getLocation());
                     }
                 }
             }
@@ -139,20 +139,20 @@ public class BlockMapper {
         return blockSet;
     }
 
-    public static HashSet<Block> mapHiddenSwitch(Block start)  {
+    public static HashSet<Block> mapHiddenSwitch(Block start) {
         // if(!(start.getState() instanceof Sign)) return null;
 
         HashSet<Block> blockSet = new HashSet<Block>();
         HashSet<Block> tempBlocks = new HashSet<Block>();
 
-        if(start.getType() != org.bukkit.Material.WALL_SIGN) return blockSet;
+        if (start.getType() != org.bukkit.Material.WALL_SIGN) return blockSet;
 
         BlockFace signface = ((Sign) start.getState().getData()).getAttachedFace();
 
         tempBlocks.add(start.getRelative(BlockFace.UP));
         tempBlocks.add(start.getRelative(BlockFace.DOWN));
 
-        switch(signface) {
+        switch (signface) {
             case NORTH:
             case SOUTH:
                 tempBlocks.add(start.getRelative(BlockFace.WEST));
@@ -164,8 +164,8 @@ public class BlockMapper {
                 tempBlocks.add(start.getRelative(BlockFace.SOUTH));
                 break;
         }
-        for(Block b : tempBlocks) {
-            if(b.getType()==Material.LEVER)
+        for (Block b : tempBlocks) {
+            if (b.getType() == Material.LEVER)
                 blockSet.add(b);
         }
         return blockSet;
@@ -204,8 +204,8 @@ public class BlockMapper {
                         tempBlock = tempBlock.getRelative(direction);
                         traversed++;
                     }
-                    if(traversed>=maxTraverse) {
-                        log.severe("[BetterMechanics] MaxTraverse hit on "+start.getLocation());
+                    if (traversed >= maxTraverse) {
+                        log.severe("[BetterMechanics] MaxTraverse hit on " + start.getLocation());
                     }
                 }
             }
@@ -236,8 +236,8 @@ public class BlockMapper {
                         tempBlock = tempBlock.getRelative(direction);
                         traversed++;
                     }
-                    if(traversed>=maxTraverse) {
-                        log.severe("[BetterMechanics] MaxTraverse hit on "+start.getLocation());
+                    if (traversed >= maxTraverse) {
+                        log.severe("[BetterMechanics] MaxTraverse hit on " + start.getLocation());
                     }
                 }
             }

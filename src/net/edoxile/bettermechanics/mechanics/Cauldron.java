@@ -109,7 +109,14 @@ public class Cauldron {
         if (recipe != null) {
             player.sendMessage(ChatColor.GOLD + "In a poof of smoke, you've made " + recipe.getName() + ".");
 
-            MaterialMap ingredients = recipe.getIngredients().clone();
+            MaterialMap ingredients = null;
+            try {
+                ingredients = recipe.getIngredients().clone();
+            } catch (CloneNotSupportedException ignored) {
+            }
+
+            if (ingredients == null)
+                return false;
 
             for (Block b : contents) {
                 if (isDependant(b.getTypeId())) {
@@ -119,8 +126,7 @@ public class Cauldron {
                             b.setType(Material.AIR);
                         } else {
                         }
-                    } catch (KeyNotFoundException e) {
-                        continue;
+                    } catch (KeyNotFoundException ignored) {
                     }
                 }
             }
@@ -132,8 +138,7 @@ public class Cauldron {
                             b.setType(Material.AIR);
                         } else {
                         }
-                    } catch (KeyNotFoundException e) {
-                        continue;
+                    } catch (KeyNotFoundException ignored) {
                     }
                 }
             }

@@ -29,10 +29,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -50,10 +49,12 @@ public class BetterMechanics extends JavaPlugin {
     private BlockBagManager blockBagManager;
     private File configFile;
 
+    @Override
     public void onDisable() {
         log.info("[BetterMechanics] disabled.");
     }
 
+    @Override
     public void onEnable() {
         try {
             configFile = this.getFile();
@@ -93,6 +94,7 @@ public class BetterMechanics extends JavaPlugin {
         pm.registerEvents(playerListener, this);
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("pen")) {
             if (configManager.getPenConfig().enabled) {
@@ -101,29 +103,28 @@ public class BetterMechanics extends JavaPlugin {
                     if (args.length == 0) {
                         player.sendMessage(ChatColor.DARK_RED + "Incorrect usage. Usage: /pen [set|clear|setline|help]");
                     } else {
-                        Pen pen = new Pen();
                         if (args[0].equalsIgnoreCase("set")) {
                             if (args.length < 2) {
                                 player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
                             } else {
-                                pen.setLines(player, args);
+                                Pen.setLines(player, args);
                             }
                         } else if (args[0].equalsIgnoreCase("clear")) {
-                            pen.clear(player);
+                            Pen.clear(player);
                             player.sendMessage(ChatColor.GOLD + "Pen data cleared.");
                         } else if (args[0].equalsIgnoreCase("dump")) {
-                            pen.dump(player);
+                            Pen.dump(player);
                         } else if (args[0].equalsIgnoreCase("setline")) {
                             if (args.length < 3) {
                                 player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
                             } else {
-                                pen.setLine(player, args);
+                                Pen.setLine(player, args);
                             }
                         } else if (args[0].equalsIgnoreCase("setline")) {
                             if (args.length < 2) {
                                 player.sendMessage(ChatColor.DARK_RED + "Too few arguments.");
                             } else {
-                                pen.clearLine(player, args);
+                                Pen.clearLine(player, args);
                             }
                         } else if (args[0].equalsIgnoreCase("help")) {
                             player.sendMessage("Pen help. The char '^' is a linebreak. Commands:");

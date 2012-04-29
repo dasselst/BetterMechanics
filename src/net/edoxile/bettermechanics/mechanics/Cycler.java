@@ -24,10 +24,8 @@ import org.bukkit.entity.Player;
 
 /**
  * Created by IntelliJ IDEA.
- * User: s111172
- * Date: 20-9-11
- * Time: 21:38
- * To change this template use File | Settings | File Templates.
+ *
+ * @author Edoxile
  */
 public class Cycler {
     public static boolean cycle(Player p, Block b, MechanicsConfig c) {

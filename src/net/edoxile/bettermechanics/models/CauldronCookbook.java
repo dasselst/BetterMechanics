@@ -62,10 +62,10 @@ public class CauldronCookbook {
         }
         // List<String> recipeNames = config.getKeys("recipes");
         ConfigurationSection section = config.getConfigurationSection("recipes");
-        if(section==null)
+        if (section == null)
             return;
 
-        Set <String> recipeNames = section.getKeys(false);
+        Set<String> recipeNames = section.getKeys(false);
         if (recipeNames == null) {
             log.warning("[BetterMechanics] Error loading cauldron recipes: no recipes found! (you probably messed up the yml format somewhere)");
             return;

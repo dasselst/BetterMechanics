@@ -18,14 +18,12 @@
 
 package net.edoxile.bettermechanics.utils.BlockBags;
 
-import net.edoxile.bettermechanics.exceptions.OutOfMaterialException;
 import net.edoxile.bettermechanics.exceptions.OutOfSpaceException;
 import net.edoxile.bettermechanics.utils.BlockBag;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Sign;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * @author GuntherDW
@@ -53,13 +51,15 @@ public class BlackHoleSign extends BlockBag {
         return true;
     }
 
+    @Override
     public Material getSourceMaterial() {
         return Material.SIGN;
     }
 
+    @Override
     public boolean isBlockBag(Block block) {
-        if ((block.getType().equals(Material.SIGN_POST)||block.getType().equals(Material.WALL_SIGN))
-            && ((Sign)block.getState()).getLine(1).equals("[Black Hole]")) {
+        if ((block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.WALL_SIGN))
+                && ((Sign) block.getState()).getLine(1).equals("[Black Hole]")) {
             sign = (Sign) block.getState();
             return true;
         }

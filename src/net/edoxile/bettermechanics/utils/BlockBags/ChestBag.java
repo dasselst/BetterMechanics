@@ -27,8 +27,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.logging.Logger;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Edoxile
@@ -41,12 +39,13 @@ public class ChestBag extends BlockBag {
         super(bag);
     }
 
+    @Override
     public boolean safeRemoveItems(ItemStack itemStack) throws OutOfMaterialException {
         boolean checkData = true;
         if (itemStack.getData() == null) {
             checkData = false;
         }
-        if(itemStack.getAmount() < 1) return false;
+        if (itemStack.getAmount() < 1) return false;
         ItemStack[] stacks = chest.getInventory().getContents();
         ItemStack tempStack;
         for (int i = 0; i < stacks.length; i++) {
@@ -73,7 +72,6 @@ public class ChestBag extends BlockBag {
             } else if (tempStack.getAmount() < itemStack.getAmount()) {
                 stacks[i] = null;
                 itemStack.setAmount(itemStack.getAmount() - tempStack.getAmount());
-                continue;
             } else {
                 stacks[i] = null;
                 itemStack.setAmount(0);
@@ -90,6 +88,7 @@ public class ChestBag extends BlockBag {
         }
     }
 
+    @Override
     public boolean safeAddItems(ItemStack itemStack) throws OutOfSpaceException {
         int amount = itemStack.getAmount();
         ItemStack[] stacks = chest.getInventory().getContents();
@@ -157,20 +156,24 @@ public class ChestBag extends BlockBag {
         return null;
     }
 
+    @Override
     public boolean isBlockSource() {
         return true;
     }
 
+    @Override
     public boolean isBlockHole() {
         return true;
     }
 
+    @Override
     public Material getSourceMaterial() {
         return Material.CHEST;
     }
 
+    @Override
     public boolean isBlockBag(Block block) {
-        if(block.getType().equals(getSourceMaterial())) {
+        if (block.getType().equals(getSourceMaterial())) {
             chest = (Chest) block.getState();
             return true;
         }

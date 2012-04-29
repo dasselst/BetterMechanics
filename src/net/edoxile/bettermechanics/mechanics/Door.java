@@ -25,10 +25,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import java.util.Set;
@@ -119,10 +117,10 @@ public class Door {
 
             BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), true, false);
 
-            if(tmpbag == null)
+            if (tmpbag == null)
                 tmpbag = blockBagManager.searchBlockBag(endSign.getBlock(), true, false);
 
-            if(tmpbag == null)
+            if (tmpbag == null)
                 throw new ChestNotFoundException();
 
             for (Block b : blockSet) {
@@ -132,7 +130,6 @@ public class Door {
                 }
             }
             // BlockbagUtil.safeAddItems(chest, doorMaterial.toItemStack(amount));
-
 
 
             tmpbag.safeAddItems(doorMaterial.toItemStack(amount));
@@ -163,10 +160,10 @@ public class Door {
 
             BlockBag tmpbag = blockBagManager.searchBlockBag(sign.getBlock(), false, true);
 
-            if(tmpbag == null)
+            if (tmpbag == null)
                 tmpbag = blockBagManager.searchBlockBag(endSign.getBlock(), false, true);
 
-            if(tmpbag == null)
+            if (tmpbag == null)
                 throw new ChestNotFoundException();
 
             for (Block b : blockSet) {
