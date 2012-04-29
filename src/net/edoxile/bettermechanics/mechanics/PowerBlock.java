@@ -42,22 +42,22 @@ public class PowerBlock extends BlockMechanicListener {
     private ConfigHandler.PowerBlockConfig config = BetterMechanics.getInstance().getConfigHandler().getPowerBlockConfig();
 
     @Override
-    public void onBlockPowerOn(RedstoneEvent event){
-        if(!event.getBlock().getMetadata("bettermechanics.powerblock.original").get(0).asBoolean()) {
+    public void onBlockPowerOn(RedstoneEvent event) {
+        if (!event.getBlock().getMetadata("bettermechanics.powerblock.original").get(0).asBoolean()) {
 
         }
     }
 
     @Override
-    public void onBlockPowerOff(RedstoneEvent event){
+    public void onBlockPowerOff(RedstoneEvent event) {
 
     }
 
     @Override
-    public void onBlockBreak(PlayerEvent e){
-        if(e.getBukkitEvent() instanceof BlockBreakEvent){
+    public void onBlockBreak(PlayerEvent e) {
+        if (e.getBukkitEvent() instanceof BlockBreakEvent) {
             BlockBreakEvent event = (BlockBreakEvent) e.getBukkitEvent();
-            if(!e.getBlock().getMetadata("bettermechanics.powerblock.original").get(0).asBoolean() && e.getBlock().isBlockPowered()) {
+            if (!e.getBlock().getMetadata("bettermechanics.powerblock.original").get(0).asBoolean() && e.getBlock().isBlockPowered()) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage("Unpower this block first before destroying it.");
             }
@@ -96,15 +96,15 @@ public class PowerBlock extends BlockMechanicListener {
         return config.isEnabled();
     }
 
-    private boolean checkMeta(Block b){
+    private boolean checkMeta(Block b) {
         List<MetadataValue> dataList = b.getMetadata("bettermechanics.powerblock.isOriginal");
         return dataList != null && dataList.size() == 1 && dataList.get(0).asBoolean();
     }
 
-    private void putMeta(Block b, boolean bool){
+    private void putMeta(Block b, boolean bool) {
         List<MetadataValue> dataList = b.getMetadata("bettermechanics.powerblock.isOriginal");
         LazyMetadataValue value = new LazyMetadataValue(BetterMechanics.getInstance(), bool);
-        if(dataList != null){
+        if (dataList != null) {
             dataList.clear();
         }
         //b.setMetadata();

@@ -62,7 +62,7 @@ public abstract class Event {
         block = b;
     }
 
-    public org.bukkit.event.Event getBukkitEvent(){
+    public org.bukkit.event.Event getBukkitEvent() {
         return bukkitEvent;
     }
 }

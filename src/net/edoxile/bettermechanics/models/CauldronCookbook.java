@@ -126,7 +126,7 @@ public class CauldronCookbook {
         return recipes.size();
     }
 
-    public Set<Recipe> getRecipes(){
+    public Set<Recipe> getRecipes() {
         return recipes;
     }
 

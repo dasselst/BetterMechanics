@@ -53,11 +53,11 @@ public class BetterMechanics extends JavaPlugin {
         dataFolder = new File("./plugins/BetterMechanics");
         jarFile = new File("./plugins/BetterMechanics.jar");
 
-        if(!dataFolder.exists()) {
-            if(dataFolder.mkdirs()) {
+        if (!dataFolder.exists()) {
+            if (dataFolder.mkdirs()) {
                 log("Creating new config");
                 ConfigHandler.createConfig(this);
-            }else{
+            } else {
                 log("The config was missing, but couldn't create new config files");
                 setEnabled(false);
             }
@@ -114,7 +114,7 @@ public class BetterMechanics extends JavaPlugin {
     }
 
     @Override
-    public File getDataFolder(){
+    public File getDataFolder() {
         return dataFolder;
     }
 

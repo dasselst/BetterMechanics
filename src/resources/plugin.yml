@@ -1,7 +1,7 @@
 name: BetterMechanics
 main: net.edoxile.bettermechanics.BetterMechanics
-version: 2.0.0-prealpha
-author: Edoxile
+version: 2.0.0 build 1
+authors: ['Edoxile', 'GuntherDW']
 website: https://github.com/Edoxile/BetterMechanics
 commands:
     bettermechanics:

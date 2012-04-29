@@ -157,13 +157,13 @@ public class Cauldron extends BlockMechanicListener implements IMechanicCommandL
                             recipes += ChatColor.GOLD + recipe.getName() + ChatColor.WHITE + ", ";
                         }
                     }
-                    if(recipes.length() > 0){
+                    if (recipes.length() > 0) {
                         commandSender.sendMessage("No (active) recipes found!");
-                    }else{
+                    } else {
                         commandSender.sendMessage(ChatColor.GREEN + "Active cauldron recipes:");
-                        commandSender.sendMessage(recipes.substring(0, recipes.length() -2));
+                        commandSender.sendMessage(recipes.substring(0, recipes.length() - 2));
                     }
-                }else if(args[0].equals("recipe")){
+                } else if (args[0].equals("recipe")) {
                     if (args.length == 1) {
                         commandSender.sendMessage(ChatColor.DARK_RED + "I need to have a name to get the ingredients for you...");
                     } else {
@@ -183,7 +183,7 @@ public class Cauldron extends BlockMechanicListener implements IMechanicCommandL
                                 result += ChatColor.RED + "???";
                             } else {
                                 MaterialMapIterator iterator = recipe.getIngredients().iterator();
-                                while(iterator.hasNext()) {
+                                while (iterator.hasNext()) {
                                     iterator.next();
                                     ingredients += iterator.value() + "x " + Material.getMaterial(iterator.id());
                                     if (iterator.data() > 0) {
@@ -193,7 +193,7 @@ public class Cauldron extends BlockMechanicListener implements IMechanicCommandL
                                 }
 
                                 iterator = recipe.getResults().iterator();
-                                while(iterator.hasNext()) {
+                                while (iterator.hasNext()) {
                                     iterator.next();
                                     result += iterator.value() + "x " + Material.getMaterial(iterator.id());
                                     if (iterator.data() > 0) {

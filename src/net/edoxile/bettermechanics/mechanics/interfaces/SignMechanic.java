@@ -53,7 +53,7 @@ public abstract class SignMechanic extends BlockMechanic {
 
     public abstract boolean hasBlockBag();
 
-    public BlockMap mapBlocks(Sign s) throws BlockMapException{
+    public BlockMap mapBlocks(Sign s) throws BlockMapException {
         BetterMechanics.log("BlockMapper called but not implemented in this mechanic.", Level.WARNING);
         return null;
     }

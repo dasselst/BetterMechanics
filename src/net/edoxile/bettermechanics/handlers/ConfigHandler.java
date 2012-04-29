@@ -366,7 +366,7 @@ public class ConfigHandler {
                         powerMap.put(unpowered, powered);
                         unpowerMap.put(powered, unpowered);
                     } else {
-                        if(powered == null){
+                        if (powered == null) {
                             BetterMechanics.log("The 'powered' blockid of " + name + " is an invalid Material.", Level.WARNING);
                         } else {
                             BetterMechanics.log("The 'unpowered' blockid of " + name + " is an invalid Material.", Level.WARNING);
@@ -380,11 +380,11 @@ public class ConfigHandler {
             return enabled;
         }
 
-        public Material getPoweredBlock(Material unpowered){
+        public Material getPoweredBlock(Material unpowered) {
             return powerMap.get(unpowered);
         }
 
-        public Material getUnpoweredBlock(Material powered){
+        public Material getUnpoweredBlock(Material powered) {
             return unpowerMap.get(powered);
         }
     }
