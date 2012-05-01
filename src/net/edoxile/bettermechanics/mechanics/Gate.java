@@ -46,6 +46,7 @@ import static net.edoxile.bettermechanics.utils.BlockUtil.*;
 public class Gate extends SignMechanicListener {
 
     private final ConfigHandler.GateConfig config = BetterMechanics.getInstance().getConfigHandler().getGateConfig();
+    private final String[] identifiers = new String[]{"[Gate]", "[dGate]", "[sGate]"};
 
     @Override
     public void onSignPowerOn(RedstoneEvent event) {
@@ -91,7 +92,7 @@ public class Gate extends SignMechanicListener {
 
     @Override
     public String[] getIdentifiers() {
-        return new String[]{"[Gate]", "[dGate]", "[sGate]"};
+        return identifiers;
     }
 
     @Override
@@ -138,7 +139,6 @@ public class Gate extends SignMechanicListener {
     public void mapBlocks(Sign sign) throws BlockMapException {
         //TODO: fix material shit
         int maxWidth = config.getMaxWidth();
-        int maxHeight = config.getMaxHeight();
         int maxLength = config.getMaxLength();
         Material gateMaterial = null;
         boolean dGate = false;
@@ -234,6 +234,64 @@ public class Gate extends SignMechanicListener {
             return blockMap.getSet().iterator().next().getRelative(BlockFace.DOWN).getType() == Material.AIR;
         } catch (NullPointerException e) {
             throw new PlayerNotifier("Couldn't find any gates, blocklist is empty!", PlayerNotifier.Level.WARNING, null);
+        }
+    }
+
+    @Override
+    protected void close() throws PlayerNotifier {
+        int n = 0;
+        for (Block b : blockMap.getSet()) {
+            int dy = 1;
+            Block temp = b.getRelative(0, dy, 0);
+            while (temp.getType() == Material.AIR && dy < config.getMaxHeight()) {
+                b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
+                n++;
+            }
+        }
+        if (!blockBag.removeItems(blockMap.getMaterial().getId(), blockMap.getMaterialData(), n)) {
+            PlayerNotifier playerNotifier = new PlayerNotifier("There are not enough items in the chest to open the gate. Still need " + n + " items.", PlayerNotifier.Level.WARNING, blockBag.getLocation(true));
+            for (Block b : blockMap.getSet()) {
+                int dy = 1;
+                Block temp = b.getRelative(0, dy, 0);
+                while (temp.getType() == blockMap.getMaterial() && temp.getData() == blockMap.getMaterialData() && dy < config.getMaxHeight()) {
+                    b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
+                    n--;
+                    if (n == 0)
+                        break;
+                }
+                if (n == 0)
+                    break;
+            }
+            throw playerNotifier;
+        }
+    }
+
+    @Override
+    protected void open() throws PlayerNotifier {
+        int n = 0;
+        for (Block b : blockMap.getSet()) {
+            int dy = 1;
+            Block temp = b.getRelative(0, dy, 0);
+            while (temp.getType() == Material.AIR && dy < config.getMaxHeight()) {
+                b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
+                n++;
+            }
+        }
+        if (!blockBag.removeItems(blockMap.getMaterial().getId(), blockMap.getMaterialData(), n)) {
+            PlayerNotifier playerNotifier = new PlayerNotifier("There's not enough space left in the chest to close the gate. Still need " + n + " empty spaces.", PlayerNotifier.Level.WARNING, blockBag.getLocation(true));
+            for (Block b : blockMap.getSet()) {
+                int dy = 1;
+                Block temp = b.getRelative(0, dy, 0);
+                while (temp.getType() == blockMap.getMaterial() && temp.getData() == blockMap.getMaterialData() && dy < config.getMaxHeight()) {
+                    b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
+                    n--;
+                    if (n == 0)
+                        break;
+                }
+                if (n == 0)
+                    break;
+            }
+            throw playerNotifier;
         }
     }
 }

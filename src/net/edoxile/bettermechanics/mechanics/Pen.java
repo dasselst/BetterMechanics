@@ -40,8 +40,9 @@ import static net.edoxile.bettermechanics.utils.StringUtil.merge;
  * @author Edoxile
  */
 public class Pen extends SignMechanicListener implements IMechanicCommandListener {
-
     ConfigHandler.PenConfig config = BetterMechanics.getInstance().getConfigHandler().getPenConfig();
+
+    private final Material[] activator = new Material[]{config.getPenTool()};
 
     public void onPlayerRightClickSign(Player player, Sign sign) {
         if (PermissionHandler.getInstance().playerHasNode(player, "pen")) {
@@ -160,7 +161,7 @@ public class Pen extends SignMechanicListener implements IMechanicCommandListene
 
     @Override
     public Material[] getMechanicActivators() {
-        return new Material[]{config.getPenTool()};
+        return activator;
     }
 
     @Override

@@ -157,7 +157,7 @@ public class Cauldron extends BlockMechanicListener implements IMechanicCommandL
                             recipes += ChatColor.GOLD + recipe.getName() + ChatColor.WHITE + ", ";
                         }
                     }
-                    if (recipes.length() > 0) {
+                    if (recipes.length() == 0) {
                         commandSender.sendMessage("No (active) recipes found!");
                     } else {
                         commandSender.sendMessage(ChatColor.GREEN + "Active cauldron recipes:");

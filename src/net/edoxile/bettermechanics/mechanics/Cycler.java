@@ -54,6 +54,8 @@ public class Cycler extends BlockMechanicListener {
             Material.WOOD_STAIRS,
             Material.COBBLESTONE_STAIRS,
 
+            Material.STEP, //This will toggle the 'upsidedown' effect of the slab
+
             Material.IRON_DOOR,
             Material.WOOD_DOOR
     };
@@ -110,17 +112,22 @@ public class Cycler extends BlockMechanicListener {
                     break;
                 case RAILS:
                     data++;
-                    if (data > 3)
+                    if (data > 9)
                         data = 0;
                     break;
                 case POWERED_RAIL:
                     data++;
-                    if (data > 3)
+                    //TODO: check this below
+                    if ((data & 8) == 8 && data > 12)
+                        data = 8;
+                    else if((data & 8) == 0 && data > 3)
                         data = 0;
                     break;
                 case DETECTOR_RAIL:
                     data++;
-                    if (data > 3)
+                    if ((data & 8) > 0 && data > 12)
+                        data = 8;
+                    else if((data & 8) == 0 && data > 3)
                         data = 0;
                     break;
                 case WOOD_STAIRS:
@@ -128,14 +135,23 @@ public class Cycler extends BlockMechanicListener {
                 case COBBLESTONE_STAIRS:
                 case SMOOTH_STAIRS:
                 case NETHER_BRICK_STAIRS:
+                    //TODO: iets met upside down
                     data++;
-                    if (data > 3)
+                    if ((data & 8) > 0 && data > 11)
                         data = 0;
+                    else if((data & 8) == 0 && data > 3)
+                        data = 8;
+                    break;
+                case STEP:
+                    //TODO: upsidedown flip
+                    data ^= 8;
                     break;
                 case WOODEN_DOOR:
                 case IRON_DOOR:
                     data++;
-                    if (data > 3)
+                    if ((data & 8) > 0 && data > 11)
+                        data = 8;
+                    else if((data & 8) == 0 && data > 3)
                         data = 0;
                     break;
                 default:

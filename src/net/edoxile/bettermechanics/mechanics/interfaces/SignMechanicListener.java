@@ -144,6 +144,11 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
             }
             if (hasBlockBag() && changed > 0) {
                 if (!blockBag.storeItems(blockMap.getMaterial().getId(), blockMap.getMaterialData(), changed)) {
+                    PlayerNotifier playerNotifier = new PlayerNotifier(
+                            "There's not enough space left in the chest. " + changed + " empty spots needed.",
+                            PlayerNotifier.Level.WARNING,
+                            blockBag.getLocation(true)
+                    );
                     for (Block b : blockMap.getSet()) {
                         if (b.getTypeId() == Material.AIR.getId()) {
                             b.setTypeIdAndData(blockMap.getMaterial().getId(), blockMap.getMaterialData(), false);
@@ -153,8 +158,7 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
                             }
                         }
                     }
-                    //TODO: fix something so the users know how much space is missing
-                    throw new PlayerNotifier("There's no space left in the chest. Abort opening.", PlayerNotifier.Level.WARNING, blockBag.getLocation(true));
+                    throw playerNotifier;
                 }
             }
         }
@@ -171,6 +175,11 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
             }
             if (hasBlockBag() && changed > 0) {
                 if (!blockBag.storeItems(blockMap.getMaterial().getId(), blockMap.getMaterialData(), changed)) {
+                    PlayerNotifier playerNotifier = new PlayerNotifier(
+                            "There are not enough items in the chest. Still need " + changed + " of type " + blockMap.getMaterial().name() + ".",
+                            PlayerNotifier.Level.WARNING,
+                            blockBag.getLocation(true)
+                    );
                     for (Block b : blockMap.getSet()) {
                         if (b.getTypeId() == blockMap.getMaterial().getId() && b.getData() == blockMap.getMaterialData()) {
                             b.setType(Material.AIR);
@@ -180,8 +189,7 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
                             }
                         }
                     }
-                    //TODO: fix something so the users know how much is missing
-                    throw new PlayerNotifier("There are not enough items in the chest. Abort opening.", PlayerNotifier.Level.WARNING, blockBag.getLocation(true));
+                    throw playerNotifier;
                 }
             }
         }

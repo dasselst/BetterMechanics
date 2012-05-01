@@ -23,6 +23,7 @@ import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
+import net.edoxile.bettermechanics.utils.datastorage.MetadataStorage;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -103,10 +104,12 @@ public class PowerBlock extends BlockMechanicListener {
 
     private void putMeta(Block b, boolean bool) {
         List<MetadataValue> dataList = b.getMetadata("bettermechanics.powerblock.isOriginal");
-        LazyMetadataValue value = new LazyMetadataValue(BetterMechanics.getInstance(), bool);
+        LazyMetadataValue value = new LazyMetadataValue(BetterMechanics.getInstance(), new MetadataStorage(bool));
         if (dataList != null) {
             dataList.clear();
+            dataList.add(value);
+        } else {
+            b.setMetadata("bettermechanics.powerblock.isOriginal", value);
         }
-        //b.setMetadata();
     }
 }

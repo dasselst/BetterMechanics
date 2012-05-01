@@ -29,6 +29,8 @@ import org.bukkit.Material;
  * @author Edoxile
  */
 public class Lift extends SignMechanicListener {
+    private final String[] identifiers = new String[]{"[Lift Up]","[Lift Down]","[TeleLift]"};
+    private final String[] passiveIdentifiers = new String[]{"[Lift]"};
 
     private ConfigHandler.LiftConfig config = BetterMechanics.getInstance().getConfigHandler().getLiftConfig();
 
@@ -44,12 +46,12 @@ public class Lift extends SignMechanicListener {
 
     @Override
     public String[] getIdentifiers() {
-        return new String[]{"Lift Up", "Lift Down", "TeleLift"};
+        return identifiers;
     }
 
     @Override
     public String[] getPassiveIdentifiers() {
-        return new String[]{"Lift"};
+        return passiveIdentifiers;
     }
 
     @Override

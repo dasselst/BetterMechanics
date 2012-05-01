@@ -29,10 +29,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
@@ -93,6 +90,7 @@ public class BMListener implements Listener {
 
         PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer(), event);
         mechanicsHandler.callPlayerEvent(playerEvent);
+        event.setCancelled(playerEvent.isCancelled());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -102,5 +100,11 @@ public class BMListener implements Listener {
 
         PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.PLACE, event.getPlayer(), event);
         mechanicsHandler.callPlayerEvent(playerEvent);
+        event.setCancelled(playerEvent.isCancelled());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onSignChange(SignChangeEvent event) {
+        //TODO: fix something for this, some kind of MechanicsHandler.checkMechanic(event.getLines()). Cancel if player doesn't have proper permissions.
     }
 }

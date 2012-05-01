@@ -1,15 +1,25 @@
 Changelog:
 - Changed the events & listeners. Code is now cleaner.
 - Moved the bukkit event listener in to one class in stead of separate classes.
+- Fixed loads of bugs
+- Did some whitespace commits
+- Added a few new mechanics
+- Changed methods around
+- Updated SignMechanicListener to contain a 'default' open() and close(). Should be overwritten if not used (for an example, see Gate.java).
+- Implemented a proper Cycler
+- Fixed some issues with BlockBags
+- Player now gets to see how many items there are missing or how much space there is needed to open the mechanic
+- Added GuntherDW to authors, since some of the code is based on his, or at least it was his idea
+- Updated plugin.yml to get a better version number
 
 TODO:
 - Something with onSignChange(), correcting mistakes/asking permission
 - Implement all the mechanics:
-    * Gate
-    * Bridge
+    * Gate (implementation done)
+    * Bridge (implementation done)
     * Door
     * (Tele)Lift
     * Ammeter
-    * Cauldron
+    * Cauldron (implementation done)
     * Hidden Switch
-    * PoweredBlock (changes blocks (materialtype) when powerd with redstone)
+    * PoweredBlock (changes blocks (materialtype) when powerd with redstone) (implementation mostly done)

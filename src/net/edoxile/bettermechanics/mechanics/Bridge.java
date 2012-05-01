@@ -45,6 +45,8 @@ import java.util.Set;
 public class Bridge extends SignMechanicListener {
 
     private final ConfigHandler.BridgeConfig config = BetterMechanics.getInstance().getConfigHandler().getBridgeConfig();
+    private final String[] identifiers = new String[]{"Bridge", "sBridge"};
+    private final String[] passiveIdentifiers = new String[]{"Bridge", "sBridge", "Bridge End", "sBridge End"};
 
     @Override
     public void onSignPowerOn(RedstoneEvent event) {
@@ -88,12 +90,12 @@ public class Bridge extends SignMechanicListener {
 
     @Override
     public String[] getIdentifiers() {
-        return new String[]{"Bridge", "sBridge"};
+        return identifiers;
     }
 
     @Override
     public String[] getPassiveIdentifiers() {
-        return new String[]{"Bridge", "sBridge", "Bridge End", "sBridge End"};
+        return passiveIdentifiers;
     }
 
     @Override

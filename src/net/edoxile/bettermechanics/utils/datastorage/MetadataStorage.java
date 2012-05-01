@@ -16,51 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.event;
+package net.edoxile.bettermechanics.utils.datastorage;
 
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
+import java.util.concurrent.Callable;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public class PlayerEvent extends Event implements Cancellable {
-    private boolean cancelled = false;
+public class MetadataStorage implements Callable<Object> {
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
+    private Boolean value;
+
+    public MetadataStorage() {
+        value = null;
+    }
+
+    public MetadataStorage(boolean v) {
+        value = v;
     }
 
     @Override
-    public void setCancelled(boolean b) {
-        cancelled = b;
+    public Object call() throws Exception {
+        return value;
     }
 
-    public enum Action {
-        RIGHT_CLICK,
-        LEFT_CLICK,
-        PLACE,
-        BREAK
+    public void setValue(boolean v) {
+        value = v;
     }
 
-    private final Player player;
-    private final Action action;
-
-    public PlayerEvent(Type t, Block b, Action a, Player p, org.bukkit.event.Event e) {
-        super(t, b, e);
-        player = p;
-        action = a;
+    public void clear() {
+        value = null;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Action getAction() {
-        return action;
+    public boolean getValue() {
+        return value;
     }
 }

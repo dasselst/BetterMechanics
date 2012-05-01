@@ -72,8 +72,10 @@ public class BetterMechanics extends JavaPlugin {
         mechanicsHandler.addMechanic(new Gate());
         mechanicsHandler.addMechanic(new Bridge());
         mechanicsHandler.addMechanic(new Cauldron());
+        mechanicsHandler.addMechanic(new Lift());
         mechanicsHandler.addMechanic(new Cycler());
         mechanicsHandler.addMechanic(new Cycler.SignCycler());
+        mechanicsHandler.addMechanic(new PowerBlock());
 
         //Register different events
         getServer().getPluginManager().registerEvents(listener, this);
@@ -109,6 +111,8 @@ public class BetterMechanics extends JavaPlugin {
         logger.log(level, "[BetterMechanics] " + msg);
     }
 
+
+    @Deprecated
     public FileConfiguration getPluginConfig() {
         return getConfig();
     }
