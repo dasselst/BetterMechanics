@@ -21,6 +21,7 @@ package net.edoxile.bettermechanics.mechanics;
 import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
+import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
 import net.edoxile.bettermechanics.mechanics.interfaces.IMechanicCommandListener;
 import net.edoxile.bettermechanics.models.CauldronCookbook;
@@ -32,6 +33,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -145,10 +147,24 @@ public class Cauldron extends BlockMechanicListener implements IMechanicCommandL
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String[] args) {
+        if (commandSender instanceof Player) {
+            if (!PermissionHandler.getInstance().playerHasNode((Player) commandSender, "cauldron.listrecipes")) {
+                commandSender.sendMessage(ChatColor.DARK_RED + "Seems like you don't have permission to see the available recipes!");
+                return true;
+            }
+        }
+
         if (command.getName().equals(getCommandName())) {
             if (args.length > 0) {
                 args[0] = args[0].toLowerCase();
-                if (args[0].equals("recipes")) {
+                if (args[0].equals("help")) {
+                    commandSender.sendMessage(new String[]{
+                            ChatColor.GREEN + "Cauldron command help. Usage:",
+                            ChatColor.AQUA + "/cauldron recipes" + ChatColor.WHITE + " list active recipes.",
+                            ChatColor.AQUA + "/cauldron recipe <name>" + ChatColor.WHITE + " show detailed information about a recipe",
+                            ChatColor.AQUA + "/cauldron reload" + ChatColor.WHITE + " reload cauldron config"
+                    });
+                } else if (args[0].equals("recipes")) {
                     String recipes = "";
                     for (CauldronCookbook.Recipe recipe : cookbook.getRecipes()) {
                         if (recipe.isHidden()) {
@@ -210,9 +226,22 @@ public class Cauldron extends BlockMechanicListener implements IMechanicCommandL
                             commandSender.sendMessage(ChatColor.GOLD + result);
                         }
                     }
+                } else if (args[0].equals("reload")) {
+                    if (commandSender instanceof Player) {
+                        if (PermissionHandler.getInstance().playerHasNode((Player) commandSender, "cauldron.reload")) {
+                            BetterMechanics.getInstance().getConfigHandler().reloadCauldronConfig();
+                            config = BetterMechanics.getInstance().getConfigHandler().getCauldronConfig();
+                            cookbook = config.getCookBook();
+                            commandSender.sendMessage(ChatColor.GREEN + "Cauldron config reloaded.");
+                        } else {
+                            commandSender.sendMessage(ChatColor.DARK_RED + "Seems like you don't have permission for this!");
+                        }
+                    }
+                } else {
+                    commandSender.sendMessage(ChatColor.DARK_RED + "Invalid syntax! See /cauldron help for correct usage.");
                 }
             } else {
-                commandSender.sendMessage("Invalid syntax! See /cauldron help for correct usage.");
+                commandSender.sendMessage(ChatColor.DARK_RED + "Invalid syntax! See /cauldron help for correct usage.");
             }
             return true;
         }

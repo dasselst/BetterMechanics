@@ -105,7 +105,7 @@ public class MaterialMap {
             _keys = keys;
             _values = values;
             size = _values.length;
-        } catch (KeyNotFoundException e) {
+        } catch (KeyNotFoundException ignore) {
         }
     }
 
@@ -149,7 +149,8 @@ public class MaterialMap {
     }
 
     @Override
-    public MaterialMap clone() {
+    public MaterialMap clone() throws CloneNotSupportedException {
+        super.clone();
         return new MaterialMap(_keys.clone(), _values.clone(), size);
     }
 

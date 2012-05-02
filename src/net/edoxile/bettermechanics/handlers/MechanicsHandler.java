@@ -212,6 +212,7 @@ public class MechanicsHandler {
         }
     }
 
+    //TODO: check mechanic activators
     private Set<SignMechanicListener> getSignListeners(Event event) {
         if (!SignUtil.isSign(event.getBlock()))
             return null;
@@ -232,6 +233,8 @@ public class MechanicsHandler {
         return listeners;
     }
 
+
+    //TODO: check mechanic activators
     private Set<BlockMechanicListener> getBlockListeners(Event event) {
         if (SignUtil.isSign(event.getBlock()))
             return null;

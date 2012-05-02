@@ -1,16 +1,16 @@
 name: BetterMechanics
 main: net.edoxile.bettermechanics.BetterMechanics
-version: 2.0.0 build 1
+version: 2.0.0 build 6
 authors: ['Edoxile', 'GuntherDW']
 website: https://github.com/Edoxile/BetterMechanics
 commands:
     bettermechanics:
         description: Management command of BetterMechanics
-        usage: /<command> reload [cauldron]
+        usage: /<command> reload
         aliases: bm
     pen:
         description: Change the text on signs
         usage: /<command> help
     cauldron:
         description: Manage cauldron and show recipes
-        usage: /cauldron help
+        usage: /<command> help
