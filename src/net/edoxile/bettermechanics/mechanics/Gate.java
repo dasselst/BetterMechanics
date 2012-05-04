@@ -229,7 +229,9 @@ public class Gate extends SignMechanicListener {
 
     }
 
-    private boolean isOpen() throws PlayerNotifier {
+    //Protected because of @Override
+    @Override
+    protected boolean isOpen() throws PlayerNotifier {
         try {
             return blockMap.getSet().iterator().next().getRelative(BlockFace.DOWN).getType() == Material.AIR;
         } catch (NullPointerException e) {

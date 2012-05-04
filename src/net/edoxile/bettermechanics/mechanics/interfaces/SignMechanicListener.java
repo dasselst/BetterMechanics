@@ -194,4 +194,18 @@ public abstract class SignMechanicListener extends BlockMechanicListener {
             }
         }
     }
+
+    protected boolean isOpen() throws PlayerNotifier{
+        if (hasBlockMapper()) {
+            for (Block b : blockMap.getSet()) {
+                if (b.getTypeId() == blockMap.getMaterial().getId() && b.getData() == blockMap.getMaterialData())
+                    return false;
+                else if (b.getTypeId() == Material.AIR.getId())
+                    return true;
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

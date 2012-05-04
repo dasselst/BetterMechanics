@@ -225,18 +225,4 @@ public class Bridge extends SignMechanicListener {
         }
         return true;
     }
-
-    private boolean isOpen() {
-        if (hasBlockMapper()) {
-            for (Block b : blockMap.getSet()) {
-                if (b.getTypeId() == blockMap.getMaterial().getId() && b.getData() == blockMap.getMaterialData())
-                    return false;
-                else if (b.getTypeId() == Material.AIR.getId())
-                    return true;
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
 }
