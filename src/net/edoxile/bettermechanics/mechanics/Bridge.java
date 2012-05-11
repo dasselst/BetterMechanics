@@ -37,6 +37,8 @@ import org.bukkit.block.Sign;
 import java.util.HashSet;
 import java.util.Set;
 
+import static net.edoxile.bettermechanics.utils.BlockUtil.blocksEqual;
+
 /**
  * Created by IntelliJ IDEA.
  *
@@ -215,14 +217,5 @@ public class Bridge extends SignMechanicListener {
         } else {
             throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
         }
-    }
-
-    private boolean blocksEqual(Material type, byte data, Block... blocks) {
-        for (Block block : blocks) {
-            if (block.getType() != type || block.getData() != data) {
-                return false;
-            }
-        }
-        return true;
     }
 }

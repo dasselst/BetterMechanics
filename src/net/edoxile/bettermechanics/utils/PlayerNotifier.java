@@ -73,4 +73,8 @@ public class PlayerNotifier extends Throwable {
         notify(player);
         log();
     }
+
+    public Level getLevel() {
+        return level;
+    }
 }

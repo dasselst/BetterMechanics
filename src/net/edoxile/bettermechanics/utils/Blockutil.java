@@ -120,4 +120,13 @@ public class BlockUtil {
         }
         return null;
     }
+
+    public static boolean blocksEqual(Material type, byte data, Block... blocks) {
+        for (Block block : blocks) {
+            if (block.getType() != type || block.getData() != data) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

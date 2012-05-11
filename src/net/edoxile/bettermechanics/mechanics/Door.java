@@ -26,11 +26,14 @@ import net.edoxile.bettermechanics.handlers.PermissionHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
 import net.edoxile.bettermechanics.utils.PlayerNotifier;
 import net.edoxile.bettermechanics.utils.SignUtil;
+import net.edoxile.bettermechanics.utils.datastorage.BlockMap;
 import net.edoxile.bettermechanics.utils.datastorage.BlockMapException;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+
+import java.util.HashSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -100,7 +103,10 @@ public class Door extends SignMechanicListener {
                 open();
             }
         } catch (PlayerNotifier playerNotifier) {
-            playerNotifier.notify(event.getPlayer());
+            if (playerNotifier.getLevel().ordinal() > 1)
+                playerNotifier.broadcast(event.getPlayer());
+            else
+                playerNotifier.notify(event.getPlayer());
         }
     }
 
@@ -130,6 +136,10 @@ public class Door extends SignMechanicListener {
         String node = SignUtil.getMechanicsIdentifier(sign);
         final boolean isSmall;
         final BlockFace direction;
+        Block startBlock = sign.getBlock();
+        Block endBlock = null;
+        boolean endFound = false;
+
         if (node.charAt(0) == 's') {
             isSmall = true;
             direction = node.equals("sDoor Up") ? BlockFace.UP : BlockFace.DOWN;
@@ -137,10 +147,16 @@ public class Door extends SignMechanicListener {
             isSmall = false;
             direction = node.equals("Door Up") ? BlockFace.UP : BlockFace.DOWN;
         }
-        Block startBlock = sign.getBlock();
-        Block endBlock;
-        boolean endFound = false;
-        for (int dy = 1; dy < maxDistance; dy++) {
+
+        BlockFace orientation = SignUtil.getFacing(sign);
+        if (orientation == BlockFace.WEST)
+            orientation = BlockFace.EAST;
+        else if (orientation == BlockFace.SOUTH)
+            orientation = BlockFace.NORTH;
+        else if (!SignUtil.isOrdinal(direction))
+            throw new BlockMapException(BlockMapException.Type.NON_ORDINAL_SIGN);
+
+        for (int dy = 4; dy < maxDistance; dy++) {
             endBlock = startBlock.getRelative(0, (direction == BlockFace.UP) ? dy : -dy, 0);
             if (SignUtil.isSign(endBlock)) {
                 String endNode = SignUtil.getMechanicsIdentifier(SignUtil.getSign(endBlock));
@@ -153,8 +169,26 @@ public class Door extends SignMechanicListener {
                 }
             }
         }
-        if(endFound){
-            //TODO: map blocks
+        if (endFound) {
+            //TODO: check if both sides are made of the same material.
+            Block tempBlock = startBlock.getRelative(direction);
+            startBlock = startBlock.getRelative(direction).getRelative(direction);
+            endBlock = endBlock.getRelative(direction.getOppositeFace()).getRelative(direction.getOppositeFace());
+            HashSet<Block> blockSet = new HashSet<Block>();
+            do {
+                tempBlock = tempBlock.getRelative(direction);
+                blockSet.add(tempBlock);
+                if (!isSmall) {
+                    if (orientation == BlockFace.NORTH) {
+                        blockSet.add(tempBlock.getRelative(BlockFace.WEST));
+                        blockSet.add(tempBlock.getRelative(BlockFace.EAST));
+                    } else {
+                        blockSet.add(tempBlock.getRelative(BlockFace.NORTH));
+                        blockSet.add(tempBlock.getRelative(BlockFace.SOUTH));
+                    }
+                }
+            } while (!tempBlock.equals(endBlock));
+            blockMap = new BlockMap(blockSet, startBlock, endBlock, endBlock.getRelative(direction).getType(), endBlock.getRelative(direction).getData());
         } else {
             throw new BlockMapException(BlockMapException.Type.END_NOT_FOUND);
         }
