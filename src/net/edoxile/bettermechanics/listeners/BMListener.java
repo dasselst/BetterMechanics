@@ -23,6 +23,9 @@ import net.edoxile.bettermechanics.event.Event;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.MechanicsHandler;
+import net.edoxile.bettermechanics.handlers.PermissionHandler;
+import net.edoxile.bettermechanics.mechanics.interfaces.SignMechanicListener;
+import net.edoxile.bettermechanics.models.Pair;
 import net.edoxile.bettermechanics.utils.SignUtil;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -31,6 +34,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.HashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,9 +47,16 @@ public class BMListener implements Listener {
     private final BlockFace[] blockFaces = new BlockFace[]{
             BlockFace.UP, BlockFace.DOWN, BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH
     };
+    private HashMap<String,Pair<String>> idMap = new HashMap<String, Pair<String>>();
 
     public BMListener(BetterMechanics plugin) {
         mechanicsHandler = plugin.getMechanicsHandler();
+
+        for (SignMechanicListener listener : mechanicsHandler.getSignMechanics()) {
+            for (String identifier : listener.getIdentifiers()) {
+                idMap.put(identifier.toLowerCase(), new Pair<String>(identifier, listener.getName()));
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -71,14 +83,22 @@ public class BMListener implements Listener {
             return;
 
         if (event.getAction() == org.bukkit.event.block.Action.LEFT_CLICK_BLOCK || event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
-            PlayerEvent playerEvent = new PlayerEvent(
-                    SignUtil.isSign(event.getClickedBlock()) ? Event.Type.SIGN : Event.Type.BLOCK,
-                    event.getClickedBlock(),
-                    event.getAction() == Action.LEFT_CLICK_BLOCK ? PlayerEvent.Action.LEFT_CLICK : PlayerEvent.Action.RIGHT_CLICK,
-                    event.getPlayer(),
-                    event
-            );
-
+            PlayerEvent playerEvent;
+            if (SignUtil.isSign(event.getClickedBlock())) {
+                playerEvent = new PlayerEvent(
+                        SignUtil.getSign(event.getClickedBlock()),
+                        event.getAction() == Action.LEFT_CLICK_BLOCK ? PlayerEvent.Action.LEFT_CLICK : PlayerEvent.Action.RIGHT_CLICK,
+                        event.getPlayer(),
+                        event
+                );
+            } else {
+                playerEvent = new PlayerEvent(
+                        event.getClickedBlock(),
+                        event.getAction() == Action.LEFT_CLICK_BLOCK ? PlayerEvent.Action.LEFT_CLICK : PlayerEvent.Action.RIGHT_CLICK,
+                        event.getPlayer(),
+                        event
+                );
+            }
             mechanicsHandler.callPlayerEvent(playerEvent);
         }
     }
@@ -88,7 +108,7 @@ public class BMListener implements Listener {
         if (event.isCancelled())
             return;
 
-        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer(), event);
+        PlayerEvent playerEvent = new PlayerEvent(event.getBlock(), PlayerEvent.Action.BREAK, event.getPlayer(), event);
         mechanicsHandler.callPlayerEvent(playerEvent);
         event.setCancelled(playerEvent.isCancelled());
     }
@@ -98,13 +118,24 @@ public class BMListener implements Listener {
         if (event.isCancelled())
             return;
 
-        PlayerEvent playerEvent = new PlayerEvent(Event.Type.BLOCK, event.getBlock(), PlayerEvent.Action.PLACE, event.getPlayer(), event);
+        PlayerEvent playerEvent = new PlayerEvent(event.getBlock(), PlayerEvent.Action.PLACE, event.getPlayer(), event);
         mechanicsHandler.callPlayerEvent(playerEvent);
         event.setCancelled(playerEvent.isCancelled());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onSignChange(SignChangeEvent event) {
-        //TODO: fix something for this, some kind of MechanicsHandler.checkMechanic(event.getLines()). Cancel if player doesn't have proper permissions.
+        if (event.isCancelled())
+            return;
+
+        String line = event.getLine(1);
+        Pair<String> data = idMap.get(line);
+        if (data != null) {
+            if (PermissionHandler.getInstance().playerHasNode(event.getPlayer(), data.getSecond()+".build")) {
+                event.setLine(1, data.getFirst());
+            } else {
+                event.setCancelled(true);
+            }
+        }
     }
 }

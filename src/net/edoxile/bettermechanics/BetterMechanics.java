@@ -73,6 +73,7 @@ public class BetterMechanics extends JavaPlugin {
         mechanicsHandler.addMechanic(new Bridge());
         mechanicsHandler.addMechanic(new Cauldron());
         mechanicsHandler.addMechanic(new Lift());
+        mechanicsHandler.addMechanic(new TeleLift());
         mechanicsHandler.addMechanic(new Cycler());
         mechanicsHandler.addMechanic(new Cycler.SignCycler());
         mechanicsHandler.addMechanic(new PowerBlock());

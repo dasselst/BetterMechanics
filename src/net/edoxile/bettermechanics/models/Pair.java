@@ -16,41 +16,45 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package net.edoxile.bettermechanics.event;
-
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.event.block.BlockRedstoneEvent;
+package net.edoxile.bettermechanics.models;
 
 /**
  * Created by IntelliJ IDEA.
  *
  * @author Edoxile
  */
-public class RedstoneEvent extends Event {
-    public enum State {
-        ON,
-        OFF
+public class Pair<T> {
+    private T f;
+    private T s;
+
+    public Pair(T first, T second){
+        f = first;
+        s = second;
     }
 
-    private final State state;
-    private BlockFace origin;
-
-    public RedstoneEvent(State s, BlockRedstoneEvent e) {
-        super(e.getBlock(), e);
-        state = s;
+    public T getFirst(){
+        return f;
     }
 
-    public void setData(Type t, Block b, BlockFace o) {
-        super.setData(t, b);
-        origin = o;
+    public T getSecond(){
+        return s;
     }
 
-    public State getState() {
-        return state;
+    public void setFirst(T first){
+        f = first;
     }
 
-    public BlockFace getOrigin() {
-        return origin;
+    public void setSecond(T second){
+        s = second;
+    }
+
+    public void setBoth(T first, T second){
+        f = first;
+        s = second;
+    }
+
+    public void clear(){
+        f = null;
+        s = null;
     }
 }

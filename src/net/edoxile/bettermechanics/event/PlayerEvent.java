@@ -19,6 +19,7 @@
 package net.edoxile.bettermechanics.event;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
@@ -50,8 +51,14 @@ public class PlayerEvent extends Event implements Cancellable {
     private final Player player;
     private final Action action;
 
-    public PlayerEvent(Type t, Block b, Action a, Player p, org.bukkit.event.Event e) {
-        super(t, b, e);
+    public PlayerEvent(Block b, Action a, Player p, org.bukkit.event.Event e) {
+        super(b, e);
+        player = p;
+        action = a;
+    }
+
+    public PlayerEvent(Sign s, Action a, Player p, org.bukkit.event.Event e){
+        super(s, e);
         player = p;
         action = a;
     }

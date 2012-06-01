@@ -24,8 +24,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
-import static net.edoxile.bettermechanics.utils.StringUtil.stripBrackets;
-
 /**
  * Created by IntelliJ IDEA.
  *
@@ -85,7 +83,7 @@ public class SignUtil {
     }
 
     public static String getMechanicsIdentifier(Sign sign) {
-        return stripBrackets(sign.getLine(1));
+        return sign.getLine(1);
     }
 
     public static void setMechanicsIdentifier(Sign sign, String identifier) {
@@ -116,7 +114,7 @@ public class SignUtil {
         }
     }
 
-    public static boolean isWallSign(Sign s) {
-        return s.getBlock().getType() == Material.WALL_SIGN;
+    public static boolean isWallSign(Block b){
+        return b.getType() == Material.WALL_SIGN;
     }
 }

@@ -18,7 +18,9 @@
 
 package net.edoxile.bettermechanics.event;
 
+import net.edoxile.bettermechanics.utils.SignUtil;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,13 +34,22 @@ public abstract class Event {
     }
 
     private Type type;
-    private Block block;
+    private Block block = null;
+    private Sign sign = null;
+    private String mechanicIdentifier = "Block";
     private org.bukkit.event.Event bukkitEvent;
 
-    public Event(Type t, Block b, org.bukkit.event.Event bEvent) {
-        type = t;
+    public Event(Block b, org.bukkit.event.Event bEvent) {
+        type = Type.BLOCK;
         block = b;
         bukkitEvent = bEvent;
+    }
+
+    public Event(Sign s, org.bukkit.event.Event bEvent) {
+        type = Type.SIGN;
+        sign = s;
+        block = sign.getBlock();
+        mechanicIdentifier = SignUtil.getMechanicsIdentifier(sign);
     }
 
     public Type getType() {
@@ -51,6 +62,14 @@ public abstract class Event {
 
     public Block getBlock() {
         return block;
+    }
+
+    public Sign getSign(){
+        return sign;
+    }
+
+    public String getMechanicIdentifier(){
+        return mechanicIdentifier;
     }
 
     public void setBlock(Block b) {

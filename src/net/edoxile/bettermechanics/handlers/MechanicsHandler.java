@@ -55,7 +55,6 @@ public class MechanicsHandler {
     private final HashMap<String, IMechanicCommandListener> commandableMechanicMap = new HashMap<String, IMechanicCommandListener>();
 
     public void addMechanic(IMechanicListener mechanicListener) {
-        //TODO: check if this list works as it's supposed to (with passing a reference)
         if (!mechanicListener.isEnabled())
             return;
         if (mechanicListener instanceof SignMechanicListener) {
@@ -69,6 +68,7 @@ public class MechanicsHandler {
                         redstoneSignMechanicMap.put(identifier, list);
                     } else {
                         list.add(signMechanic);
+                        //TODO: check if this list works as it's supposed to (with passing a reference)
                         //redstoneSignMechanicMap.put(identifier, list);
                     }
                 }
@@ -82,6 +82,7 @@ public class MechanicsHandler {
                         signMechanicMap.put(identifier, list);
                     } else {
                         list.add(signMechanic);
+                        //TODO: check if this list works as it's supposed to (with passing a reference)
                         //signMechanicMap.put(identifier, list);
                     }
                 }
@@ -97,6 +98,7 @@ public class MechanicsHandler {
                         redstoneBlockMechanicMap.put(target, list);
                     } else {
                         list.add(blockMechanicListener);
+                        //TODO: check if this list works as it's supposed to (with passing a reference)
                         //redstoneBlockMechanicMap.put(target, list);
                     }
                 }
@@ -110,6 +112,7 @@ public class MechanicsHandler {
                         blockMechanicMap.put(target, list);
                     } else {
                         list.add(blockMechanicListener);
+                        //TODO: check if this list works as it's supposed to (with passing a reference)
                         //blockMechanicMap.put(target, list);
                     }
                 }
@@ -253,5 +256,17 @@ public class MechanicsHandler {
         }
 
         return listeners;
+    }
+
+    public Set<SignMechanicListener> getSignMechanics() {
+        //Returns a list of sign mechanics. Is needed by BMListener to set correct ID's on each sign.
+        Set<SignMechanicListener> set = new HashSet<SignMechanicListener>();
+        for (Set<SignMechanicListener> set2 : signMechanicMap.values()) {
+            set.addAll(set2);
+        }
+        for (Set<SignMechanicListener> set2 : redstoneSignMechanicMap.values()) {
+            set.addAll(set2);
+        }
+        return set;
     }
 }
