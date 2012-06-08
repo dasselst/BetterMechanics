@@ -13,11 +13,10 @@ Changelog:
 - Updated plugin.yml to get a better version number
 
 TODO:
-- Something with onSignChange(), correcting mistakes/asking permission
 - Implement all the mechanics:
     * Gate (implementation done)
     * Bridge (implementation done)
-    * Door
+    * Door (implementation done)
     * (Tele)Lift
     * Ammeter
     * Cauldron (implementation done)

@@ -170,8 +170,28 @@ public class Door extends SignMechanicListener {
             }
         }
         if (endFound) {
-            //TODO: check if both sides are made of the same material.
             Block tempBlock = startBlock.getRelative(direction);
+            Material type = tempBlock.getType();
+            byte data = tempBlock.getData();
+            if (!isSmall &&
+                    (orientation == BlockFace.EAST && (
+                            tempBlock.getRelative(BlockFace.NORTH).getType() != type
+                                    || tempBlock.getRelative(BlockFace.SOUTH).getType() != type
+                                    || tempBlock.getRelative(BlockFace.NORTH).getData() != data
+                                    || tempBlock.getRelative(BlockFace.SOUTH).getData() != data
+                    )
+                    ) || /* orientation == BlockFace.NORTH && */(
+                    (
+                            tempBlock.getRelative(BlockFace.WEST).getType() != type
+                                    || tempBlock.getRelative(BlockFace.EAST).getType() != type
+                                    || tempBlock.getRelative(BlockFace.WEST).getData() != data
+                                    || tempBlock.getRelative(BlockFace.EAST).getData() != data
+                    )
+            )
+                    )
+                throw new BlockMapException(BlockMapException.Type.SIDES_DO_NOT_MATCH);
+
+
             startBlock = startBlock.getRelative(direction).getRelative(direction);
             endBlock = endBlock.getRelative(direction.getOppositeFace()).getRelative(direction.getOppositeFace());
             HashSet<Block> blockSet = new HashSet<Block>();

@@ -419,13 +419,20 @@ public class ConfigHandler {
 
     public class AmmeterConfig {
         private final boolean enabled;
+        private final Material tool;
 
         public AmmeterConfig() {
             enabled = configuration.getBoolean("ammeter.enabled", true);
+            //TODO: check if tool id is correct (coal)
+            tool = Material.getMaterial(configuration.getInt("ammeter.tool", 283));
         }
 
         public boolean isEnabled() {
             return enabled;
+        }
+
+        public Material getTool(){
+            return tool;
         }
     }
 
