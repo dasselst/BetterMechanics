@@ -22,6 +22,7 @@ import net.edoxile.bettermechanics.BetterMechanics;
 import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 /**
@@ -67,6 +68,15 @@ public class Ammeter extends BlockMechanicListener {
 
     @Override
     public void onBlockRightClick(PlayerEvent event){
-         //
+        String msg = "The current is: [" + ChatColor.GREEN;
+        for (byte i = 0; i < event.getBlock().getData(); i++) {
+            msg += "|";
+        }
+        msg += ChatColor.DARK_RED;
+        for (byte i = event.getBlock().getData(); i < 15; i++) {
+            msg += "|";
+        }
+        msg += ChatColor.WHITE + "] " + ChatColor.RED + Byte.toString(event.getBlock().getData()) + ChatColor.WHITE + " A.";
+        event.getPlayer().sendMessage(msg);
     }
 }
