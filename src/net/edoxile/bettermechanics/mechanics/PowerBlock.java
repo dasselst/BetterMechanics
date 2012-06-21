@@ -23,14 +23,10 @@ import net.edoxile.bettermechanics.event.PlayerEvent;
 import net.edoxile.bettermechanics.event.RedstoneEvent;
 import net.edoxile.bettermechanics.handlers.ConfigHandler;
 import net.edoxile.bettermechanics.mechanics.interfaces.BlockMechanicListener;
-import net.edoxile.bettermechanics.utils.datastorage.MetadataStorage;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.metadata.LazyMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -38,14 +34,19 @@ import java.util.logging.Level;
  *
  * @author Edoxile
  */
+//TODO: This still needs to be implemented properly. MetadataStorage could be used, but I'll have to figure out how that works.
 public class PowerBlock extends BlockMechanicListener {
 
     private ConfigHandler.PowerBlockConfig config = BetterMechanics.getInstance().getConfigHandler().getPowerBlockConfig();
 
     @Override
     public void onBlockPowerOn(RedstoneEvent event) {
-        if (!event.getBlock().getMetadata("bettermechanics.powerblock.original").get(0).asBoolean()) {
-
+        Block b = event.getBlock();
+        Material to = config.getPoweredBlock(b.getType());
+        if(to != null){
+            if(!checkMeta(b)){
+                b.setType(to);
+            }
         }
     }
 
@@ -98,18 +99,9 @@ public class PowerBlock extends BlockMechanicListener {
     }
 
     private boolean checkMeta(Block b) {
-        List<MetadataValue> dataList = b.getMetadata("bettermechanics.powerblock.isOriginal");
-        return dataList != null && dataList.size() == 1 && dataList.get(0).asBoolean();
+        return false;
     }
 
     private void putMeta(Block b, boolean bool) {
-        List<MetadataValue> dataList = b.getMetadata("bettermechanics.powerblock.isOriginal");
-        LazyMetadataValue value = new LazyMetadataValue(BetterMechanics.getInstance(), new MetadataStorage(bool));
-        if (dataList != null) {
-            dataList.clear();
-            dataList.add(value);
-        } else {
-            b.setMetadata("bettermechanics.powerblock.isOriginal", value);
-        }
     }
 }
